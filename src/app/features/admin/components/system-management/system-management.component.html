@@ -1,0 +1,477 @@
+<div class="system-management-container">
+  <!-- Header -->
+  <div class="header">
+    <h1>System Management</h1>
+    <p class="subtitle">Monitor and configure system settings and performance</p>
+    <button mat-raised-button color="primary" (click)="refreshAll()">
+      <mat-icon>refresh</mat-icon>
+      Refresh All
+    </button>
+  </div>
+
+  <!-- System Health Section -->
+  @if (systemHealth()) {
+    <mat-card class="health-card">
+      <mat-card-header>
+        <mat-card-title>
+          <div class="card-title-row">
+            <mat-icon>health_and_safety</mat-icon>
+            <span>System Health</span>
+          </div>
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="health-overview">
+          <div class="health-status">
+            <mat-icon [class]="'status-icon-' + systemHealth()!.status"
+                      [style.color]="getHealthStatusColor(systemHealth()!.status)">
+              {{ getHealthStatusIcon(systemHealth()!.status) }}
+            </mat-icon>
+            <div class="status-details">
+              <div class="status-label">System Status</div>
+              <div class="status-value">{{ systemHealth()!.status | uppercase }}</div>
+            </div>
+          </div>
+
+          <div class="health-metric">
+            <mat-icon class="metric-icon">schedule</mat-icon>
+            <div class="metric-details">
+              <div class="metric-label">Uptime</div>
+              <div class="metric-value">{{ formatUptime(systemHealth()!.uptime) }}</div>
+            </div>
+          </div>
+
+          <div class="health-metric">
+            <mat-icon class="metric-icon">access_time</mat-icon>
+            <div class="metric-details">
+              <div class="metric-label">Last Check</div>
+              <div class="metric-value">{{ formatTimestamp(systemHealth()!.timestamp) }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Services Status -->
+        <div class="services-grid">
+          <div class="service-card">
+            <div class="service-header">
+              <mat-icon>storage</mat-icon>
+              <span>Database</span>
+              <mat-chip [class]="'chip-' + getServiceStatusColor(systemHealth()!.services.database.status)">
+                {{ systemHealth()!.services.database.status }}
+              </mat-chip>
+            </div>
+            <div class="service-metric">
+              Response: {{ systemHealth()!.services.database.responseTime }}ms
+            </div>
+          </div>
+
+          <div class="service-card">
+            <div class="service-header">
+              <mat-icon>memory</mat-icon>
+              <span>Cache</span>
+              <mat-chip [class]="'chip-' + getServiceStatusColor(systemHealth()!.services.cache.status)">
+                {{ systemHealth()!.services.cache.status }}
+              </mat-chip>
+            </div>
+            <div class="service-metric">
+              Response: {{ systemHealth()!.services.cache.responseTime }}ms
+            </div>
+          </div>
+
+          <div class="service-card">
+            <div class="service-header">
+              <mat-icon>cloud_upload</mat-icon>
+              <span>Storage</span>
+              <mat-chip [class]="'chip-' + getServiceStatusColor(systemHealth()!.services.storage.status)">
+                {{ systemHealth()!.services.storage.status }}
+              </mat-chip>
+            </div>
+            <div class="service-metric">
+              Response: {{ systemHealth()!.services.storage.responseTime }}ms
+            </div>
+          </div>
+        </div>
+
+        <!-- Resource Usage -->
+        <div class="resources-section">
+          <h3>Resource Usage</h3>
+
+          <div class="resource-item">
+            <div class="resource-header">
+              <mat-icon>memory</mat-icon>
+              <span>Memory</span>
+              <span class="resource-value">
+                {{ formatBytes(systemHealth()!.resources.memory.used) }} /
+                {{ formatBytes(systemHealth()!.resources.memory.total) }}
+              </span>
+            </div>
+            <mat-progress-bar
+              mode="determinate"
+              [value]="systemHealth()!.resources.memory.percentage"
+              [color]="systemHealth()!.resources.memory.percentage > 80 ? 'warn' : 'primary'">
+            </mat-progress-bar>
+            <span class="percentage-label">{{ formatPercentage(systemHealth()!.resources.memory.percentage) }}</span>
+          </div>
+
+          <div class="resource-item">
+            <div class="resource-header">
+              <mat-icon>settings</mat-icon>
+              <span>CPU</span>
+              <span class="resource-value">{{ formatPercentage(systemHealth()!.resources.cpu.percentage) }}</span>
+            </div>
+            <mat-progress-bar
+              mode="determinate"
+              [value]="systemHealth()!.resources.cpu.percentage"
+              [color]="systemHealth()!.resources.cpu.percentage > 80 ? 'warn' : 'primary'">
+            </mat-progress-bar>
+            <span class="percentage-label">{{ formatPercentage(systemHealth()!.resources.cpu.percentage) }}</span>
+          </div>
+
+          <div class="resource-item">
+            <div class="resource-header">
+              <mat-icon>storage</mat-icon>
+              <span>Disk</span>
+              <span class="resource-value">
+                {{ formatBytes(systemHealth()!.resources.disk.used) }} /
+                {{ formatBytes(systemHealth()!.resources.disk.total) }}
+              </span>
+            </div>
+            <mat-progress-bar
+              mode="determinate"
+              [value]="systemHealth()!.resources.disk.percentage"
+              [color]="systemHealth()!.resources.disk.percentage > 80 ? 'warn' : 'primary'">
+            </mat-progress-bar>
+            <span class="percentage-label">{{ formatPercentage(systemHealth()!.resources.disk.percentage) }}</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  <!-- Application Settings Section -->
+  <mat-card class="settings-card">
+    <mat-card-header>
+      <mat-card-title>
+        <div class="card-title-row">
+          <mat-icon>settings</mat-icon>
+          <span>Application Settings</span>
+        </div>
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="settingsForm" class="settings-form">
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon>build</mat-icon>
+              General Settings
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <div class="settings-group">
+            <div class="setting-item">
+              <div class="setting-info">
+                <div class="setting-label">Maintenance Mode</div>
+                <div class="setting-description">Enable to prevent user access during maintenance</div>
+              </div>
+              <mat-slide-toggle formControlName="maintenanceMode"></mat-slide-toggle>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <div class="setting-label">User Registration</div>
+                <div class="setting-description">Allow new users to register</div>
+              </div>
+              <mat-slide-toggle formControlName="registrationEnabled"></mat-slide-toggle>
+            </div>
+          </div>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon>verified_user</mat-icon>
+              Verification Settings
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <div class="settings-group">
+            <div class="setting-item">
+              <div class="setting-info">
+                <div class="setting-label">Email Verification Required</div>
+                <div class="setting-description">Require email verification for new users</div>
+              </div>
+              <mat-slide-toggle formControlName="emailVerificationRequired"></mat-slide-toggle>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <div class="setting-label">Phone Verification Required</div>
+                <div class="setting-description">Require phone verification for new users</div>
+              </div>
+              <mat-slide-toggle formControlName="phoneVerificationRequired"></mat-slide-toggle>
+            </div>
+          </div>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon>tune</mat-icon>
+              System Configuration
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <div class="settings-group">
+            <mat-form-field appearance="outline">
+              <mat-label>Max Upload Size (MB)</mat-label>
+              <input matInput type="number" formControlName="maxUploadSize">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Session Timeout (seconds)</mat-label>
+              <input matInput type="number" formControlName="sessionTimeout">
+            </mat-form-field>
+          </div>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon>speed</mat-icon>
+              Rate Limiting
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <div class="settings-group">
+            <div class="setting-item">
+              <div class="setting-info">
+                <div class="setting-label">Rate Limiting Enabled</div>
+                <div class="setting-description">Limit API request rates</div>
+              </div>
+              <mat-slide-toggle formControlName="rateLimitEnabled"></mat-slide-toggle>
+            </div>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Max Requests</mat-label>
+              <input matInput type="number" formControlName="rateLimitMaxRequests">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Window (milliseconds)</mat-label>
+              <input matInput type="number" formControlName="rateLimitWindowMs">
+            </mat-form-field>
+          </div>
+        </mat-expansion-panel>
+
+        <div class="form-actions">
+          <button mat-raised-button color="primary" (click)="saveSettings()"
+                  [disabled]="settingsSaving()">
+            @if (settingsSaving()) {
+              <mat-spinner diameter="20"></mat-spinner>
+            } @else {
+              <mat-icon>save</mat-icon>
+            }
+            Save Settings
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Feature Flags Section -->
+  <mat-card class="feature-flags-card">
+    <mat-card-header>
+      <mat-card-title>
+        <div class="card-title-row">
+          <mat-icon>flag</mat-icon>
+          <span>Feature Flags</span>
+        </div>
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      @if (featureFlags().length > 0) {
+        <div class="feature-flags-list">
+          @for (flag of featureFlags(); track flag.name) {
+            <div class="feature-flag-item">
+              <div class="flag-info">
+                <div class="flag-name">{{ flag.name }}</div>
+                <div class="flag-description">{{ flag.description }}</div>
+                <div class="flag-updated">Updated: {{ formatTimestamp(flag.updatedAt) }}</div>
+              </div>
+              <mat-slide-toggle
+                [checked]="flag.enabled"
+                (change)="toggleFeatureFlag(flag)">
+              </mat-slide-toggle>
+            </div>
+          }
+        </div>
+      } @else {
+        <p class="no-data">No feature flags configured</p>
+      }
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Cache Management Section -->
+  @if (cacheStats()) {
+    <mat-card class="cache-card">
+      <mat-card-header>
+        <mat-card-title>
+          <div class="card-title-row">
+            <mat-icon>memory</mat-icon>
+            <span>Cache Management</span>
+          </div>
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="cache-stats-grid">
+          <div class="cache-stat">
+            <mat-icon>key</mat-icon>
+            <div class="stat-info">
+              <div class="stat-label">Total Keys</div>
+              <div class="stat-value">{{ cacheStats()!.keys }}</div>
+            </div>
+          </div>
+
+          <div class="cache-stat">
+            <mat-icon>trending_up</mat-icon>
+            <div class="stat-info">
+              <div class="stat-label">Cache Hits</div>
+              <div class="stat-value">{{ cacheStats()!.hits }}</div>
+            </div>
+          </div>
+
+          <div class="cache-stat">
+            <mat-icon>trending_down</mat-icon>
+            <div class="stat-info">
+              <div class="stat-label">Cache Misses</div>
+              <div class="stat-value">{{ cacheStats()!.misses }}</div>
+            </div>
+          </div>
+
+          <div class="cache-stat">
+            <mat-icon>analytics</mat-icon>
+            <div class="stat-info">
+              <div class="stat-label">Hit Rate</div>
+              <div class="stat-value">{{ formatPercentage(cacheStats()!.hitRate) }}</div>
+            </div>
+          </div>
+
+          <div class="cache-stat">
+            <mat-icon>storage</mat-icon>
+            <div class="stat-info">
+              <div class="stat-label">Memory Usage</div>
+              <div class="stat-value">{{ formatBytes(cacheStats()!.memoryUsage) }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cache-actions">
+          <button mat-raised-button color="warn" (click)="clearCache()">
+            <mat-icon>delete_sweep</mat-icon>
+            Clear Cache
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  <!-- Database Statistics Section -->
+  @if (databaseStats()) {
+    <mat-card class="database-card">
+      <mat-card-header>
+        <mat-card-title>
+          <div class="card-title-row">
+            <mat-icon>storage</mat-icon>
+            <span>Database Statistics</span>
+          </div>
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="database-connections">
+          <h3>Connections</h3>
+          <div class="connections-grid">
+            <div class="connection-stat">
+              <mat-icon class="stat-icon success">link</mat-icon>
+              <div class="stat-info">
+                <div class="stat-value">{{ databaseStats()!.connections.active }}</div>
+                <div class="stat-label">Active</div>
+              </div>
+            </div>
+            <div class="connection-stat">
+              <mat-icon class="stat-icon accent">pause_circle</mat-icon>
+              <div class="stat-info">
+                <div class="stat-value">{{ databaseStats()!.connections.idle }}</div>
+                <div class="stat-label">Idle</div>
+              </div>
+            </div>
+            <div class="connection-stat">
+              <mat-icon class="stat-icon primary">all_inclusive</mat-icon>
+              <div class="stat-info">
+                <div class="stat-value">{{ databaseStats()!.connections.total }}</div>
+                <div class="stat-label">Total</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="database-performance">
+          <h3>Query Performance</h3>
+          <div class="performance-metrics">
+            <div class="metric">
+              <span class="metric-label">Average Query Time:</span>
+              <span class="metric-value">{{ databaseStats()!.queryPerformance.avgQueryTime }}ms</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Slow Queries:</span>
+              <span class="metric-value warn">{{ databaseStats()!.queryPerformance.slowQueries }}</span>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  <!-- System Logs Section -->
+  <mat-card class="logs-card">
+    <mat-card-header>
+      <mat-card-title>
+        <div class="card-title-row">
+          <mat-icon>description</mat-icon>
+          <span>Recent System Logs</span>
+        </div>
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      @if (systemLogs().length > 0) {
+        <div class="logs-container">
+          <table mat-table [dataSource]="systemLogs()" class="logs-table">
+            <ng-container matColumnDef="timestamp">
+              <th mat-header-cell *matHeaderCellDef>Timestamp</th>
+              <td mat-cell *matCellDef="let log">{{ formatTimestamp(log.timestamp) }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="level">
+              <th mat-header-cell *matHeaderCellDef>Level</th>
+              <td mat-cell *matCellDef="let log">
+                <mat-chip [class]="'chip-' + getLogLevelColor(log.level)">
+                  {{ log.level.toUpperCase() }}
+                </mat-chip>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="message">
+              <th mat-header-cell *matHeaderCellDef>Message</th>
+              <td mat-cell *matCellDef="let log">{{ log.message }}</td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="logColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: logColumns;"></tr>
+          </table>
+        </div>
+      } @else {
+        <p class="no-data">No recent logs</p>
+      }
+    </mat-card-content>
+  </mat-card>
+</div>

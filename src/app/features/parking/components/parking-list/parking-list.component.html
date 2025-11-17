@@ -1,0 +1,322 @@
+<div class="parking-list-container">
+  <!-- Header Section -->
+  <div class="list-header">
+    <div class="header-content">
+      <h1 class="title">Find Your Perfect Parking Spot</h1>
+      <p class="subtitle">{{ totalItems() }} parking spots available</p>
+    </div>
+
+    <!-- View Toggle -->
+    <div class="view-toggle">
+      <mat-button-toggle-group
+        [value]="viewMode()"
+        (change)="toggleViewMode($event.value)"
+        aria-label="View mode">
+        <mat-button-toggle value="grid">
+          <mat-icon>grid_view</mat-icon>
+          <span class="toggle-label">Grid</span>
+        </mat-button-toggle>
+        <mat-button-toggle value="map">
+          <mat-icon>map</mat-icon>
+          <span class="toggle-label">Map</span>
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="filters-section">
+    <form [formGroup]="filterForm" class="filters-form">
+      <!-- Search Bar -->
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Search by location</mat-label>
+        <input
+          matInput
+          formControlName="searchQuery"
+          placeholder="Enter city, address, or zip code">
+        <mat-icon matPrefix>search</mat-icon>
+      </mat-form-field>
+
+      <!-- Price Range -->
+      <div class="price-range-container">
+        <label class="filter-label">Price Range (per hour)</label>
+        <div class="price-inputs">
+          <mat-form-field appearance="outline" class="price-field">
+            <mat-label>Min</mat-label>
+            <input
+              matInput
+              type="number"
+              formControlName="minPrice"
+              placeholder="0">
+            <span matPrefix>$</span>
+          </mat-form-field>
+
+          <span class="price-separator">-</span>
+
+          <mat-form-field appearance="outline" class="price-field">
+            <mat-label>Max</mat-label>
+            <input
+              matInput
+              type="number"
+              formControlName="maxPrice"
+              placeholder="200">
+            <span matPrefix>$</span>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Quick Filters -->
+      <div class="quick-filters">
+        <mat-slide-toggle
+          formControlName="hasEVCharging"
+          color="primary"
+          class="filter-toggle">
+          <mat-icon class="toggle-icon">ev_station</mat-icon>
+          EV Charging
+        </mat-slide-toggle>
+
+        <mat-slide-toggle
+          formControlName="isVerified"
+          color="primary"
+          class="filter-toggle">
+          <mat-icon class="toggle-icon">verified</mat-icon>
+          Verified Only
+        </mat-slide-toggle>
+      </div>
+
+      <!-- Features Filter -->
+      <mat-form-field appearance="outline" class="features-field">
+        <mat-label>Features</mat-label>
+        <mat-select
+          formControlName="features"
+          multiple
+          placeholder="Select features">
+          @for (feature of availableFeatures; track feature) {
+            <mat-option [value]="feature">{{ feature }}</mat-option>
+          }
+        </mat-select>
+        <mat-icon matPrefix>tune</mat-icon>
+      </mat-form-field>
+
+      <!-- Sort Options -->
+      <mat-form-field appearance="outline" class="sort-field">
+        <mat-label>Sort By</mat-label>
+        <mat-select
+          [value]="selectedSort()"
+          (selectionChange)="selectedSort.set($event.value)">
+          @for (option of sortOptions; track option.value) {
+            <mat-option [value]="option.value">{{ option.label }}</mat-option>
+          }
+        </mat-select>
+        <mat-icon matPrefix>sort</mat-icon>
+      </mat-form-field>
+
+      <!-- Reset Filters Button -->
+      <button
+        mat-stroked-button
+        type="button"
+        class="reset-button"
+        (click)="resetFilters()">
+        <mat-icon>refresh</mat-icon>
+        Reset Filters
+      </button>
+    </form>
+  </div>
+
+  <!-- Active Filters Chips -->
+  @if (filterForm.value.features && filterForm.value.features.length > 0) {
+    <div class="active-filters">
+      <span class="filters-label">Active Filters:</span>
+      <mat-chip-set aria-label="Active filters">
+        @for (feature of filterForm.value.features; track feature) {
+          <mat-chip
+            (removed)="filterForm.patchValue({
+              features: filterForm.value.features?.filter(f => f !== feature)
+            })">
+            {{ feature }}
+            <button matChipRemove>
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </mat-chip>
+        }
+      </mat-chip-set>
+    </div>
+  }
+
+  <!-- Loading State -->
+  @if (loading()) {
+    <div class="loading-container">
+      <mat-spinner diameter="60"></mat-spinner>
+      <p class="loading-text">Loading parking spots...</p>
+    </div>
+  }
+
+  <!-- Error State -->
+  @if (error() && !loading()) {
+    <div class="error-container">
+      <mat-icon class="error-icon">error_outline</mat-icon>
+      <h3 class="error-title">Oops! Something went wrong</h3>
+      <p class="error-message">{{ error() }}</p>
+      <button mat-raised-button color="primary" (click)="loadParkings()">
+        <mat-icon>refresh</mat-icon>
+        Try Again
+      </button>
+    </div>
+  }
+
+  <!-- Grid View -->
+  @if (viewMode() === 'grid' && !loading() && !error()) {
+    <!-- Empty State -->
+    @if (displayedParkings().length === 0) {
+      <div class="empty-state">
+        <mat-icon class="empty-icon">search_off</mat-icon>
+        <h3 class="empty-title">No parking spots found</h3>
+        <p class="empty-message">Try adjusting your filters or search criteria</p>
+        <button mat-raised-button color="primary" (click)="resetFilters()">
+          Clear Filters
+        </button>
+      </div>
+    }
+
+    <!-- Parking Grid -->
+    @if (displayedParkings().length > 0) {
+      <div class="parking-grid">
+        @for (parking of displayedParkings(); track trackByParkingId($index, parking)) {
+          <mat-card class="parking-card" [routerLink]="['/parking', parking.id]">
+            <!-- Parking Image -->
+            <div class="card-image-container">
+              <img
+                [src]="getPrimaryPhotoUrl(parking)"
+                [alt]="parking.title"
+                class="card-image">
+
+              <!-- Availability Badge -->
+              <div
+                class="availability-badge"
+                [class.available]="isCurrentlyAvailable(parking)"
+                [class.unavailable]="!isCurrentlyAvailable(parking)">
+                <mat-icon class="badge-icon">
+                  {{ isCurrentlyAvailable(parking) ? 'check_circle' : 'schedule' }}
+                </mat-icon>
+                {{ getAvailabilityStatus(parking) }}
+              </div>
+
+              <!-- Verified Badge -->
+              @if (parking.isVerified) {
+                <div class="verified-badge">
+                  <mat-icon>verified</mat-icon>
+                </div>
+              }
+            </div>
+
+            <!-- Card Content -->
+            <mat-card-content class="card-content">
+              <!-- Title and Location -->
+              <div class="card-header">
+                <h3 class="card-title">{{ parking.title }}</h3>
+                <div class="card-location">
+                  <mat-icon class="location-icon">place</mat-icon>
+                  <span class="location-text">{{ getFormattedAddress(parking) }}</span>
+                </div>
+              </div>
+
+              <!-- Rating -->
+              @if (parking.averageRating && parking.totalReviews) {
+                <div class="rating-container">
+                  <div class="stars">
+                    @for (filled of getRatingStars(parking.averageRating); track $index) {
+                      <mat-icon class="star" [class.filled]="filled">
+                        {{ filled ? 'star' : 'star_border' }}
+                      </mat-icon>
+                    }
+                  </div>
+                  <span class="rating-text">
+                    {{ parking.averageRating?.toFixed(1) }} ({{ parking.totalReviews }})
+                  </span>
+                </div>
+              }
+
+              <!-- Features -->
+              @if (parking.features && parking.features.length > 0) {
+                <div class="features-container">
+                  @for (feature of parking.features.slice(0, 3); track feature) {
+                    <mat-chip class="feature-chip">{{ feature }}</mat-chip>
+                  }
+                  @if (parking.features.length > 3) {
+                    <span class="more-features">+{{ parking.features.length - 3 }} more</span>
+                  }
+                </div>
+              }
+
+              <!-- Price and Action -->
+              <div class="card-footer">
+                <div class="price-container">
+                  <span class="price">
+                    {{ formatPrice(parking.basePrice, parking.currency) }}
+                  </span>
+                  <span class="price-unit">/hour</span>
+                </div>
+                <button
+                  mat-raised-button
+                  color="primary"
+                  class="book-button"
+                  (click)="$event.stopPropagation()">
+                  Book Now
+                </button>
+              </div>
+
+              <!-- Extra Features Icons -->
+              <div class="extra-features">
+                @if (parking.hasEVCharging) {
+                  <mat-icon class="feature-icon" matTooltip="EV Charging Available">
+                    ev_station
+                  </mat-icon>
+                }
+                @if (parking.features.includes('24/7 Access')) {
+                  <mat-icon class="feature-icon" matTooltip="24/7 Access">
+                    schedule
+                  </mat-icon>
+                }
+                @if (parking.features.includes('Security Camera')) {
+                  <mat-icon class="feature-icon" matTooltip="Security Camera">
+                    videocam
+                  </mat-icon>
+                }
+                @if (parking.features.includes('Covered')) {
+                  <mat-icon class="feature-icon" matTooltip="Covered Parking">
+                    roofing
+                  </mat-icon>
+                }
+              </div>
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+
+      <!-- Pagination -->
+      <mat-paginator
+        class="parking-paginator"
+        [length]="totalItems()"
+        [pageSize]="pageSize()"
+        [pageIndex]="pageIndex()"
+        [pageSizeOptions]="[6, 12, 24, 48]"
+        (page)="onPageChange($event)"
+        aria-label="Select page">
+      </mat-paginator>
+    }
+  }
+
+  <!-- Map View (Placeholder) -->
+  @if (viewMode() === 'map' && !loading() && !error()) {
+    <div class="map-view-container">
+      <div class="map-placeholder">
+        <mat-icon class="map-icon">map</mat-icon>
+        <h3>Map View</h3>
+        <p>Map integration coming soon</p>
+        <p class="map-note">
+          This will display all {{ totalItems() }} parking spots on an interactive map
+        </p>
+      </div>
+    </div>
+  }
+</div>

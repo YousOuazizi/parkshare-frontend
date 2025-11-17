@@ -1,0 +1,699 @@
+.system-management-container {
+  padding: var(--spacing-lg);
+  max-width: 1400px;
+  margin: 0 auto;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--spacing-lg);
+
+    h1 {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: var(--spacing-xs);
+      color: var(--primary-color);
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.6);
+      margin: 0;
+    }
+
+    button {
+      margin-top: var(--spacing-sm);
+    }
+  }
+
+  // Card Title Row
+  .card-title-row {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+
+    mat-icon {
+      color: var(--primary-color);
+    }
+  }
+
+  // Health Card
+  .health-card {
+    margin-bottom: var(--spacing-lg);
+
+    .health-overview {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--spacing-lg);
+      margin-bottom: var(--spacing-xl);
+      padding-bottom: var(--spacing-lg);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+
+      .health-status,
+      .health-metric {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-md);
+
+        .status-icon-healthy,
+        .status-icon-degraded,
+        .status-icon-unhealthy,
+        .metric-icon {
+          font-size: 40px;
+          width: 40px;
+          height: 40px;
+        }
+
+        .metric-icon {
+          color: rgba(0, 0, 0, 0.54);
+        }
+
+        .status-details,
+        .metric-details {
+          .status-label,
+          .metric-label {
+            font-size: 12px;
+            color: rgba(0, 0, 0, 0.6);
+            text-transform: uppercase;
+            font-weight: 500;
+            margin-bottom: var(--spacing-xs);
+          }
+
+          .status-value,
+          .metric-value {
+            font-size: 20px;
+            font-weight: 700;
+          }
+        }
+      }
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-xl);
+
+      .service-card {
+        padding: var(--spacing-md);
+        background-color: rgba(0, 0, 0, 0.02);
+        border-radius: var(--border-radius-md);
+        border: 1px solid rgba(0, 0, 0, 0.08);
+
+        .service-header {
+          display: flex;
+          align-items: center;
+          gap: var(--spacing-sm);
+          margin-bottom: var(--spacing-sm);
+
+          mat-icon {
+            color: var(--primary-color);
+          }
+
+          span {
+            flex: 1;
+            font-weight: 500;
+          }
+
+          mat-chip {
+            font-size: 11px;
+            min-height: 20px;
+            padding: 2px 8px;
+          }
+        }
+
+        .service-metric {
+          font-size: 13px;
+          color: rgba(0, 0, 0, 0.6);
+        }
+      }
+    }
+
+    .resources-section {
+      h3 {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: var(--spacing-md);
+        color: var(--primary-color);
+      }
+
+      .resource-item {
+        margin-bottom: var(--spacing-lg);
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        .resource-header {
+          display: flex;
+          align-items: center;
+          gap: var(--spacing-sm);
+          margin-bottom: var(--spacing-sm);
+
+          mat-icon {
+            color: rgba(0, 0, 0, 0.54);
+          }
+
+          span {
+            &:first-of-type {
+              flex: 1;
+              font-weight: 500;
+            }
+
+            &.resource-value {
+              font-size: 14px;
+              color: rgba(0, 0, 0, 0.6);
+            }
+          }
+        }
+
+        mat-progress-bar {
+          height: 8px;
+          border-radius: 4px;
+          margin-bottom: var(--spacing-xs);
+        }
+
+        .percentage-label {
+          font-size: 13px;
+          color: rgba(0, 0, 0, 0.6);
+          font-weight: 500;
+        }
+      }
+    }
+  }
+
+  // Settings Card
+  .settings-card {
+    margin-bottom: var(--spacing-lg);
+
+    .settings-form {
+      mat-expansion-panel {
+        margin-bottom: var(--spacing-md);
+        box-shadow: none;
+        border: 1px solid rgba(0, 0, 0, 0.12);
+
+        mat-panel-title {
+          display: flex;
+          align-items: center;
+          gap: var(--spacing-sm);
+
+          mat-icon {
+            color: var(--primary-color);
+          }
+        }
+
+        .settings-group {
+          padding: var(--spacing-md);
+
+          .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-md) 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+
+            &:last-child {
+              border-bottom: none;
+            }
+
+            .setting-info {
+              flex: 1;
+
+              .setting-label {
+                font-size: 15px;
+                font-weight: 500;
+                margin-bottom: var(--spacing-xs);
+              }
+
+              .setting-description {
+                font-size: 13px;
+                color: rgba(0, 0, 0, 0.6);
+              }
+            }
+          }
+
+          mat-form-field {
+            width: 100%;
+            margin-bottom: var(--spacing-md);
+
+            &:last-child {
+              margin-bottom: 0;
+            }
+          }
+        }
+      }
+
+      .form-actions {
+        margin-top: var(--spacing-lg);
+        display: flex;
+        justify-content: flex-end;
+
+        button {
+          min-width: 200px;
+
+          mat-spinner {
+            display: inline-block;
+            margin-right: var(--spacing-sm);
+          }
+        }
+      }
+    }
+  }
+
+  // Feature Flags Card
+  .feature-flags-card {
+    margin-bottom: var(--spacing-lg);
+
+    .feature-flags-list {
+      .feature-flag-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--spacing-md);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        transition: background-color var(--transition-fast);
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        &:hover {
+          background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        .flag-info {
+          flex: 1;
+
+          .flag-name {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+            font-family: monospace;
+          }
+
+          .flag-description {
+            font-size: 14px;
+            color: rgba(0, 0, 0, 0.7);
+            margin-bottom: var(--spacing-xs);
+          }
+
+          .flag-updated {
+            font-size: 12px;
+            color: rgba(0, 0, 0, 0.5);
+          }
+        }
+      }
+    }
+  }
+
+  // Cache Card
+  .cache-card {
+    margin-bottom: var(--spacing-lg);
+
+    .cache-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-lg);
+
+      .cache-stat {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-md);
+        padding: var(--spacing-md);
+        background-color: rgba(0, 0, 0, 0.02);
+        border-radius: var(--border-radius-md);
+
+        mat-icon {
+          color: var(--primary-color);
+          font-size: 32px;
+          width: 32px;
+          height: 32px;
+        }
+
+        .stat-info {
+          .stat-label {
+            font-size: 12px;
+            color: rgba(0, 0, 0, 0.6);
+            margin-bottom: var(--spacing-xs);
+          }
+
+          .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+          }
+        }
+      }
+    }
+
+    .cache-actions {
+      display: flex;
+      justify-content: center;
+      padding-top: var(--spacing-md);
+      border-top: 1px solid rgba(0, 0, 0, 0.12);
+    }
+  }
+
+  // Database Card
+  .database-card {
+    margin-bottom: var(--spacing-lg);
+
+    .database-connections {
+      margin-bottom: var(--spacing-xl);
+
+      h3 {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: var(--spacing-md);
+        color: var(--primary-color);
+      }
+
+      .connections-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: var(--spacing-md);
+
+        .connection-stat {
+          display: flex;
+          align-items: center;
+          gap: var(--spacing-md);
+          padding: var(--spacing-md);
+          background-color: rgba(0, 0, 0, 0.02);
+          border-radius: var(--border-radius-md);
+
+          .stat-icon {
+            font-size: 32px;
+            width: 32px;
+            height: 32px;
+
+            &.success {
+              color: var(--success-color);
+            }
+
+            &.accent {
+              color: var(--accent-color);
+            }
+
+            &.primary {
+              color: var(--primary-color);
+            }
+          }
+
+          .stat-info {
+            .stat-value {
+              font-size: 24px;
+              font-weight: 700;
+              line-height: 1;
+              margin-bottom: var(--spacing-xs);
+            }
+
+            .stat-label {
+              font-size: 12px;
+              color: rgba(0, 0, 0, 0.6);
+            }
+          }
+        }
+      }
+    }
+
+    .database-performance {
+      h3 {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: var(--spacing-md);
+        color: var(--primary-color);
+      }
+
+      .performance-metrics {
+        .metric {
+          display: flex;
+          justify-content: space-between;
+          padding: var(--spacing-sm) var(--spacing-md);
+          background-color: rgba(0, 0, 0, 0.02);
+          border-radius: var(--border-radius-sm);
+          margin-bottom: var(--spacing-sm);
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+
+          .metric-label {
+            font-weight: 500;
+          }
+
+          .metric-value {
+            font-weight: 700;
+
+            &.warn {
+              color: var(--warn-color);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Logs Card
+  .logs-card {
+    .logs-container {
+      overflow-x: auto;
+
+      .logs-table {
+        width: 100%;
+        min-width: 600px;
+
+        mat-chip {
+          font-size: 11px;
+          min-height: 20px;
+          padding: 2px 8px;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+
+  // Chip Colors
+  mat-chip {
+    &.chip-success {
+      background-color: rgba(76, 175, 80, 0.1);
+      color: var(--success-color);
+    }
+
+    &.chip-warn {
+      background-color: rgba(244, 67, 54, 0.1);
+      color: var(--warn-color);
+    }
+
+    &.chip-primary {
+      background-color: rgba(0, 137, 123, 0.1);
+      color: var(--primary-color);
+    }
+
+    &.chip-accent {
+      background-color: rgba(255, 152, 0, 0.1);
+      color: var(--accent-color);
+    }
+  }
+
+  // No Data
+  .no-data {
+    text-align: center;
+    padding: var(--spacing-xl);
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 14px;
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .system-management-container {
+    padding: var(--spacing-md);
+
+    .header {
+      flex-direction: column;
+      align-items: flex-start;
+
+      h1 {
+        font-size: 24px;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+
+    .health-card {
+      .health-overview {
+        grid-template-columns: 1fr;
+      }
+
+      .services-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .cache-card {
+      .cache-stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .database-card {
+      .database-connections {
+        .connections-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    }
+  }
+}
+
+// Dark Theme Support
+.dark-theme {
+  .system-management-container {
+    .header {
+      .subtitle {
+        color: rgba(255, 255, 255, 0.6);
+      }
+    }
+
+    .health-card {
+      .health-overview {
+        border-bottom-color: rgba(255, 255, 255, 0.12);
+
+        .health-status,
+        .health-metric {
+          .metric-icon {
+            color: rgba(255, 255, 255, 0.54);
+          }
+
+          .status-details,
+          .metric-details {
+            .status-label,
+            .metric-label {
+              color: rgba(255, 255, 255, 0.6);
+            }
+          }
+        }
+      }
+
+      .services-grid {
+        .service-card {
+          background-color: rgba(255, 255, 255, 0.02);
+          border-color: rgba(255, 255, 255, 0.08);
+
+          .service-metric {
+            color: rgba(255, 255, 255, 0.6);
+          }
+        }
+      }
+
+      .resources-section {
+        .resource-item {
+          .resource-header {
+            mat-icon {
+              color: rgba(255, 255, 255, 0.54);
+            }
+
+            .resource-value {
+              color: rgba(255, 255, 255, 0.6);
+            }
+          }
+
+          .percentage-label {
+            color: rgba(255, 255, 255, 0.6);
+          }
+        }
+      }
+    }
+
+    .settings-card {
+      .settings-form {
+        mat-expansion-panel {
+          border-color: rgba(255, 255, 255, 0.12);
+
+          .settings-group {
+            .setting-item {
+              border-bottom-color: rgba(255, 255, 255, 0.06);
+
+              .setting-info {
+                .setting-description {
+                  color: rgba(255, 255, 255, 0.6);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .feature-flags-card {
+      .feature-flags-list {
+        .feature-flag-item {
+          border-bottom-color: rgba(255, 255, 255, 0.06);
+
+          &:hover {
+            background-color: rgba(255, 255, 255, 0.02);
+          }
+
+          .flag-info {
+            .flag-description {
+              color: rgba(255, 255, 255, 0.7);
+            }
+
+            .flag-updated {
+              color: rgba(255, 255, 255, 0.5);
+            }
+          }
+        }
+      }
+    }
+
+    .cache-card {
+      .cache-stats-grid {
+        .cache-stat {
+          background-color: rgba(255, 255, 255, 0.02);
+
+          .stat-info {
+            .stat-label {
+              color: rgba(255, 255, 255, 0.6);
+            }
+          }
+        }
+      }
+
+      .cache-actions {
+        border-top-color: rgba(255, 255, 255, 0.12);
+      }
+    }
+
+    .database-card {
+      .database-connections {
+        .connections-grid {
+          .connection-stat {
+            background-color: rgba(255, 255, 255, 0.02);
+
+            .stat-info {
+              .stat-label {
+                color: rgba(255, 255, 255, 0.6);
+              }
+            }
+          }
+        }
+      }
+
+      .database-performance {
+        .performance-metrics {
+          .metric {
+            background-color: rgba(255, 255, 255, 0.02);
+          }
+        }
+      }
+    }
+
+    .no-data {
+      color: rgba(255, 255, 255, 0.6);
+    }
+  }
+}

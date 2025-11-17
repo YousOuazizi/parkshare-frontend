@@ -1,0 +1,338 @@
+<div class="swap-create-container">
+  <!-- Header -->
+  <div class="page-header">
+    <button mat-icon-button class="back-button" (click)="onCancel()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div class="header-content">
+      <h1 class="title">Create Swap Listing</h1>
+      <p class="subtitle">List your parking spot for swap or rent</p>
+    </div>
+  </div>
+
+  <!-- Error Alert -->
+  @if (error()) {
+    <div class="error-alert">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ error() }}</span>
+    </div>
+  }
+
+  <!-- Stepper Form -->
+  <mat-stepper linear #stepper class="swap-stepper">
+    <!-- Step 1: Select Parking -->
+    <mat-step [stepControl]="parkingForm" label="Select Parking">
+      <form [formGroup]="parkingForm" class="step-form">
+        <div class="step-header">
+          <mat-icon class="step-icon">local_parking</mat-icon>
+          <h2 class="step-title">Choose Your Parking Spot</h2>
+          <p class="step-description">Select the parking spot you want to offer for swap</p>
+        </div>
+
+        <!-- Loading State -->
+        @if (loading()) {
+          <div class="loading-container">
+            <mat-spinner diameter="40"></mat-spinner>
+            <p>Loading your parkings...</p>
+          </div>
+        }
+
+        <!-- Parking Selection -->
+        @if (!loading() && myParkings().length > 0) {
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Select Parking Spot</mat-label>
+            <mat-select formControlName="parkingId" required>
+              @for (parking of myParkings(); track parking.id) {
+                <mat-option [value]="parking.id">
+                  {{ parking.title }} - {{ getFormattedAddress(parking) }}
+                </mat-option>
+              }
+            </mat-select>
+            <mat-icon matPrefix>local_parking</mat-icon>
+            @if (parkingForm.get('parkingId')?.hasError('required') && parkingForm.get('parkingId')?.touched) {
+              <mat-error>Please select a parking spot</mat-error>
+            }
+          </mat-form-field>
+
+          <!-- Selected Parking Preview -->
+          @if (getSelectedParking(); as selectedParking) {
+            <div class="parking-preview">
+              <img
+                [src]="getParkingPhotoUrl(selectedParking)"
+                [alt]="selectedParking.title"
+                class="preview-image">
+              <div class="preview-details">
+                <h3>{{ selectedParking.title }}</h3>
+                <p class="address">
+                  <mat-icon>place</mat-icon>
+                  {{ getFormattedAddress(selectedParking) }}
+                </p>
+                <p class="price">
+                  <mat-icon>attach_money</mat-icon>
+                  {{ selectedParking.basePrice }} {{ selectedParking.currency }}/hour
+                </p>
+              </div>
+            </div>
+          }
+        }
+
+        <!-- Empty State -->
+        @if (!loading() && myParkings().length === 0) {
+          <div class="empty-state">
+            <mat-icon class="empty-icon">local_parking</mat-icon>
+            <h3>No Parking Spots Found</h3>
+            <p>You need to add a parking spot before creating a swap listing</p>
+            <button mat-raised-button color="primary" routerLink="/parking/create">
+              <mat-icon>add</mat-icon>
+              Add Parking Spot
+            </button>
+          </div>
+        }
+
+        <!-- Step Actions -->
+        <div class="step-actions">
+          <button mat-button (click)="onCancel()">Cancel</button>
+          <button
+            mat-raised-button
+            color="primary"
+            matStepperNext
+            [disabled]="!parkingForm.valid">
+            Next
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </div>
+      </form>
+    </mat-step>
+
+    <!-- Step 2: Select Dates -->
+    <mat-step [stepControl]="datesForm" label="Dates">
+      <form [formGroup]="datesForm" class="step-form">
+        <div class="step-header">
+          <mat-icon class="step-icon">date_range</mat-icon>
+          <h2 class="step-title">Select Dates</h2>
+          <p class="step-description">When is your parking available for swap?</p>
+        </div>
+
+        <!-- Date Range -->
+        <div class="date-range-container">
+          <mat-form-field appearance="outline" class="date-field">
+            <mat-label>Start Date</mat-label>
+            <input
+              matInput
+              [matDatepicker]="startPicker"
+              formControlName="startDate"
+              [min]="minDate"
+              required>
+            <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+            <mat-datepicker #startPicker></mat-datepicker>
+            @if (datesForm.get('startDate')?.hasError('required') && datesForm.get('startDate')?.touched) {
+              <mat-error>Start date is required</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="date-field">
+            <mat-label>End Date</mat-label>
+            <input
+              matInput
+              [matDatepicker]="endPicker"
+              formControlName="endDate"
+              [min]="datesForm.get('startDate')?.value || minDate"
+              required>
+            <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+            <mat-datepicker #endPicker></mat-datepicker>
+            @if (datesForm.get('endDate')?.hasError('required') && datesForm.get('endDate')?.touched) {
+              <mat-error>End date is required</mat-error>
+            }
+            @if (!validateDates() && datesForm.get('endDate')?.touched) {
+              <mat-error>End date must be after start date</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <!-- Partial Days Option -->
+        <div class="checkbox-container">
+          <mat-checkbox formControlName="allowPartialDays">
+            Allow partial days (hourly swaps)
+          </mat-checkbox>
+        </div>
+
+        <!-- Step Actions -->
+        <div class="step-actions">
+          <button mat-button matStepperPrevious>
+            <mat-icon>arrow_back</mat-icon>
+            Back
+          </button>
+          <button
+            mat-raised-button
+            color="primary"
+            matStepperNext
+            [disabled]="!datesForm.valid || !validateDates()">
+            Next
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </div>
+      </form>
+    </mat-step>
+
+    <!-- Step 3: Preferences -->
+    <mat-step [stepControl]="preferencesForm" label="Preferences">
+      <form [formGroup]="preferencesForm" class="step-form">
+        <div class="step-header">
+          <mat-icon class="step-icon">tune</mat-icon>
+          <h2 class="step-title">Swap Preferences</h2>
+          <p class="step-description">Describe what you're looking for</p>
+        </div>
+
+        <!-- Description -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Description</mat-label>
+          <textarea
+            matInput
+            formControlName="description"
+            rows="4"
+            maxlength="500"
+            placeholder="Describe your ideal swap location, requirements, or additional details..."></textarea>
+          <mat-icon matPrefix>description</mat-icon>
+          <mat-hint align="end">{{ preferencesForm.get('description')?.value?.length || 0 }}/500</mat-hint>
+        </mat-form-field>
+
+        <!-- Exchange Type -->
+        <div class="exchange-type-section">
+          <mat-slide-toggle
+            formControlName="requiresExchange"
+            color="primary"
+            (change)="onExchangeToggle($event.checked)">
+            <div class="toggle-content">
+              <mat-icon>swap_horiz</mat-icon>
+              <span>Requires Parking Exchange</span>
+            </div>
+          </mat-slide-toggle>
+          <p class="helper-text">
+            @if (preferencesForm.get('requiresExchange')?.value) {
+              You're looking for a parking spot swap
+            } @else {
+              You're offering your parking for cash only
+            }
+          </p>
+        </div>
+
+        <!-- Price (Optional for Exchange, Required for Cash) -->
+        <div class="price-section">
+          <h3 class="section-title">
+            @if (preferencesForm.get('requiresExchange')?.value) {
+              Price Difference (Optional)
+            } @else {
+              Rental Price
+            }
+          </h3>
+
+          <div class="price-inputs">
+            <mat-form-field appearance="outline" class="price-field">
+              <mat-label>
+                @if (preferencesForm.get('requiresExchange')?.value) {
+                  Price Difference
+                } @else {
+                  Price
+                }
+              </mat-label>
+              <input
+                matInput
+                type="number"
+                formControlName="price"
+                min="0"
+                placeholder="0.00">
+              <span matPrefix>$</span>
+              @if (preferencesForm.get('price')?.hasError('required')) {
+                <mat-error>Price is required for cash-only listings</mat-error>
+              }
+              @if (preferencesForm.get('price')?.hasError('min')) {
+                <mat-error>Price must be greater than 0</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="currency-field">
+              <mat-label>Currency</mat-label>
+              <mat-select formControlName="currency">
+                <mat-option value="USD">USD</mat-option>
+                <mat-option value="EUR">EUR</mat-option>
+                <mat-option value="GBP">GBP</mat-option>
+                <mat-option value="CAD">CAD</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <p class="helper-text">
+            @if (preferencesForm.get('requiresExchange')?.value) {
+              Enter amount if your parking is worth more/less than desired location
+            } @else {
+              Enter the rental price for your parking
+            }
+          </p>
+        </div>
+
+        <!-- Preferred Location (Optional) -->
+        @if (preferencesForm.get('requiresExchange')?.value) {
+          <div class="location-section">
+            <h3 class="section-title">Preferred Location (Optional)</h3>
+            <p class="helper-text">Specify a preferred area for the swap</p>
+
+            <div class="location-inputs">
+              <mat-form-field appearance="outline" class="coordinate-field">
+                <mat-label>Latitude</mat-label>
+                <input
+                  matInput
+                  type="number"
+                  formControlName="preferredLatitude"
+                  step="0.000001"
+                  placeholder="40.7128">
+                <mat-icon matPrefix>my_location</mat-icon>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="coordinate-field">
+                <mat-label>Longitude</mat-label>
+                <input
+                  matInput
+                  type="number"
+                  formControlName="preferredLongitude"
+                  step="0.000001"
+                  placeholder="-74.0060">
+                <mat-icon matPrefix>place</mat-icon>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="radius-field">
+                <mat-label>Radius (meters)</mat-label>
+                <input
+                  matInput
+                  type="number"
+                  formControlName="preferredRadius"
+                  min="0"
+                  placeholder="5000">
+                <mat-icon matPrefix>radio_button_unchecked</mat-icon>
+              </mat-form-field>
+            </div>
+          </div>
+        }
+
+        <!-- Step Actions -->
+        <div class="step-actions">
+          <button mat-button matStepperPrevious>
+            <mat-icon>arrow_back</mat-icon>
+            Back
+          </button>
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="onSubmit()"
+            [disabled]="!preferencesForm.valid || submitting()">
+            @if (submitting()) {
+              <mat-spinner diameter="20"></mat-spinner>
+            } @else {
+              <mat-icon>check</mat-icon>
+            }
+            Create Listing
+          </button>
+        </div>
+      </form>
+    </mat-step>
+  </mat-stepper>
+</div>

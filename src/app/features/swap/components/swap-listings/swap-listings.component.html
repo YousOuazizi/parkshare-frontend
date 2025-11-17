@@ -1,0 +1,226 @@
+<div class="swap-listings-container">
+  <!-- Header Section -->
+  <div class="list-header">
+    <div class="header-content">
+      <h1 class="title">Parking Swap Marketplace</h1>
+      <p class="subtitle">{{ filteredListings().length }} swap listings available</p>
+    </div>
+
+    <button
+      mat-raised-button
+      color="primary"
+      routerLink="/swap/create"
+      class="create-button">
+      <mat-icon>add</mat-icon>
+      Create Listing
+    </button>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="filters-section">
+    <form [formGroup]="filterForm" class="filters-form">
+      <!-- Search Bar -->
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Search listings</mat-label>
+        <input
+          matInput
+          formControlName="searchQuery"
+          placeholder="Search by location or description">
+        <mat-icon matPrefix>search</mat-icon>
+      </mat-form-field>
+
+      <!-- Status Filter -->
+      <mat-form-field appearance="outline" class="status-field">
+        <mat-label>Status</mat-label>
+        <mat-select formControlName="status" placeholder="All statuses">
+          <mat-option [value]="null">All Statuses</mat-option>
+          @for (option of statusOptions; track option.value) {
+            <mat-option [value]="option.value">{{ option.label }}</mat-option>
+          }
+        </mat-select>
+        <mat-icon matPrefix>filter_list</mat-icon>
+      </mat-form-field>
+
+      <!-- Exchange Type Filter -->
+      <mat-form-field appearance="outline" class="exchange-field">
+        <mat-label>Exchange Type</mat-label>
+        <mat-select formControlName="requiresExchange" placeholder="All types">
+          <mat-option [value]="null">All Types</mat-option>
+          @for (option of exchangeOptions; track option.value) {
+            <mat-option [value]="option.value">{{ option.label }}</mat-option>
+          }
+        </mat-select>
+        <mat-icon matPrefix>swap_horiz</mat-icon>
+      </mat-form-field>
+
+      <!-- Price Range -->
+      <div class="price-range-container">
+        <mat-form-field appearance="outline" class="price-field">
+          <mat-label>Min Price</mat-label>
+          <input
+            matInput
+            type="number"
+            formControlName="minPrice"
+            placeholder="0">
+          <span matPrefix>$</span>
+        </mat-form-field>
+
+        <span class="price-separator">-</span>
+
+        <mat-form-field appearance="outline" class="price-field">
+          <mat-label>Max Price</mat-label>
+          <input
+            matInput
+            type="number"
+            formControlName="maxPrice"
+            placeholder="Any">
+          <span matPrefix>$</span>
+        </mat-form-field>
+      </div>
+
+      <!-- Reset Filters Button -->
+      <button
+        mat-stroked-button
+        type="button"
+        class="reset-button"
+        (click)="resetFilters()">
+        <mat-icon>refresh</mat-icon>
+        Reset
+      </button>
+    </form>
+  </div>
+
+  <!-- Loading State -->
+  @if (loading()) {
+    <div class="loading-container">
+      <mat-spinner diameter="60"></mat-spinner>
+      <p class="loading-text">Loading swap listings...</p>
+    </div>
+  }
+
+  <!-- Error State -->
+  @if (error() && !loading()) {
+    <div class="error-container">
+      <mat-icon class="error-icon">error_outline</mat-icon>
+      <h3 class="error-title">Oops! Something went wrong</h3>
+      <p class="error-message">{{ error() }}</p>
+      <button mat-raised-button color="primary" (click)="loadListings()">
+        <mat-icon>refresh</mat-icon>
+        Try Again
+      </button>
+    </div>
+  }
+
+  <!-- Listings Grid -->
+  @if (!loading() && !error()) {
+    <!-- Empty State -->
+    @if (filteredListings().length === 0) {
+      <div class="empty-state">
+        <mat-icon class="empty-icon">search_off</mat-icon>
+        <h3 class="empty-title">No swap listings found</h3>
+        <p class="empty-message">Try adjusting your filters or create a new listing</p>
+        <button mat-raised-button color="primary" routerLink="/swap/create">
+          <mat-icon>add</mat-icon>
+          Create Listing
+        </button>
+      </div>
+    }
+
+    <!-- Listings Grid -->
+    @if (filteredListings().length > 0) {
+      <div class="listings-grid">
+        @for (listing of filteredListings(); track trackByListingId($index, listing)) {
+          <mat-card class="listing-card">
+            <!-- Card Image -->
+            <div class="card-image-container">
+              <img
+                [src]="getPrimaryPhotoUrl(listing)"
+                [alt]="listing.parking?.title || 'Parking spot'"
+                class="card-image">
+
+              <!-- Status Badge -->
+              <div class="status-badge" [class]="getStatusClass(listing.status)">
+                {{ listing.status }}
+              </div>
+
+              <!-- Exchange Badge -->
+              @if (listing.requiresExchange) {
+                <div class="exchange-badge">
+                  <mat-icon>swap_horiz</mat-icon>
+                  Exchange
+                </div>
+              }
+            </div>
+
+            <!-- Card Content -->
+            <mat-card-content class="card-content">
+              <!-- Offering Section -->
+              <div class="section offering-section">
+                <div class="section-header">
+                  <mat-icon class="section-icon">local_parking</mat-icon>
+                  <span class="section-title">Offering</span>
+                </div>
+                <h3 class="parking-title">{{ listing.parking?.title || 'Parking Spot' }}</h3>
+                <div class="parking-location">
+                  <mat-icon class="location-icon">place</mat-icon>
+                  <span>{{ listing.parking?.address || 'Location not available' }}</span>
+                </div>
+                <div class="parking-dates">
+                  <mat-icon class="date-icon">date_range</mat-icon>
+                  <span>{{ formatDateRange(listing.startDate, listing.endDate) }}</span>
+                </div>
+              </div>
+
+              <!-- Desired Section -->
+              <div class="section desired-section">
+                <div class="section-header">
+                  <mat-icon class="section-icon">location_searching</mat-icon>
+                  <span class="section-title">Looking For</span>
+                </div>
+                <div class="desired-location">
+                  <mat-icon class="location-icon">near_me</mat-icon>
+                  <span>{{ getPreferredLocationText(listing) }}</span>
+                </div>
+                @if (listing.description) {
+                  <p class="description">{{ listing.description }}</p>
+                }
+              </div>
+
+              <!-- Price Section -->
+              <div class="price-section">
+                @if (listing.price) {
+                  <div class="price-container">
+                    <span class="price-label">Price Difference:</span>
+                    <span class="price">{{ formatPrice(listing.price, listing.currency) }}</span>
+                  </div>
+                } @else {
+                  <div class="price-container">
+                    <span class="price-label">Direct Swap</span>
+                  </div>
+                }
+              </div>
+
+              <!-- Card Actions -->
+              <div class="card-actions">
+                <button
+                  mat-raised-button
+                  color="primary"
+                  class="action-button"
+                  [disabled]="listing.status !== 'ACTIVE'">
+                  <mat-icon>send</mat-icon>
+                  Make Offer
+                </button>
+                <button
+                  mat-icon-button
+                  class="details-button"
+                  matTooltip="View Details">
+                  <mat-icon>info</mat-icon>
+                </button>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+    }
+  }
+</div>

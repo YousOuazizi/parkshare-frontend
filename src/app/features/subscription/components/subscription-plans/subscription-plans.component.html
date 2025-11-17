@@ -1,0 +1,206 @@
+<div class="subscription-plans-container">
+  <!-- Header Section -->
+  <div class="plans-header">
+    <h1 class="title">Choose Your Perfect Plan</h1>
+    <p class="subtitle">Flexible subscription plans designed for every parking need</p>
+
+    <!-- Billing Toggle -->
+    <div class="billing-toggle">
+      <span class="toggle-label" [class.active]="!isAnnual()">Monthly</span>
+      <mat-slide-toggle
+        [checked]="isAnnual()"
+        (change)="toggleBillingCycle($event.checked)"
+        color="primary">
+      </mat-slide-toggle>
+      <span class="toggle-label" [class.active]="isAnnual()">
+        Annual
+        <mat-chip class="savings-chip">Save 17%</mat-chip>
+      </span>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading()" class="loading-spinner">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Loading subscription plans...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error()" class="error-message">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ error() }}</p>
+    <button mat-raised-button color="primary" (click)="loadPlans()">
+      <mat-icon>refresh</mat-icon>
+      Retry
+    </button>
+  </div>
+
+  <!-- Plans Grid -->
+  <div *ngIf="!loading() && !error()" class="plans-grid">
+    <mat-card
+      *ngFor="let plan of displayedPlans()"
+      class="plan-card"
+      [class.popular]="plan.popular">
+      <!-- Popular Badge -->
+      <div *ngIf="plan.popular" class="popular-badge">
+        <mat-icon>star</mat-icon>
+        Most Popular
+      </div>
+
+      <mat-card-header>
+        <mat-card-title class="plan-name">{{ plan.name }}</mat-card-title>
+        <mat-card-subtitle class="plan-description">{{ plan.description }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <!-- Price Section -->
+        <div class="price-section">
+          <div class="price-wrapper">
+            <span class="currency">{{ plan.currency }}</span>
+            <span class="price-amount">{{ plan.displayPrice === 0 ? 'Free' : plan.displayPrice.toFixed(2) }}</span>
+            <span *ngIf="plan.displayPrice > 0" class="billing-period">/ {{ plan.billingPeriod }}</span>
+          </div>
+          <div *ngIf="isAnnual() && plan.displayPrice > 0" class="savings-info">
+            Save {{ formatPrice(plan.price * 2, plan.currency) }} per year
+          </div>
+        </div>
+
+        <!-- Features List -->
+        <ul class="features-list">
+          <li *ngFor="let feature of plan.features" class="feature-item">
+            <mat-icon class="feature-icon">check_circle</mat-icon>
+            <span>{{ feature }}</span>
+          </li>
+        </ul>
+      </mat-card-content>
+
+      <mat-card-actions>
+        <button
+          mat-raised-button
+          [color]="getCtaColor(plan.name)"
+          class="cta-button"
+          (click)="selectPlan(plan)">
+          {{ getCtaText(plan.name) }}
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+  <!-- Feature Comparison Table -->
+  <div *ngIf="!loading() && !error()" class="comparison-section">
+    <h2 class="comparison-title">Detailed Feature Comparison</h2>
+    <p class="comparison-subtitle">Compare all features across our subscription plans</p>
+
+    <div class="table-container">
+      <table mat-table [dataSource]="comparisonFeatures" class="comparison-table">
+        <!-- Feature Column -->
+        <ng-container matColumnDef="feature">
+          <th mat-header-cell *matHeaderCellDef class="feature-column">Feature</th>
+          <td mat-cell *matCellDef="let row" class="feature-name">{{ row.name }}</td>
+        </ng-container>
+
+        <!-- Free Column -->
+        <ng-container matColumnDef="free">
+          <th mat-header-cell *matHeaderCellDef class="plan-column">
+            <div class="plan-header">
+              <span class="plan-name">Free</span>
+              <span class="plan-price">$0</span>
+            </div>
+          </th>
+          <td mat-cell *matCellDef="let row" [class]="getFeatureClass(row.free)">
+            <div class="feature-value">
+              <mat-icon class="value-icon">{{ getFeatureIcon(row.free) }}</mat-icon>
+              <span>{{ row.free }}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Basic Column -->
+        <ng-container matColumnDef="basic">
+          <th mat-header-cell *matHeaderCellDef class="plan-column">
+            <div class="plan-header">
+              <span class="plan-name">Basic</span>
+              <span class="plan-price">{{ formatPrice(isAnnual() ? 99.9 : 9.99, 'USD') }}</span>
+            </div>
+          </th>
+          <td mat-cell *matCellDef="let row" [class]="getFeatureClass(row.basic)">
+            <div class="feature-value">
+              <mat-icon class="value-icon">{{ getFeatureIcon(row.basic) }}</mat-icon>
+              <span>{{ row.basic }}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Premium Column -->
+        <ng-container matColumnDef="premium">
+          <th mat-header-cell *matHeaderCellDef class="plan-column premium-column">
+            <div class="plan-header">
+              <mat-chip class="popular-chip">Popular</mat-chip>
+              <span class="plan-name">Premium</span>
+              <span class="plan-price">{{ formatPrice(isAnnual() ? 249.9 : 24.99, 'USD') }}</span>
+            </div>
+          </th>
+          <td mat-cell *matCellDef="let row" [class]="getFeatureClass(row.premium)">
+            <div class="feature-value">
+              <mat-icon class="value-icon">{{ getFeatureIcon(row.premium) }}</mat-icon>
+              <span>{{ row.premium }}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Enterprise Column -->
+        <ng-container matColumnDef="enterprise">
+          <th mat-header-cell *matHeaderCellDef class="plan-column">
+            <div class="plan-header">
+              <span class="plan-name">Enterprise</span>
+              <span class="plan-price">{{ formatPrice(isAnnual() ? 999.9 : 99.99, 'USD') }}</span>
+            </div>
+          </th>
+          <td mat-cell *matCellDef="let row" [class]="getFeatureClass(row.enterprise)">
+            <div class="feature-value">
+              <mat-icon class="value-icon">{{ getFeatureIcon(row.enterprise) }}</mat-icon>
+              <span>{{ row.enterprise }}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- FAQ Section -->
+  <div class="faq-section">
+    <h2 class="faq-title">Frequently Asked Questions</h2>
+    <div class="faq-grid">
+      <div class="faq-item">
+        <h3>Can I upgrade or downgrade my plan?</h3>
+        <p>Yes! You can change your subscription plan at any time. Upgrades take effect immediately, while downgrades apply at the end of your current billing cycle.</p>
+      </div>
+      <div class="faq-item">
+        <h3>What happens when I cancel?</h3>
+        <p>You'll retain access to your subscription features until the end of your current billing period. No refunds are provided for partial months.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Can I share my subscription?</h3>
+        <p>Depending on your plan, you can share your subscription with family members or colleagues. Check the "Subscription shares" feature for your plan tier.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Do you offer refunds?</h3>
+        <p>We offer a 14-day money-back guarantee on all paid plans. Contact our support team if you're not satisfied with your subscription.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA Footer -->
+  <div class="cta-footer">
+    <h2>Still have questions?</h2>
+    <p>Our team is here to help you find the perfect plan for your needs</p>
+    <button mat-raised-button color="primary" class="contact-button">
+      <mat-icon>chat</mat-icon>
+      Contact Sales
+    </button>
+  </div>
+</div>

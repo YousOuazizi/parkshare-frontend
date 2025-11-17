@@ -1,0 +1,231 @@
+<div class="user-dashboard-container">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-content">
+      <h1 class="title">
+        <mat-icon>dashboard</mat-icon>
+        My Dashboard
+      </h1>
+      <div class="header-actions">
+        <button mat-icon-button (click)="refresh()" matTooltip="Refresh">
+          <mat-icon>refresh</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading()" class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Loading your dashboard...</p>
+  </div>
+
+  <!-- Error State -->
+  <mat-card *ngIf="error()" class="error-card">
+    <div class="error-content">
+      <mat-icon color="warn">error</mat-icon>
+      <h3>Oops! Something went wrong</h3>
+      <p>{{ error() }}</p>
+      <button mat-raised-button color="primary" (click)="refresh()">
+        Try Again
+      </button>
+    </div>
+  </mat-card>
+
+  <!-- Dashboard Content -->
+  <div *ngIf="!loading() && !error()" class="dashboard-content">
+
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+      <mat-card class="stat-card">
+        <div class="stat-icon-wrapper primary">
+          <mat-icon>local_parking</mat-icon>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ totalBookings() }}</div>
+          <div class="stat-label">Total Bookings</div>
+        </div>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <div class="stat-icon-wrapper success">
+          <mat-icon>attach_money</mat-icon>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ formatCurrency(totalSpent()) }}</div>
+          <div class="stat-label">Total Spent</div>
+        </div>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <div class="stat-icon-wrapper accent">
+          <mat-icon>favorite</mat-icon>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ favoriteLocations().length }}</div>
+          <div class="stat-label">Favorite Parkings</div>
+        </div>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <div class="stat-icon-wrapper info">
+          <mat-icon>trending_up</mat-icon>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ formatCurrency(averageBookingValue()) }}</div>
+          <div class="stat-label">Avg. Booking Value</div>
+        </div>
+      </mat-card>
+    </div>
+
+    <!-- Recent Bookings and Saved Parkings -->
+    <div class="content-grid">
+
+      <!-- Recent Bookings -->
+      <mat-card class="section-card">
+        <div class="card-header">
+          <div class="card-title">
+            <mat-icon>history</mat-icon>
+            <h2>Recent Bookings</h2>
+          </div>
+          <button mat-button color="primary" (click)="navigateToBookings()">
+            View All
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </div>
+        <mat-divider></mat-divider>
+
+        <div class="bookings-list">
+          <div *ngIf="recentBookings().length === 0" class="empty-state">
+            <mat-icon>event_busy</mat-icon>
+            <p>No recent bookings</p>
+            <button mat-raised-button color="primary" (click)="navigateToSearch()">
+              <mat-icon>search</mat-icon>
+              Find Parking
+            </button>
+          </div>
+
+          <div
+            *ngFor="let booking of recentBookings()"
+            class="booking-item"
+            (click)="viewBookingDetails(booking.id)">
+            <div class="booking-info">
+              <div class="booking-header">
+                <mat-icon class="parking-icon">local_parking</mat-icon>
+                <span class="parking-title">{{ booking.parkingTitle }}</span>
+              </div>
+              <div class="booking-details">
+                <span class="booking-date">
+                  <mat-icon>event</mat-icon>
+                  {{ formatDate(booking.date) }}
+                </span>
+                <span class="booking-amount">{{ formatCurrency(booking.amount) }}</span>
+              </div>
+            </div>
+            <mat-chip [class]="getStatusClass(booking.status)" class="status-chip">
+              <mat-icon class="chip-icon">{{ getStatusIcon(booking.status) }}</mat-icon>
+              {{ booking.status }}
+            </mat-chip>
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- Saved Parkings -->
+      <mat-card class="section-card">
+        <div class="card-header">
+          <div class="card-title">
+            <mat-icon>bookmark</mat-icon>
+            <h2>Saved Parkings</h2>
+          </div>
+          <button mat-button color="primary" (click)="navigateToSearch()">
+            Find More
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </div>
+        <mat-divider></mat-divider>
+
+        <div class="saved-list">
+          <div *ngIf="savedParkings().length === 0" class="empty-state">
+            <mat-icon>bookmark_border</mat-icon>
+            <p>No saved parkings</p>
+            <button mat-raised-button color="primary" (click)="navigateToSearch()">
+              <mat-icon>search</mat-icon>
+              Explore Parkings
+            </button>
+          </div>
+
+          <div
+            *ngFor="let parking of savedParkings()"
+            class="saved-item"
+            (click)="viewParkingDetails(parking.id)">
+            <div class="parking-info">
+              <div class="parking-header">
+                <mat-icon class="location-icon">location_on</mat-icon>
+                <div class="parking-main">
+                  <span class="parking-name">{{ parking.title }}</span>
+                  <span class="parking-address">{{ parking.address }}</span>
+                </div>
+              </div>
+              <div class="parking-footer">
+                <div class="parking-rating">
+                  <mat-icon *ngFor="let star of getRatingStars(parking.rating)" class="star-icon">
+                    {{ star }}
+                  </mat-icon>
+                  <span class="rating-value">{{ parking.rating }}</span>
+                </div>
+                <span class="parking-price">{{ formatCurrency(parking.basePrice) }}/hr</span>
+              </div>
+            </div>
+            <button mat-icon-button matTooltip="View Details">
+              <mat-icon>chevron_right</mat-icon>
+            </button>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+
+    <!-- Charts Placeholder -->
+    <mat-card class="chart-card">
+      <div class="card-header">
+        <div class="card-title">
+          <mat-icon>insert_chart</mat-icon>
+          <h2>Booking Trends</h2>
+        </div>
+      </div>
+      <mat-divider></mat-divider>
+
+      <div class="chart-placeholder">
+        <mat-icon>show_chart</mat-icon>
+        <p>Booking trends chart will be displayed here</p>
+        <small>Monthly booking statistics and spending patterns</small>
+      </div>
+    </mat-card>
+
+    <!-- Favorite Locations -->
+    <mat-card class="favorite-locations-card" *ngIf="favoriteLocations().length > 0">
+      <div class="card-header">
+        <div class="card-title">
+          <mat-icon>favorite</mat-icon>
+          <h2>Favorite Locations</h2>
+        </div>
+      </div>
+      <mat-divider></mat-divider>
+
+      <div class="favorites-grid">
+        <div
+          *ngFor="let location of favoriteLocations()"
+          class="favorite-item"
+          (click)="viewParkingDetails(location.parkingId)">
+          <div class="favorite-content">
+            <mat-icon class="favorite-icon">local_parking</mat-icon>
+            <div class="favorite-info">
+              <span class="favorite-title">{{ location.parkingTitle }}</span>
+              <span class="favorite-count">{{ location.bookingCount }} bookings</span>
+            </div>
+          </div>
+          <mat-icon class="chevron-icon">chevron_right</mat-icon>
+        </div>
+      </div>
+    </mat-card>
+  </div>
+</div>

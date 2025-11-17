@@ -1,0 +1,115 @@
+<div class="home-page">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1 class="hero-title">Find & Share Parking Spaces</h1>
+        <p class="hero-subtitle">
+          Join thousands of users who are saving time and money with ParkShare.
+          Find affordable parking or earn extra income by listing your space.
+        </p>
+        <div class="hero-actions">
+          <button
+            mat-raised-button
+            color="primary"
+            class="hero-button primary-button"
+            (click)="navigateToFindParking()">
+            <mat-icon>search</mat-icon>
+            Find Parking
+          </button>
+          <button
+            mat-raised-button
+            color="accent"
+            class="hero-button accent-button"
+            (click)="navigateToListSpace()">
+            <mat-icon>add_location</mat-icon>
+            List Your Space
+          </button>
+        </div>
+      </div>
+      <div class="hero-image">
+        <div class="hero-graphic">
+          <mat-icon class="hero-icon">local_parking</mat-icon>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="stats-section">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-card" *ngFor="let stat of stats">
+          <mat-icon class="stat-icon">{{ stat.icon }}</mat-icon>
+          <div class="stat-value">{{ stat.value }}</div>
+          <div class="stat-label">{{ stat.label }}</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Why Choose ParkShare?</h2>
+        <p class="section-subtitle">
+          Experience the future of parking with our innovative platform
+        </p>
+      </div>
+      <div class="features-grid">
+        <mat-card class="feature-card" *ngFor="let feature of features">
+          <mat-card-content>
+            <div class="feature-icon-wrapper">
+              <mat-icon class="feature-icon">{{ feature.icon }}</mat-icon>
+            </div>
+            <h3 class="feature-title">{{ feature.title }}</h3>
+            <p class="feature-description">{{ feature.description }}</p>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="how-it-works-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">How It Works</h2>
+        <p class="section-subtitle">
+          Get started in four simple steps
+        </p>
+      </div>
+      <div class="steps-container">
+        <div class="step-card" *ngFor="let step of howItWorksSteps; let i = index">
+          <div class="step-number">{{ i + 1 }}</div>
+          <div class="step-icon-wrapper">
+            <mat-icon class="step-icon">{{ step.icon }}</mat-icon>
+          </div>
+          <h3 class="step-title">{{ step.title }}</h3>
+          <p class="step-description">{{ step.description }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action Section -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-content">
+        <h2 class="cta-title">Ready to Get Started?</h2>
+        <p class="cta-subtitle">
+          Join ParkShare today and experience stress-free parking
+        </p>
+        <button
+          mat-raised-button
+          color="accent"
+          class="cta-button"
+          (click)="navigateToSignUp()">
+          <mat-icon>person_add</mat-icon>
+          Sign Up Now
+        </button>
+      </div>
+    </div>
+  </section>
+</div>

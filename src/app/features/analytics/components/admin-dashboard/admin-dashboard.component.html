@@ -1,0 +1,387 @@
+<div class="admin-dashboard-container">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-content">
+      <h1 class="title">
+        <mat-icon>admin_panel_settings</mat-icon>
+        Admin Dashboard
+      </h1>
+      <div class="header-actions">
+        <button mat-button (click)="navigateToReports()">
+          <mat-icon>assessment</mat-icon>
+          Reports
+        </button>
+        <button mat-icon-button (click)="refresh()" matTooltip="Refresh">
+          <mat-icon>refresh</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading()" class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Loading dashboard...</p>
+  </div>
+
+  <!-- Error State -->
+  <mat-card *ngIf="error()" class="error-card">
+    <div class="error-content">
+      <mat-icon color="warn">error</mat-icon>
+      <h3>Oops! Something went wrong</h3>
+      <p>{{ error() }}</p>
+      <button mat-raised-button color="primary" (click)="refresh()">
+        Try Again
+      </button>
+    </div>
+  </mat-card>
+
+  <!-- Dashboard Content -->
+  <div *ngIf="!loading() && !error()" class="dashboard-content">
+
+    <!-- Platform Statistics -->
+    <div class="stats-grid">
+      <mat-card class="stat-card clickable" (click)="navigateToUsers()">
+        <div class="stat-icon-wrapper primary">
+          <mat-icon>people</mat-icon>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ formatNumber(overview().totalUsers) }}</div>
+          <div class="stat-label">Total Users</div>
+          <div class="stat-subtitle">{{ formatNumber(overview().activeUsers) }} active</div>
+        </div>
+      </mat-card>
+
+      <mat-card class="stat-card clickable" (click)="navigateToParkings()">
+        <div class="stat-icon-wrapper info">
+          <mat-icon>local_parking</mat-icon>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ formatNumber(overview().totalParkings) }}</div>
+          <div class="stat-label">Total Parkings</div>
+          <div class="stat-subtitle">{{ formatNumber(overview().activeParkings) }} active</div>
+        </div>
+      </mat-card>
+
+      <mat-card class="stat-card clickable" (click)="navigateToBookings()">
+        <div class="stat-icon-wrapper accent">
+          <mat-icon>event</mat-icon>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ formatNumber(overview().totalBookings) }}</div>
+          <div class="stat-label">Total Bookings</div>
+          <div class="stat-subtitle">All time</div>
+        </div>
+      </mat-card>
+
+      <mat-card class="stat-card clickable" (click)="navigateToPayments()">
+        <div class="stat-icon-wrapper success">
+          <mat-icon>payments</mat-icon>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ formatCurrency(overview().totalRevenue) }}</div>
+          <div class="stat-label">Total Revenue</div>
+          <div class="stat-subtitle">Platform earnings</div>
+        </div>
+      </mat-card>
+    </div>
+
+    <!-- System Health and Recent Activities -->
+    <div class="main-grid">
+
+      <!-- System Health -->
+      <mat-card class="health-card">
+        <div class="card-header">
+          <div class="card-title">
+            <mat-icon>monitor_heart</mat-icon>
+            <h2>System Health</h2>
+          </div>
+          <mat-chip class="health-status-chip">
+            <mat-icon>check_circle</mat-icon>
+            Healthy
+          </mat-chip>
+        </div>
+        <mat-divider></mat-divider>
+
+        <div class="health-metrics">
+          <div class="health-item">
+            <div class="health-header">
+              <div class="health-info">
+                <mat-icon>memory</mat-icon>
+                <span class="health-label">CPU Usage</span>
+              </div>
+              <span class="health-value" [class]="getHealthClass(systemHealth().cpu)">
+                {{ formatPercentage(systemHealth().cpu) }}
+              </span>
+            </div>
+            <mat-progress-bar
+              mode="determinate"
+              [value]="systemHealth().cpu"
+              [class]="getHealthClass(systemHealth().cpu)">
+            </mat-progress-bar>
+          </div>
+
+          <div class="health-item">
+            <div class="health-header">
+              <div class="health-info">
+                <mat-icon>storage</mat-icon>
+                <span class="health-label">Memory Usage</span>
+              </div>
+              <span class="health-value" [class]="getHealthClass(systemHealth().memory)">
+                {{ formatPercentage(systemHealth().memory) }}
+              </span>
+            </div>
+            <mat-progress-bar
+              mode="determinate"
+              [value]="systemHealth().memory"
+              [class]="getHealthClass(systemHealth().memory)">
+            </mat-progress-bar>
+          </div>
+
+          <div class="health-item">
+            <div class="health-header">
+              <div class="health-info">
+                <mat-icon>sd_storage</mat-icon>
+                <span class="health-label">Storage Usage</span>
+              </div>
+              <span class="health-value" [class]="getHealthClass(systemHealth().storage)">
+                {{ formatPercentage(systemHealth().storage) }}
+              </span>
+            </div>
+            <mat-progress-bar
+              mode="determinate"
+              [value]="systemHealth().storage"
+              [class]="getHealthClass(systemHealth().storage)">
+            </mat-progress-bar>
+          </div>
+
+          <div class="health-info-grid">
+            <div class="info-item">
+              <mat-icon>speed</mat-icon>
+              <div class="info-content">
+                <span class="info-label">API Response Time</span>
+                <span class="info-value">{{ systemHealth().apiResponseTime }}ms</span>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <mat-icon>schedule</mat-icon>
+              <div class="info-content">
+                <span class="info-label">System Uptime</span>
+                <span class="info-value">{{ systemHealth().uptime }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- Recent Activities -->
+      <mat-card class="activities-card">
+        <div class="card-header">
+          <div class="card-title">
+            <mat-icon>notifications_active</mat-icon>
+            <h2>Recent Activities</h2>
+          </div>
+        </div>
+        <mat-divider></mat-divider>
+
+        <div class="activities-list">
+          <div
+            *ngFor="let activity of recentActivities()"
+            class="activity-item"
+            [class]="getActivityClass(activity.severity)">
+            <div class="activity-icon-wrapper">
+              <mat-icon class="activity-type-icon">{{ getActivityIcon(activity.type) }}</mat-icon>
+              <mat-icon class="severity-icon">{{ getSeverityIcon(activity.severity) }}</mat-icon>
+            </div>
+            <div class="activity-content">
+              <p class="activity-description">{{ activity.description }}</p>
+              <span class="activity-time">{{ getRelativeTime(activity.timestamp) }}</span>
+            </div>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+
+    <!-- Top Performers and Quick Links -->
+    <div class="bottom-grid">
+
+      <!-- Top Parkings -->
+      <mat-card class="top-card">
+        <div class="card-header">
+          <div class="card-title">
+            <mat-icon>emoji_events</mat-icon>
+            <h2>Top Parkings</h2>
+          </div>
+          <button mat-button color="primary" (click)="navigateToParkings()">
+            View All
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </div>
+        <mat-divider></mat-divider>
+
+        <div class="top-list">
+          <div *ngIf="topParkings().length === 0" class="empty-state">
+            <mat-icon>local_parking</mat-icon>
+            <p>No data available</p>
+          </div>
+
+          <div
+            *ngFor="let parking of topParkings(); let i = index"
+            class="top-item"
+            (click)="viewParkingDetails(parking.parkingId)">
+            <div class="rank-badge" [class.top-three]="i < 3">
+              {{ i + 1 }}
+            </div>
+            <div class="item-content">
+              <span class="item-title">{{ parking.title }}</span>
+              <div class="item-stats">
+                <span class="stat">
+                  <mat-icon>event</mat-icon>
+                  {{ parking.bookingCount }} bookings
+                </span>
+                <span class="stat revenue">
+                  <mat-icon>attach_money</mat-icon>
+                  {{ formatCurrency(parking.revenue) }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- Top Users -->
+      <mat-card class="top-card">
+        <div class="card-header">
+          <div class="card-title">
+            <mat-icon>star</mat-icon>
+            <h2>Top Users</h2>
+          </div>
+          <button mat-button color="primary" (click)="navigateToUsers()">
+            View All
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </div>
+        <mat-divider></mat-divider>
+
+        <div class="top-list">
+          <div *ngIf="topUsers().length === 0" class="empty-state">
+            <mat-icon>people</mat-icon>
+            <p>No data available</p>
+          </div>
+
+          <div
+            *ngFor="let user of topUsers(); let i = index"
+            class="top-item"
+            (click)="viewUserDetails(user.userId)">
+            <div class="rank-badge" [class.top-three]="i < 3">
+              {{ i + 1 }}
+            </div>
+            <div class="item-content">
+              <span class="item-title">{{ user.name }}</span>
+              <div class="item-stats">
+                <span class="stat">
+                  <mat-icon>event</mat-icon>
+                  {{ user.bookingCount }} bookings
+                </span>
+                <span class="stat revenue">
+                  <mat-icon>attach_money</mat-icon>
+                  {{ formatCurrency(user.totalSpent) }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- User Verification Levels -->
+      <mat-card class="verification-card">
+        <div class="card-header">
+          <div class="card-title">
+            <mat-icon>verified_user</mat-icon>
+            <h2>User Verification Levels</h2>
+          </div>
+        </div>
+        <mat-divider></mat-divider>
+
+        <div class="verification-levels">
+          <div class="level-item" *ngFor="let level of [0, 1, 2, 3, 4]">
+            <div class="level-header">
+              <span class="level-label">Level {{ level }}</span>
+              <span class="level-count">{{ verificationStats()['level' + level] }}</span>
+            </div>
+            <div class="level-bar-container">
+              <div
+                class="level-bar"
+                [style.width.%]="getVerificationPercentage(level)"
+                [class]="'level-' + level">
+              </div>
+            </div>
+            <span class="level-percentage">{{ formatPercentage(getVerificationPercentage(level)) }}</span>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+
+    <!-- Quick Management Links -->
+    <mat-card class="quick-links-card">
+      <div class="card-header">
+        <div class="card-title">
+          <mat-icon>link</mat-icon>
+          <h2>Quick Management Links</h2>
+        </div>
+      </div>
+      <mat-divider></mat-divider>
+
+      <div class="quick-links-grid">
+        <button mat-stroked-button class="quick-link-btn" (click)="navigateToUsers()">
+          <mat-icon>person_add</mat-icon>
+          <div class="btn-content">
+            <span class="btn-label">User Management</span>
+            <span class="btn-description">Manage users and permissions</span>
+          </div>
+        </button>
+
+        <button mat-stroked-button class="quick-link-btn" (click)="navigateToParkings()">
+          <mat-icon>add_location</mat-icon>
+          <div class="btn-content">
+            <span class="btn-label">Parking Management</span>
+            <span class="btn-description">Approve and manage parkings</span>
+          </div>
+        </button>
+
+        <button mat-stroked-button class="quick-link-btn" (click)="navigateToBookings()">
+          <mat-icon>event_note</mat-icon>
+          <div class="btn-content">
+            <span class="btn-label">Booking Management</span>
+            <span class="btn-description">View and manage bookings</span>
+          </div>
+        </button>
+
+        <button mat-stroked-button class="quick-link-btn" (click)="navigateToPayments()">
+          <mat-icon>account_balance_wallet</mat-icon>
+          <div class="btn-content">
+            <span class="btn-label">Payment Management</span>
+            <span class="btn-description">Handle payments and refunds</span>
+          </div>
+        </button>
+
+        <button mat-stroked-button class="quick-link-btn" (click)="navigateToReports()">
+          <mat-icon>bar_chart</mat-icon>
+          <div class="btn-content">
+            <span class="btn-label">Analytics & Reports</span>
+            <span class="btn-description">View detailed reports</span>
+          </div>
+        </button>
+
+        <button mat-stroked-button class="quick-link-btn">
+          <mat-icon>settings</mat-icon>
+          <div class="btn-content">
+            <span class="btn-label">System Settings</span>
+            <span class="btn-description">Configure platform settings</span>
+          </div>
+        </button>
+      </div>
+    </mat-card>
+  </div>
+</div>

@@ -1,0 +1,643 @@
+@use '@angular/material' as mat;
+
+.swap-offers-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-lg) var(--spacing-md);
+
+  // Page Header
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-xl);
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+
+    .header-content {
+      .title {
+        font-size: 2rem;
+        font-weight: 600;
+        color: var(--primary-color);
+        margin: 0 0 var(--spacing-xs) 0;
+      }
+
+      .subtitle {
+        font-size: 1rem;
+        color: rgba(0, 0, 0, 0.6);
+        margin: 0;
+      }
+    }
+
+    .browse-button {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      font-weight: 500;
+    }
+  }
+
+  // Error Alert
+  .error-alert {
+    background-color: rgba(244, 67, 54, 0.1);
+    border-left: 4px solid var(--warn-color);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-md);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+    color: var(--warn-color);
+
+    mat-icon {
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+    }
+
+    span {
+      flex: 1;
+    }
+
+    button {
+      color: var(--warn-color);
+    }
+  }
+
+  // Loading State
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    gap: var(--spacing-lg);
+
+    .loading-text {
+      font-size: 1.1rem;
+      color: rgba(0, 0, 0, 0.6);
+    }
+  }
+
+  // Offers Tabs
+  .offers-tabs {
+    background: white;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+
+    ::ng-deep {
+      .mat-mdc-tab-labels {
+        background: rgba(0, 150, 136, 0.05);
+      }
+
+      .mat-mdc-tab {
+        min-width: 160px;
+
+        .mdc-tab__content {
+          display: flex;
+          align-items: center;
+          gap: var(--spacing-xs);
+        }
+      }
+
+      .mat-mdc-tab-body-wrapper {
+        padding: var(--spacing-lg);
+      }
+    }
+
+    .tab-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+
+    .tab-label {
+      font-weight: 500;
+    }
+
+    // Tab Content
+    .tab-content {
+      min-height: 400px;
+
+      // Empty State
+      .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 400px;
+        text-align: center;
+        gap: var(--spacing-md);
+
+        .empty-icon {
+          font-size: 64px;
+          width: 64px;
+          height: 64px;
+          color: rgba(0, 0, 0, 0.3);
+        }
+
+        .empty-title {
+          font-size: 1.5rem;
+          font-weight: 500;
+          color: rgba(0, 0, 0, 0.87);
+          margin: 0;
+        }
+
+        .empty-message {
+          color: rgba(0, 0, 0, 0.6);
+          max-width: 500px;
+          margin: 0;
+        }
+      }
+
+      // Offers Grid
+      .offers-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+        gap: var(--spacing-lg);
+
+        // Offer Card
+        .offer-card {
+          position: relative;
+          transition: all var(--transition-normal);
+          border-radius: var(--border-radius-lg);
+          overflow: hidden;
+
+          &:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+          }
+
+          // Status Badge
+          .status-badge {
+            position: absolute;
+            top: var(--spacing-md);
+            right: var(--spacing-md);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--border-radius-md);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            z-index: 1;
+            backdrop-filter: blur(8px);
+
+            &.status-pending {
+              background: rgba(255, 152, 0, 0.9);
+              color: white;
+            }
+
+            &.status-accepted {
+              background: rgba(76, 175, 80, 0.9);
+              color: white;
+            }
+
+            &.status-rejected {
+              background: rgba(244, 67, 54, 0.9);
+              color: white;
+            }
+
+            &.status-cancelled {
+              background: rgba(158, 158, 158, 0.9);
+              color: white;
+            }
+
+            &.status-completed {
+              background: rgba(156, 39, 176, 0.9);
+              color: white;
+            }
+          }
+
+          // Card Content
+          .card-content {
+            padding: var(--spacing-lg);
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+
+            // Section Headers
+            .offerer-header,
+            .parking-header {
+              display: flex;
+              align-items: center;
+              gap: var(--spacing-xs);
+              margin-bottom: var(--spacing-sm);
+
+              .section-icon {
+                font-size: 18px;
+                width: 18px;
+                height: 18px;
+                color: var(--primary-color);
+              }
+
+              .section-title {
+                font-size: 0.875rem;
+                font-weight: 600;
+                color: var(--primary-color);
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+              }
+            }
+
+            // Offerer Section
+            .offerer-section {
+              padding-bottom: var(--spacing-md);
+              border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+
+              .offerer-info {
+                display: flex;
+                align-items: center;
+                gap: var(--spacing-md);
+
+                .avatar,
+                .avatar-placeholder {
+                  width: 48px;
+                  height: 48px;
+                  border-radius: 50%;
+                  object-fit: cover;
+                }
+
+                .avatar-placeholder {
+                  background: var(--primary-light);
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+
+                  mat-icon {
+                    color: white;
+                    font-size: 24px;
+                    width: 24px;
+                    height: 24px;
+                  }
+                }
+
+                .offerer-details {
+                  h4 {
+                    font-size: 1rem;
+                    font-weight: 600;
+                    margin: 0;
+                    color: rgba(0, 0, 0, 0.87);
+                  }
+                }
+              }
+            }
+
+            // Parking Section
+            .parking-section {
+              padding-bottom: var(--spacing-md);
+              border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+
+              .parking-card-mini {
+                display: flex;
+                gap: var(--spacing-md);
+                background: rgba(0, 150, 136, 0.05);
+                border-radius: var(--border-radius-md);
+                padding: var(--spacing-sm);
+
+                .parking-image {
+                  width: 80px;
+                  height: 80px;
+                  object-fit: cover;
+                  border-radius: var(--border-radius-md);
+                }
+
+                .parking-details {
+                  flex: 1;
+                  display: flex;
+                  flex-direction: column;
+                  justify-content: center;
+
+                  h4 {
+                    font-size: 1rem;
+                    font-weight: 600;
+                    margin: 0 0 var(--spacing-xs) 0;
+                    color: rgba(0, 0, 0, 0.87);
+                  }
+
+                  .address {
+                    display: flex;
+                    align-items: center;
+                    gap: var(--spacing-xs);
+                    font-size: 0.875rem;
+                    color: rgba(0, 0, 0, 0.6);
+                    margin: 0;
+
+                    mat-icon {
+                      font-size: 16px;
+                      width: 16px;
+                      height: 16px;
+                    }
+                  }
+                }
+              }
+            }
+
+            // Details Section
+            .details-section {
+              display: flex;
+              flex-direction: column;
+              gap: var(--spacing-sm);
+
+              .detail-item {
+                display: flex;
+                align-items: center;
+                gap: var(--spacing-sm);
+                font-size: 0.875rem;
+                color: rgba(0, 0, 0, 0.7);
+
+                mat-icon {
+                  font-size: 18px;
+                  width: 18px;
+                  height: 18px;
+                  color: var(--primary-color);
+                }
+
+                &.price {
+                  font-weight: 600;
+                  color: var(--primary-color);
+                }
+              }
+
+              .message-box {
+                background: rgba(0, 150, 136, 0.05);
+                border-left: 3px solid var(--primary-color);
+                padding: var(--spacing-sm) var(--spacing-md);
+                border-radius: var(--border-radius-md);
+                display: flex;
+                gap: var(--spacing-sm);
+                align-items: flex-start;
+
+                mat-icon {
+                  font-size: 18px;
+                  width: 18px;
+                  height: 18px;
+                  color: var(--primary-color);
+                  flex-shrink: 0;
+                }
+
+                p {
+                  font-size: 0.875rem;
+                  color: rgba(0, 0, 0, 0.7);
+                  margin: 0;
+                  line-height: 1.5;
+                }
+              }
+            }
+
+            // Response Message
+            .response-message {
+              background: rgba(76, 175, 80, 0.1);
+              border-left: 3px solid #4caf50;
+              padding: var(--spacing-sm) var(--spacing-md);
+              border-radius: var(--border-radius-md);
+              display: flex;
+              gap: var(--spacing-sm);
+              align-items: flex-start;
+
+              mat-icon {
+                font-size: 18px;
+                width: 18px;
+                height: 18px;
+                color: #4caf50;
+                flex-shrink: 0;
+              }
+
+              p {
+                font-size: 0.875rem;
+                color: rgba(0, 0, 0, 0.7);
+                margin: 0;
+                line-height: 1.5;
+              }
+
+              &.rejected {
+                background: rgba(244, 67, 54, 0.1);
+                border-left-color: #f44336;
+
+                mat-icon {
+                  color: #f44336;
+                }
+              }
+            }
+
+            // Card Actions
+            .card-actions {
+              display: flex;
+              gap: var(--spacing-sm);
+              padding-top: var(--spacing-md);
+              border-top: 1px solid rgba(0, 0, 0, 0.08);
+
+              button {
+                flex: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: var(--spacing-xs);
+                font-weight: 500;
+
+                mat-spinner {
+                  margin-right: 0;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .swap-offers-container {
+    padding: var(--spacing-md) var(--spacing-sm);
+
+    .page-header {
+      flex-direction: column;
+      align-items: flex-start;
+
+      .header-content {
+        .title {
+          font-size: 1.5rem;
+        }
+      }
+
+      .browse-button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    .offers-tabs {
+      ::ng-deep .mat-mdc-tab-body-wrapper {
+        padding: var(--spacing-md);
+      }
+
+      .tab-content {
+        .offers-grid {
+          grid-template-columns: 1fr;
+          gap: var(--spacing-md);
+
+          .offer-card {
+            .card-content {
+              .parking-section {
+                .parking-card-mini {
+                  flex-direction: column;
+
+                  .parking-image {
+                    width: 100%;
+                    height: 150px;
+                  }
+                }
+              }
+
+              .card-actions {
+                flex-direction: column;
+
+                button {
+                  width: 100%;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Dark Mode Support
+.dark-theme {
+  .swap-offers-container {
+    .page-header {
+      .header-content {
+        .title {
+          color: var(--primary-light);
+        }
+
+        .subtitle {
+          color: rgba(255, 255, 255, 0.6);
+        }
+      }
+    }
+
+    .error-alert {
+      background-color: rgba(244, 67, 54, 0.2);
+      color: #ff6b6b;
+
+      button {
+        color: #ff6b6b;
+      }
+    }
+
+    .loading-container {
+      .loading-text {
+        color: rgba(255, 255, 255, 0.6);
+      }
+    }
+
+    .offers-tabs {
+      background: #1e1e1e;
+
+      ::ng-deep .mat-mdc-tab-labels {
+        background: rgba(0, 150, 136, 0.1);
+      }
+
+      .tab-content {
+        .empty-state {
+          .empty-icon {
+            color: rgba(255, 255, 255, 0.3);
+          }
+
+          .empty-title {
+            color: rgba(255, 255, 255, 0.87);
+          }
+
+          .empty-message {
+            color: rgba(255, 255, 255, 0.6);
+          }
+        }
+
+        .offers-grid {
+          .offer-card {
+            background: #1e1e1e;
+
+            .card-content {
+              .offerer-header,
+              .parking-header {
+                .section-icon,
+                .section-title {
+                  color: var(--primary-light);
+                }
+              }
+
+              .offerer-section {
+                border-bottom-color: rgba(255, 255, 255, 0.08);
+
+                .offerer-info {
+                  .offerer-details h4 {
+                    color: rgba(255, 255, 255, 0.87);
+                  }
+                }
+              }
+
+              .parking-section {
+                border-bottom-color: rgba(255, 255, 255, 0.08);
+
+                .parking-card-mini {
+                  background: rgba(0, 150, 136, 0.15);
+
+                  .parking-details {
+                    h4 {
+                      color: rgba(255, 255, 255, 0.87);
+                    }
+
+                    .address {
+                      color: rgba(255, 255, 255, 0.6);
+                    }
+                  }
+                }
+              }
+
+              .details-section {
+                .detail-item {
+                  color: rgba(255, 255, 255, 0.7);
+
+                  mat-icon {
+                    color: var(--primary-light);
+                  }
+
+                  &.price {
+                    color: var(--primary-light);
+                  }
+                }
+
+                .message-box {
+                  background: rgba(0, 150, 136, 0.15);
+                  border-left-color: var(--primary-light);
+
+                  mat-icon {
+                    color: var(--primary-light);
+                  }
+
+                  p {
+                    color: rgba(255, 255, 255, 0.7);
+                  }
+                }
+              }
+
+              .response-message {
+                p {
+                  color: rgba(255, 255, 255, 0.7);
+                }
+              }
+
+              .card-actions {
+                border-top-color: rgba(255, 255, 255, 0.08);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

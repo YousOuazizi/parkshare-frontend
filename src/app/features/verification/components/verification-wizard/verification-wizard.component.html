@@ -1,0 +1,457 @@
+<div class="wizard-container">
+  @if (loading()) {
+    <div class="loading-container">
+      <mat-spinner diameter="48"></mat-spinner>
+      <p>Loading verification status...</p>
+    </div>
+  } @else {
+    <mat-card class="wizard-card">
+      <!-- Header with Progress -->
+      <mat-card-header>
+        <div class="header-content">
+          <div class="header-title">
+            <mat-icon class="header-icon">verified_user</mat-icon>
+            <div>
+              <h2>Account Verification</h2>
+              <p class="subtitle">Complete verification to unlock all features</p>
+            </div>
+          </div>
+          <div class="progress-info">
+            <div class="progress-stats">
+              <span class="percentage">{{ completionPercentage() }}%</span>
+              <span class="level-text">Level {{ currentLevel() }}/4</span>
+            </div>
+            <mat-progress-bar
+              mode="determinate"
+              [value]="completionPercentage()"
+              class="progress-bar"
+            ></mat-progress-bar>
+          </div>
+        </div>
+      </mat-card-header>
+
+      <mat-card-content>
+        @if (successMessage()) {
+          <div class="success-alert">
+            <mat-icon>check_circle</mat-icon>
+            <span>{{ successMessage() }}</span>
+            <button
+              mat-icon-button
+              (click)="successMessage.set(null)"
+              [attr.aria-label]="'Close'"
+            >
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+        }
+
+        @if (errorMessage()) {
+          <div class="error-alert">
+            <mat-icon>error_outline</mat-icon>
+            <span>{{ errorMessage() }}</span>
+            <button
+              mat-icon-button
+              (click)="errorMessage.set(null)"
+              [attr.aria-label]="'Close'"
+            >
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+        }
+
+        <!-- Verification Levels Overview -->
+        <div class="levels-overview">
+          <h3>Verification Levels</h3>
+          <div class="levels-grid">
+            @for (level of verificationLevels(); track level.level) {
+              <div class="level-card" [class.completed]="level.isCompleted" [class.current]="level.level === currentLevel()">
+                <div class="level-header">
+                  <mat-icon>{{ level.icon }}</mat-icon>
+                  <mat-chip [color]="getLevelChipColor(level)" [highlighted]="level.level === currentLevel()">
+                    @if (level.isCompleted) {
+                      <mat-icon>check</mat-icon>
+                      <span>Completed</span>
+                    } @else if (level.level === currentLevel()) {
+                      <span>In Progress</span>
+                    } @else {
+                      <span>Locked</span>
+                    }
+                  </mat-chip>
+                </div>
+                <h4>{{ level.name }}</h4>
+                <p class="level-description">{{ level.description }}</p>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Verification Stepper -->
+        <mat-stepper [linear]="false" [selectedIndex]="currentLevel()" class="verification-stepper">
+          <!-- Step 0: Email Verification -->
+          <mat-step [completed]="verificationLevels()[0].isCompleted" [editable]="!verificationLevels()[0].isCompleted">
+            <ng-template matStepLabel>Email Verification</ng-template>
+            <div class="step-content">
+              <div class="step-header">
+                <mat-icon class="step-icon">email</mat-icon>
+                <div>
+                  <h3>Verify Your Email</h3>
+                  <p>We'll send a verification code to your email address</p>
+                </div>
+              </div>
+
+              <div class="requirements-list">
+                <h4>Requirements:</h4>
+                <ul>
+                  @for (req of verificationLevels()[0].requirements; track req) {
+                    <li>{{ req }}</li>
+                  }
+                </ul>
+              </div>
+
+              @if (!emailSent()) {
+                <form [formGroup]="emailForm" (ngSubmit)="requestEmailVerification()">
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Email Address</mat-label>
+                    <input
+                      matInput
+                      type="email"
+                      formControlName="email"
+                      placeholder="you@example.com"
+                    />
+                    <mat-icon matPrefix>email</mat-icon>
+                    @if (emailForm.get('email')?.invalid && emailForm.get('email')?.touched) {
+                      <mat-error>Please enter a valid email address</mat-error>
+                    }
+                  </mat-form-field>
+
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    type="submit"
+                    [disabled]="emailForm.invalid || loadingStep()"
+                  >
+                    @if (loadingStep()) {
+                      <mat-spinner diameter="20"></mat-spinner>
+                      <span>Sending...</span>
+                    } @else {
+                      <mat-icon>send</mat-icon>
+                      <span>Send Verification Email</span>
+                    }
+                  </button>
+                </form>
+              } @else {
+                <form [formGroup]="emailCodeForm" (ngSubmit)="verifyEmail()">
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Verification Code</mat-label>
+                    <input
+                      matInput
+                      type="text"
+                      formControlName="token"
+                      placeholder="Enter code from email"
+                    />
+                    <mat-icon matPrefix>vpn_key</mat-icon>
+                    @if (emailCodeForm.get('token')?.invalid && emailCodeForm.get('token')?.touched) {
+                      <mat-error>Please enter the verification code</mat-error>
+                    }
+                  </mat-form-field>
+
+                  <div class="step-actions">
+                    <button
+                      mat-button
+                      type="button"
+                      (click)="emailSent.set(false)"
+                    >
+                      Change Email
+                    </button>
+                    <button
+                      mat-raised-button
+                      color="primary"
+                      type="submit"
+                      [disabled]="emailCodeForm.invalid || loadingStep()"
+                    >
+                      @if (loadingStep()) {
+                        <mat-spinner diameter="20"></mat-spinner>
+                        <span>Verifying...</span>
+                      } @else {
+                        <mat-icon>check</mat-icon>
+                        <span>Verify Email</span>
+                      }
+                    </button>
+                  </div>
+                </form>
+              }
+            </div>
+          </mat-step>
+
+          <!-- Step 1: Phone Verification -->
+          <mat-step [completed]="verificationLevels()[1].isCompleted" [editable]="verificationLevels()[0].isCompleted && !verificationLevels()[1].isCompleted">
+            <ng-template matStepLabel>Phone Verification</ng-template>
+            <div class="step-content">
+              <div class="step-header">
+                <mat-icon class="step-icon">phone</mat-icon>
+                <div>
+                  <h3>Verify Your Phone Number</h3>
+                  <p>We'll send a verification code via SMS</p>
+                </div>
+              </div>
+
+              <div class="requirements-list">
+                <h4>Requirements:</h4>
+                <ul>
+                  @for (req of verificationLevels()[1].requirements; track req) {
+                    <li>{{ req }}</li>
+                  }
+                </ul>
+              </div>
+
+              @if (!phoneSent()) {
+                <form [formGroup]="phoneForm" (ngSubmit)="requestPhoneVerification()">
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Phone Number</mat-label>
+                    <input
+                      matInput
+                      type="tel"
+                      formControlName="phoneNumber"
+                      placeholder="+1234567890"
+                    />
+                    <mat-icon matPrefix>phone</mat-icon>
+                    @if (phoneForm.get('phoneNumber')?.invalid && phoneForm.get('phoneNumber')?.touched) {
+                      <mat-error>Please enter a valid phone number</mat-error>
+                    }
+                  </mat-form-field>
+
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    type="submit"
+                    [disabled]="phoneForm.invalid || loadingStep()"
+                  >
+                    @if (loadingStep()) {
+                      <mat-spinner diameter="20"></mat-spinner>
+                      <span>Sending...</span>
+                    } @else {
+                      <mat-icon>send</mat-icon>
+                      <span>Send Verification Code</span>
+                    }
+                  </button>
+                </form>
+              } @else {
+                <form [formGroup]="phoneCodeForm" (ngSubmit)="verifyPhone()">
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Verification Code</mat-label>
+                    <input
+                      matInput
+                      type="text"
+                      formControlName="code"
+                      placeholder="Enter SMS code"
+                    />
+                    <mat-icon matPrefix>vpn_key</mat-icon>
+                    @if (phoneCodeForm.get('code')?.invalid && phoneCodeForm.get('code')?.touched) {
+                      <mat-error>Please enter the verification code</mat-error>
+                    }
+                  </mat-form-field>
+
+                  <div class="step-actions">
+                    <button
+                      mat-button
+                      type="button"
+                      (click)="phoneSent.set(false)"
+                    >
+                      Change Phone
+                    </button>
+                    <button
+                      mat-raised-button
+                      color="primary"
+                      type="submit"
+                      [disabled]="phoneCodeForm.invalid || loadingStep()"
+                    >
+                      @if (loadingStep()) {
+                        <mat-spinner diameter="20"></mat-spinner>
+                        <span>Verifying...</span>
+                      } @else {
+                        <mat-icon>check</mat-icon>
+                        <span>Verify Phone</span>
+                      }
+                    </button>
+                  </div>
+                </form>
+              }
+            </div>
+          </mat-step>
+
+          <!-- Step 2: Identity Verification -->
+          <mat-step [completed]="verificationLevels()[2].isCompleted" [editable]="verificationLevels()[1].isCompleted && !verificationLevels()[2].isCompleted">
+            <ng-template matStepLabel>Identity Verification</ng-template>
+            <div class="step-content">
+              <div class="step-header">
+                <mat-icon class="step-icon">badge</mat-icon>
+                <div>
+                  <h3>Verify Your Identity</h3>
+                  <p>Upload a government-issued ID document</p>
+                </div>
+              </div>
+
+              <div class="requirements-list">
+                <h4>Requirements:</h4>
+                <ul>
+                  @for (req of verificationLevels()[2].requirements; track req) {
+                    <li>{{ req }}</li>
+                  }
+                </ul>
+              </div>
+
+              <form [formGroup]="identityForm" (ngSubmit)="uploadIdentityDocument()">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Document Type</mat-label>
+                  <mat-select formControlName="documentType">
+                    @for (docType of getDocumentTypes(); track docType.value) {
+                      <mat-option [value]="docType.value">{{ docType.label }}</mat-option>
+                    }
+                  </mat-select>
+                  <mat-icon matPrefix>description</mat-icon>
+                </mat-form-field>
+
+                <div class="file-upload-section">
+                  @if (!selectedIdentityFile()) {
+                    <label class="file-upload-label">
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/jpg,image/png,application/pdf"
+                        (change)="onIdentityFileSelected($event)"
+                        hidden
+                        #identityFileInput
+                      />
+                      <button
+                        mat-raised-button
+                        color="accent"
+                        type="button"
+                        (click)="identityFileInput.click()"
+                      >
+                        <mat-icon>upload_file</mat-icon>
+                        <span>Choose File</span>
+                      </button>
+                    </label>
+                    <p class="file-hint">Supported: JPG, PNG, PDF (max 5MB)</p>
+                  } @else {
+                    <div class="selected-file">
+                      <mat-icon>insert_drive_file</mat-icon>
+                      <span>{{ selectedIdentityFile()?.name }}</span>
+                      <button
+                        mat-icon-button
+                        type="button"
+                        (click)="selectedIdentityFile.set(null)"
+                      >
+                        <mat-icon>close</mat-icon>
+                      </button>
+                    </div>
+                  }
+                </div>
+
+                <button
+                  mat-raised-button
+                  color="primary"
+                  type="submit"
+                  [disabled]="identityForm.invalid || !selectedIdentityFile() || loadingStep()"
+                >
+                  @if (loadingStep()) {
+                    <mat-spinner diameter="20"></mat-spinner>
+                    <span>Uploading...</span>
+                  } @else {
+                    <mat-icon>upload</mat-icon>
+                    <span>Upload Document</span>
+                  }
+                </button>
+              </form>
+            </div>
+          </mat-step>
+
+          <!-- Step 3: Advanced Verification -->
+          <mat-step [completed]="verificationLevels()[3].isCompleted" [editable]="verificationLevels()[2].isCompleted && !verificationLevels()[3].isCompleted">
+            <ng-template matStepLabel>Advanced Verification</ng-template>
+            <div class="step-content">
+              <div class="step-header">
+                <mat-icon class="step-icon">verified_user</mat-icon>
+                <div>
+                  <h3>Complete Advanced Verification</h3>
+                  <p>Upload additional documents for full verification</p>
+                </div>
+              </div>
+
+              <div class="requirements-list">
+                <h4>Requirements:</h4>
+                <ul>
+                  @for (req of verificationLevels()[3].requirements; track req) {
+                    <li>{{ req }}</li>
+                  }
+                </ul>
+              </div>
+
+              <form [formGroup]="advancedForm" (ngSubmit)="uploadAdvancedDocument()">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Document Type</mat-label>
+                  <mat-select formControlName="documentType">
+                    @for (docType of getAdvancedDocumentTypes(); track docType.value) {
+                      <mat-option [value]="docType.value">{{ docType.label }}</mat-option>
+                    }
+                  </mat-select>
+                  <mat-icon matPrefix>description</mat-icon>
+                </mat-form-field>
+
+                <div class="file-upload-section">
+                  @if (!selectedAdvancedFile()) {
+                    <label class="file-upload-label">
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/jpg,image/png,application/pdf"
+                        (change)="onAdvancedFileSelected($event)"
+                        hidden
+                        #advancedFileInput
+                      />
+                      <button
+                        mat-raised-button
+                        color="accent"
+                        type="button"
+                        (click)="advancedFileInput.click()"
+                      >
+                        <mat-icon>upload_file</mat-icon>
+                        <span>Choose File</span>
+                      </button>
+                    </label>
+                    <p class="file-hint">Supported: JPG, PNG, PDF (max 5MB)</p>
+                  } @else {
+                    <div class="selected-file">
+                      <mat-icon>insert_drive_file</mat-icon>
+                      <span>{{ selectedAdvancedFile()?.name }}</span>
+                      <button
+                        mat-icon-button
+                        type="button"
+                        (click)="selectedAdvancedFile.set(null)"
+                      >
+                        <mat-icon>close</mat-icon>
+                      </button>
+                    </div>
+                  }
+                </div>
+
+                <button
+                  mat-raised-button
+                  color="primary"
+                  type="submit"
+                  [disabled]="advancedForm.invalid || !selectedAdvancedFile() || loadingStep()"
+                >
+                  @if (loadingStep()) {
+                    <mat-spinner diameter="20"></mat-spinner>
+                    <span>Uploading...</span>
+                  } @else {
+                    <mat-icon>upload</mat-icon>
+                    <span>Upload Document</span>
+                  }
+                </button>
+              </form>
+            </div>
+          </mat-step>
+        </mat-stepper>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>

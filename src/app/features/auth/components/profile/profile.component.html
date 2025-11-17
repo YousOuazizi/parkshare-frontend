@@ -1,0 +1,414 @@
+<div class="profile-container">
+  <div class="profile-header">
+    <mat-card class="header-card">
+      <mat-card-content>
+        <div class="header-content">
+          <div class="avatar-section">
+            @if (currentUser()?.profilePicture) {
+              <img [src]="currentUser()?.profilePicture" [alt]="fullName()" class="avatar-image" />
+            } @else {
+              <div class="avatar-initials">
+                {{ userInitials() }}
+              </div>
+            }
+          </div>
+          <div class="user-info">
+            <h1 class="user-name">{{ fullName() }}</h1>
+            <p class="user-email">{{ currentUser()?.email }}</p>
+            <div class="user-meta">
+              <mat-chip-set>
+                <mat-chip [class]="'role-chip ' + currentUser()?.role?.toLowerCase()">
+                  <mat-icon>badge</mat-icon>
+                  {{ roleDisplayName() }}
+                </mat-chip>
+                <mat-chip [class]="'verification-chip ' + verificationLevelInfo().color">
+                  <mat-icon>{{ verificationLevelInfo().icon }}</mat-icon>
+                  {{ verificationLevelInfo().name }}
+                </mat-chip>
+              </mat-chip-set>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="profile-content">
+    <mat-tab-group animationDuration="300ms" class="profile-tabs">
+      <!-- Personal Info Tab -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">person</mat-icon>
+          Personal Info
+        </ng-template>
+
+        <mat-card class="tab-content-card">
+          <mat-card-header>
+            <mat-card-title>Personal Information</mat-card-title>
+            <div class="card-actions">
+              @if (!isEditMode()) {
+                <button mat-raised-button color="primary" (click)="toggleEditMode()">
+                  <mat-icon>edit</mat-icon>
+                  Edit Profile
+                </button>
+              } @else {
+                <button mat-button (click)="toggleEditMode()">
+                  <mat-icon>cancel</mat-icon>
+                  Cancel
+                </button>
+                <button mat-raised-button color="primary" (click)="savePersonalInfo()" [disabled]="!personalInfoForm.valid || isSaving()">
+                  @if (isSaving()) {
+                    <mat-spinner diameter="20"></mat-spinner>
+                  } @else {
+                    <mat-icon>save</mat-icon>
+                  }
+                  Save Changes
+                </button>
+              }
+            </div>
+          </mat-card-header>
+
+          <mat-card-content>
+            <form [formGroup]="personalInfoForm" class="profile-form">
+              <div class="form-section">
+                <h3 class="section-title">Basic Information</h3>
+                <div class="form-row">
+                  <mat-form-field appearance="outline" class="form-field">
+                    <mat-label>First Name</mat-label>
+                    <input matInput formControlName="firstName" placeholder="Enter your first name" />
+                    <mat-icon matPrefix>person</mat-icon>
+                    @if (personalInfoForm.get('firstName')?.invalid && personalInfoForm.get('firstName')?.touched) {
+                      <mat-error>{{ getErrorMessage(personalInfoForm, 'firstName') }}</mat-error>
+                    }
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="form-field">
+                    <mat-label>Last Name</mat-label>
+                    <input matInput formControlName="lastName" placeholder="Enter your last name" />
+                    <mat-icon matPrefix>person</mat-icon>
+                    @if (personalInfoForm.get('lastName')?.invalid && personalInfoForm.get('lastName')?.touched) {
+                      <mat-error>{{ getErrorMessage(personalInfoForm, 'lastName') }}</mat-error>
+                    }
+                  </mat-form-field>
+                </div>
+
+                <div class="form-row">
+                  <mat-form-field appearance="outline" class="form-field">
+                    <mat-label>Email</mat-label>
+                    <input matInput formControlName="email" type="email" placeholder="your@email.com" />
+                    <mat-icon matPrefix>email</mat-icon>
+                    @if (currentUser()?.isEmailVerified) {
+                      <mat-icon matSuffix class="verified-icon" matTooltip="Email verified">verified</mat-icon>
+                    }
+                    <mat-hint>Email cannot be changed</mat-hint>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="form-field">
+                    <mat-label>Phone Number</mat-label>
+                    <input matInput formControlName="phoneNumber" type="tel" placeholder="+1234567890" />
+                    <mat-icon matPrefix>phone</mat-icon>
+                    @if (currentUser()?.isPhoneVerified) {
+                      <mat-icon matSuffix class="verified-icon" matTooltip="Phone verified">verified</mat-icon>
+                    }
+                    @if (personalInfoForm.get('phoneNumber')?.invalid && personalInfoForm.get('phoneNumber')?.touched) {
+                      <mat-error>{{ getErrorMessage(personalInfoForm, 'phoneNumber') }}</mat-error>
+                    }
+                  </mat-form-field>
+                </div>
+
+                <mat-form-field appearance="outline" class="form-field-full">
+                  <mat-label>Bio</mat-label>
+                  <textarea matInput formControlName="bio" rows="3" placeholder="Tell us about yourself" maxlength="500"></textarea>
+                  <mat-icon matPrefix>description</mat-icon>
+                  <mat-hint align="end">{{ personalInfoForm.get('bio')?.value?.length || 0 }}/500</mat-hint>
+                </mat-form-field>
+              </div>
+
+              <mat-divider></mat-divider>
+
+              <div class="form-section">
+                <h3 class="section-title">Address Information</h3>
+                <mat-form-field appearance="outline" class="form-field-full">
+                  <mat-label>Street Address</mat-label>
+                  <input matInput formControlName="address" placeholder="123 Main Street" />
+                  <mat-icon matPrefix>home</mat-icon>
+                </mat-form-field>
+
+                <div class="form-row">
+                  <mat-form-field appearance="outline" class="form-field">
+                    <mat-label>City</mat-label>
+                    <input matInput formControlName="city" placeholder="New York" />
+                    <mat-icon matPrefix>location_city</mat-icon>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="form-field">
+                    <mat-label>Country</mat-label>
+                    <input matInput formControlName="country" placeholder="United States" />
+                    <mat-icon matPrefix>public</mat-icon>
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <mat-divider></mat-divider>
+
+              <div class="form-section">
+                <h3 class="section-title">Additional Information</h3>
+                <mat-form-field appearance="outline" class="form-field">
+                  <mat-label>Date of Birth</mat-label>
+                  <input matInput formControlName="dateOfBirth" type="date" />
+                  <mat-icon matPrefix>cake</mat-icon>
+                </mat-form-field>
+              </div>
+
+              <div class="form-section">
+                <h3 class="section-title">Account Information</h3>
+                <div class="info-row">
+                  <span class="info-label">
+                    <mat-icon>calendar_today</mat-icon>
+                    Member Since
+                  </span>
+                  <span class="info-value">{{ currentUser()?.createdAt | date:'mediumDate' }}</span>
+                </div>
+                @if (currentUser()?.lastLoginAt) {
+                  <div class="info-row">
+                    <span class="info-label">
+                      <mat-icon>login</mat-icon>
+                      Last Login
+                    </span>
+                    <span class="info-value">{{ currentUser()?.lastLoginAt | date:'medium' }}</span>
+                  </div>
+                }
+              </div>
+            </form>
+          </mat-card-content>
+        </mat-card>
+      </mat-tab>
+
+      <!-- Verification Status Tab -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">verified_user</mat-icon>
+          Verification
+        </ng-template>
+
+        <mat-card class="tab-content-card">
+          <mat-card-header>
+            <mat-card-title>Verification Status</mat-card-title>
+          </mat-card-header>
+
+          <mat-card-content>
+            <div class="verification-overview">
+              <div class="verification-level-badge" [class]="verificationLevelInfo().color + '-badge'">
+                <mat-icon class="level-icon">{{ verificationLevelInfo().icon }}</mat-icon>
+                <div class="level-info">
+                  <h2>{{ verificationLevelInfo().name }}</h2>
+                  <p>{{ verificationLevelInfo().description }}</p>
+                </div>
+              </div>
+
+              <div class="progress-section">
+                <div class="progress-header">
+                  <span class="progress-label">Overall Progress</span>
+                  <span class="progress-value">{{ verificationProgress() }}%</span>
+                </div>
+                <mat-progress-bar mode="determinate" [value]="verificationProgress()" color="primary"></mat-progress-bar>
+              </div>
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <div class="verification-steps">
+              <h3 class="section-title">Verification Steps</h3>
+
+              <!-- Email Verification -->
+              <div class="verification-item" [class.verified]="currentUser()?.isEmailVerified">
+                <div class="verification-icon">
+                  @if (currentUser()?.isEmailVerified) {
+                    <mat-icon class="verified-icon">check_circle</mat-icon>
+                  } @else {
+                    <mat-icon class="pending-icon">radio_button_unchecked</mat-icon>
+                  }
+                </div>
+                <div class="verification-details">
+                  <h4>Email Verification</h4>
+                  <p>Verify your email address to unlock basic features</p>
+                  @if (currentUser()?.isEmailVerified) {
+                    <mat-chip class="status-chip verified">
+                      <mat-icon>verified</mat-icon>
+                      Verified
+                    </mat-chip>
+                  } @else {
+                    <button mat-stroked-button color="primary" (click)="requestVerification('email')" [disabled]="isLoading()">
+                      <mat-icon>email</mat-icon>
+                      Verify Email
+                    </button>
+                  }
+                </div>
+              </div>
+
+              <!-- Phone Verification -->
+              <div class="verification-item" [class.verified]="currentUser()?.isPhoneVerified">
+                <div class="verification-icon">
+                  @if (currentUser()?.isPhoneVerified) {
+                    <mat-icon class="verified-icon">check_circle</mat-icon>
+                  } @else {
+                    <mat-icon class="pending-icon">radio_button_unchecked</mat-icon>
+                  }
+                </div>
+                <div class="verification-details">
+                  <h4>Phone Verification</h4>
+                  <p>Verify your phone number to enable booking capabilities</p>
+                  @if (currentUser()?.isPhoneVerified) {
+                    <mat-chip class="status-chip verified">
+                      <mat-icon>verified</mat-icon>
+                      Verified
+                    </mat-chip>
+                  } @else {
+                    <button mat-stroked-button color="primary" (click)="requestVerification('phone')" [disabled]="isLoading() || !currentUser()?.phoneNumber">
+                      <mat-icon>phone</mat-icon>
+                      Verify Phone
+                    </button>
+                  }
+                </div>
+              </div>
+
+              <!-- Identity Verification -->
+              <div class="verification-item" [class.verified]="currentUser()?.isIdentityVerified">
+                <div class="verification-icon">
+                  @if (currentUser()?.isIdentityVerified) {
+                    <mat-icon class="verified-icon">check_circle</mat-icon>
+                  } @else {
+                    <mat-icon class="pending-icon">radio_button_unchecked</mat-icon>
+                  }
+                </div>
+                <div class="verification-details">
+                  <h4>Identity Verification</h4>
+                  <p>Submit identity documents to publish parking spaces</p>
+                  @if (currentUser()?.isIdentityVerified) {
+                    <mat-chip class="status-chip verified">
+                      <mat-icon>verified</mat-icon>
+                      Verified
+                    </mat-chip>
+                  } @else {
+                    <button mat-stroked-button color="primary" (click)="requestVerification('identity')" [disabled]="isLoading()">
+                      <mat-icon>badge</mat-icon>
+                      Verify Identity
+                    </button>
+                  }
+                </div>
+              </div>
+
+              <!-- Advanced Verification -->
+              <div class="verification-item" [class.verified]="currentUser()?.isAdvancedVerified">
+                <div class="verification-icon">
+                  @if (currentUser()?.isAdvancedVerified) {
+                    <mat-icon class="verified-icon">check_circle</mat-icon>
+                  } @else {
+                    <mat-icon class="pending-icon">radio_button_unchecked</mat-icon>
+                  }
+                </div>
+                <div class="verification-details">
+                  <h4>Advanced Verification</h4>
+                  <p>Complete advanced checks for full platform access</p>
+                  @if (currentUser()?.isAdvancedVerified) {
+                    <mat-chip class="status-chip verified">
+                      <mat-icon>verified</mat-icon>
+                      Verified
+                    </mat-chip>
+                  } @else {
+                    <button mat-stroked-button color="primary" (click)="requestVerification('advanced')" [disabled]="isLoading()">
+                      <mat-icon>security</mat-icon>
+                      Start Advanced Verification
+                    </button>
+                  }
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </mat-tab>
+
+      <!-- Security Settings Tab -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">security</mat-icon>
+          Security
+        </ng-template>
+
+        <mat-card class="tab-content-card">
+          <mat-card-header>
+            <mat-card-title>Security Settings</mat-card-title>
+          </mat-card-header>
+
+          <mat-card-content>
+            <div class="security-section">
+              <h3 class="section-title">Change Password</h3>
+              <form [formGroup]="securityForm" class="security-form">
+                <mat-form-field appearance="outline" class="form-field-full">
+                  <mat-label>Current Password</mat-label>
+                  <input matInput formControlName="currentPassword" type="password" placeholder="Enter current password" />
+                  <mat-icon matPrefix>lock</mat-icon>
+                  @if (securityForm.get('currentPassword')?.invalid && securityForm.get('currentPassword')?.touched) {
+                    <mat-error>{{ getErrorMessage(securityForm, 'currentPassword') }}</mat-error>
+                  }
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="form-field-full">
+                  <mat-label>New Password</mat-label>
+                  <input matInput formControlName="newPassword" type="password" placeholder="Enter new password" />
+                  <mat-icon matPrefix>lock_outline</mat-icon>
+                  @if (securityForm.get('newPassword')?.invalid && securityForm.get('newPassword')?.touched) {
+                    <mat-error>{{ getErrorMessage(securityForm, 'newPassword') }}</mat-error>
+                  }
+                  <mat-hint>Minimum 6 characters</mat-hint>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="form-field-full">
+                  <mat-label>Confirm New Password</mat-label>
+                  <input matInput formControlName="confirmPassword" type="password" placeholder="Confirm new password" />
+                  <mat-icon matPrefix>lock_outline</mat-icon>
+                  @if (hasFormError(securityForm, 'passwordMismatch') && securityForm.get('confirmPassword')?.touched) {
+                    <mat-error>Passwords do not match</mat-error>
+                  }
+                </mat-form-field>
+
+                <div class="form-actions">
+                  <button mat-raised-button color="primary" (click)="changePassword()" [disabled]="!securityForm.valid || isSaving()">
+                    @if (isSaving()) {
+                      <mat-spinner diameter="20"></mat-spinner>
+                    } @else {
+                      <mat-icon>save</mat-icon>
+                    }
+                    Change Password
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <div class="security-section">
+              <h3 class="section-title">Two-Factor Authentication</h3>
+              <p class="section-description">Add an extra layer of security to your account</p>
+              <button mat-stroked-button color="primary">
+                <mat-icon>phonelink_lock</mat-icon>
+                Enable 2FA
+              </button>
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <div class="security-section">
+              <h3 class="section-title">Active Sessions</h3>
+              <p class="section-description">Manage your active login sessions</p>
+              <button mat-stroked-button color="warn">
+                <mat-icon>logout</mat-icon>
+                Sign Out All Devices
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>

@@ -1,0 +1,428 @@
+<!-- Loading State -->
+<div *ngIf="loading()" class="loading-container">
+  <mat-spinner></mat-spinner>
+  <p>Loading parking details...</p>
+</div>
+
+<!-- Error State -->
+<div *ngIf="error() && !loading()" class="error-container">
+  <mat-icon class="error-icon">error_outline</mat-icon>
+  <h2>Oops! Something went wrong</h2>
+  <p>{{ error() }}</p>
+  <button mat-raised-button color="primary" routerLink="/parkings">
+    <mat-icon>arrow_back</mat-icon>
+    Back to Parkings
+  </button>
+</div>
+
+<!-- Main Content -->
+<div *ngIf="parking() && !loading()" class="parking-detail-container">
+  <!-- Header Section -->
+  <div class="header-section">
+    <button mat-icon-button routerLink="/parkings" class="back-button">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div class="header-actions">
+      <button mat-icon-button (click)="shareParking()" matTooltip="Share">
+        <mat-icon>share</mat-icon>
+      </button>
+      <button mat-icon-button matTooltip="Save to favorites">
+        <mat-icon>favorite_border</mat-icon>
+      </button>
+      <button mat-icon-button (click)="reportParking()" matTooltip="Report">
+        <mat-icon>flag</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Image Gallery -->
+  <div class="gallery-section">
+    <div class="main-image">
+      <img
+        [src]="selectedPhoto()?.url || 'https://via.placeholder.com/800x600?text=No+Image'"
+        [alt]="selectedPhoto()?.caption || parking()!.title"
+      />
+      <button
+        *ngIf="hasMultiplePhotos()"
+        mat-icon-button
+        class="nav-button prev-button"
+        (click)="previousPhoto()"
+      >
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+      <button
+        *ngIf="hasMultiplePhotos()"
+        mat-icon-button
+        class="nav-button next-button"
+        (click)="nextPhoto()"
+      >
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+      <div class="image-counter" *ngIf="hasMultiplePhotos()">
+        {{ selectedPhotoIndex() + 1 }} / {{ parking()!.photos.length }}
+      </div>
+    </div>
+
+    <div class="thumbnail-grid" *ngIf="parking()!.photos.length > 1">
+      <div
+        *ngFor="let photo of parking()!.photos; let i = index"
+        class="thumbnail"
+        [class.active]="i === selectedPhotoIndex()"
+        (click)="selectPhoto(i)"
+      >
+        <img [src]="photo.url" [alt]="photo.caption || 'Photo ' + (i + 1)">
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Grid -->
+  <div class="content-grid">
+    <!-- Left Column - Details -->
+    <div class="details-column">
+      <!-- Title and Rating -->
+      <mat-card class="title-card">
+        <mat-card-content>
+          <div class="title-section">
+            <h1>{{ parking()!.title }}</h1>
+            <div class="badges">
+              <mat-chip *ngIf="parking()!.isVerified" class="verified-chip">
+                <mat-icon>verified</mat-icon>
+                Verified
+              </mat-chip>
+              <mat-chip *ngIf="parking()!.hasEVCharging" class="ev-chip">
+                <mat-icon>ev_station</mat-icon>
+                EV Charging
+              </mat-chip>
+            </div>
+          </div>
+
+          <div class="rating-location">
+            <div class="rating" *ngIf="averageRating() > 0">
+              <mat-icon class="star-icon">star</mat-icon>
+              <span class="rating-value">{{ averageRating().toFixed(1) }}</span>
+              <span class="review-count">({{ totalReviews() }} reviews)</span>
+            </div>
+            <div class="location">
+              <mat-icon>location_on</mat-icon>
+              <span>{{ parking()!.address }}</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Description -->
+      <mat-card class="description-card">
+        <mat-card-header>
+          <mat-card-title>About this parking space</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p>{{ parking()!.description }}</p>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Features & Amenities -->
+      <mat-card class="features-card">
+        <mat-card-header>
+          <mat-card-title>Features & Amenities</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="features-grid">
+            <div class="feature-item" *ngFor="let feature of parking()!.features">
+              <mat-icon>check_circle</mat-icon>
+              <span>{{ feature }}</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Parking Specifications -->
+      <mat-card class="specs-card">
+        <mat-card-header>
+          <mat-card-title>Parking Specifications</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="specs-grid">
+            <div class="spec-item">
+              <mat-icon>straighten</mat-icon>
+              <div class="spec-info">
+                <span class="spec-label">Length</span>
+                <span class="spec-value">{{ parking()!.size.length }}m</span>
+              </div>
+            </div>
+            <div class="spec-item">
+              <mat-icon>straighten</mat-icon>
+              <div class="spec-info">
+                <span class="spec-label">Width</span>
+                <span class="spec-value">{{ parking()!.size.width }}m</span>
+              </div>
+            </div>
+            <div class="spec-item">
+              <mat-icon>height</mat-icon>
+              <div class="spec-info">
+                <span class="spec-label">Height</span>
+                <span class="spec-value">{{ parking()!.size.height }}m</span>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Access Information -->
+      <mat-card class="access-card">
+        <mat-card-header>
+          <mat-card-title>Access Information</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="access-method">
+            <mat-icon>{{ getAccessMethodIcon(parking()!.accessMethod) }}</mat-icon>
+            <div class="access-info">
+              <span class="access-label">Access Method</span>
+              <span class="access-value">{{ getAccessMethodLabel(parking()!.accessMethod) }}</span>
+            </div>
+          </div>
+          <p *ngIf="parking()!.accessInstructions" class="access-instructions">
+            <mat-icon>info</mat-icon>
+            {{ parking()!.accessInstructions }}
+          </p>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Map Location -->
+      <mat-card class="map-card">
+        <mat-card-header>
+          <mat-card-title>Location</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="map-placeholder">
+            <mat-icon class="map-icon">map</mat-icon>
+            <p>Map integration coming soon</p>
+            <p class="coordinates">
+              Lat: {{ parking()!.latitude }}, Lng: {{ parking()!.longitude }}
+            </p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Availability Schedule -->
+      <mat-card class="availability-card">
+        <mat-card-header>
+          <mat-card-title>Availability Schedule</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="schedule-list">
+            <div class="schedule-item" *ngFor="let day of daysOfWeek; let i = index">
+              <span class="day-name">{{ day }}</span>
+              <span class="day-hours">{{ getAvailabilityForDay(i) }}</span>
+            </div>
+          </div>
+
+          <mat-divider class="my-3"></mat-divider>
+
+          <div *ngIf="parking()!.availabilityExceptions.length > 0" class="exceptions">
+            <h4>Special Dates</h4>
+            <div class="exception-item" *ngFor="let exception of parking()!.availabilityExceptions">
+              <mat-icon [class.available]="exception.isAvailable" [class.unavailable]="!exception.isAvailable">
+                {{ exception.isAvailable ? 'check_circle' : 'cancel' }}
+              </mat-icon>
+              <div class="exception-info">
+                <span class="exception-date">{{ formatDate(exception.date) }}</span>
+                <span class="exception-reason" *ngIf="exception.reason">{{ exception.reason }}</span>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Owner Information -->
+      <mat-card class="owner-card" *ngIf="parking()!.owner">
+        <mat-card-header>
+          <mat-card-title>Hosted by</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="owner-info">
+            <div class="owner-avatar">
+              <img
+                *ngIf="parking()!.owner!.profilePicture"
+                [src]="parking()!.owner!.profilePicture"
+                [alt]="parking()!.owner!.firstName"
+              >
+              <div *ngIf="!parking()!.owner!.profilePicture" class="avatar-placeholder">
+                {{ parking()!.owner!.firstName.charAt(0) }}{{ parking()!.owner!.lastName.charAt(0) }}
+              </div>
+            </div>
+            <div class="owner-details">
+              <h3>{{ parking()!.owner!.firstName }} {{ parking()!.owner!.lastName }}</h3>
+              <p class="verification-level">{{ parking()!.owner!.verificationLevel }} verified</p>
+              <button mat-stroked-button (click)="navigateToOwnerProfile()">
+                View Profile
+              </button>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Reviews Section -->
+      <mat-card class="reviews-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>star</mat-icon>
+            Reviews ({{ totalReviews() }})
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div *ngIf="reviews().length === 0" class="no-reviews">
+            <mat-icon>rate_review</mat-icon>
+            <p>No reviews yet. Be the first to review!</p>
+          </div>
+
+          <div class="reviews-list" *ngIf="reviews().length > 0">
+            <div class="review-item" *ngFor="let review of reviews()">
+              <div class="review-header">
+                <div class="reviewer-info">
+                  <div class="reviewer-avatar">
+                    <img
+                      *ngIf="review.author?.profilePicture"
+                      [src]="review.author.profilePicture"
+                      [alt]="getReviewerName(review)"
+                    >
+                    <div *ngIf="!review.author?.profilePicture" class="avatar-placeholder">
+                      {{ getReviewerInitials(review) }}
+                    </div>
+                  </div>
+                  <div class="reviewer-details">
+                    <h4>{{ getReviewerName(review) }}</h4>
+                    <span class="review-date">{{ formatDate(review.createdAt) }}</span>
+                  </div>
+                </div>
+                <div class="review-rating">
+                  <mat-icon *ngFor="let filled of getStarArray(review.rating)" [class.filled]="filled">
+                    {{ filled ? 'star' : 'star_border' }}
+                  </mat-icon>
+                </div>
+              </div>
+
+              <p class="review-comment" *ngIf="review.comment">{{ review.comment }}</p>
+
+              <div class="review-criteria" *ngIf="review.criteria">
+                <div class="criteria-item" *ngIf="review.criteria.location">
+                  <span>Location</span>
+                  <span class="criteria-value">{{ review.criteria.location }}/5</span>
+                </div>
+                <div class="criteria-item" *ngIf="review.criteria.cleanliness">
+                  <span>Cleanliness</span>
+                  <span class="criteria-value">{{ review.criteria.cleanliness }}/5</span>
+                </div>
+                <div class="criteria-item" *ngIf="review.criteria.security">
+                  <span>Security</span>
+                  <span class="criteria-value">{{ review.criteria.security }}/5</span>
+                </div>
+                <div class="criteria-item" *ngIf="review.criteria.value">
+                  <span>Value</span>
+                  <span class="criteria-value">{{ review.criteria.value }}/5</span>
+                </div>
+              </div>
+
+              <div class="owner-response" *ngIf="review.response">
+                <mat-icon>reply</mat-icon>
+                <div class="response-content">
+                  <h5>Response from owner</h5>
+                  <p>{{ review.response }}</p>
+                  <span class="response-date">{{ formatDate(review.responseDate!) }}</span>
+                </div>
+              </div>
+
+              <mat-divider *ngIf="!$last"></mat-divider>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Right Column - Booking Card -->
+    <div class="booking-column">
+      <mat-card class="booking-card sticky">
+        <mat-card-content>
+          <div class="price-section">
+            <h2 class="price">
+              {{ parking()!.currency }} {{ parking()!.basePrice }}
+              <span class="price-unit">/ hour</span>
+            </h2>
+          </div>
+
+          <mat-divider class="my-3"></mat-divider>
+
+          <div class="booking-form">
+            <h3>Book Your Spot</h3>
+
+            <!-- Date Range Selector Placeholder -->
+            <div class="date-picker-placeholder">
+              <div class="date-field">
+                <mat-icon>event</mat-icon>
+                <div class="date-info">
+                  <span class="date-label">Check-in</span>
+                  <span class="date-value">{{ dateRange().startDate | date:'short' }}</span>
+                </div>
+              </div>
+              <div class="date-field">
+                <mat-icon>event</mat-icon>
+                <div class="date-info">
+                  <span class="date-label">Check-out</span>
+                  <span class="date-value">{{ dateRange().endDate | date:'short' }}</span>
+                </div>
+              </div>
+            </div>
+
+            <mat-divider class="my-3"></mat-divider>
+
+            <!-- Price Breakdown -->
+            <div class="price-breakdown">
+              <div class="breakdown-item">
+                <span>Parking fee</span>
+                <span>{{ parking()!.currency }} {{ totalPrice() }}</span>
+              </div>
+              <div class="breakdown-item">
+                <span>Service fee</span>
+                <span>{{ parking()!.currency }} {{ serviceFee() }}</span>
+              </div>
+              <mat-divider class="my-2"></mat-divider>
+              <div class="breakdown-item total">
+                <span>Total</span>
+                <span>{{ parking()!.currency }} {{ grandTotal() }}</span>
+              </div>
+            </div>
+
+            <button
+              mat-raised-button
+              color="accent"
+              class="book-button"
+              (click)="navigateToBooking()"
+            >
+              <mat-icon>event_available</mat-icon>
+              Book Now
+            </button>
+
+            <p class="booking-note">You won't be charged yet</p>
+          </div>
+
+          <mat-divider class="my-3"></mat-divider>
+
+          <!-- Quick Info -->
+          <div class="quick-info">
+            <div class="info-item">
+              <mat-icon>policy</mat-icon>
+              <span>Free cancellation for 48 hours</span>
+            </div>
+            <div class="info-item">
+              <mat-icon>verified_user</mat-icon>
+              <span>Secure payment protection</span>
+            </div>
+            <div class="info-item">
+              <mat-icon>support_agent</mat-icon>
+              <span>24/7 customer support</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

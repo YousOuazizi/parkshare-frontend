@@ -1,0 +1,347 @@
+<div class="notification-list-container">
+  <!-- Header -->
+  <div class="notification-header">
+    <div class="header-content">
+      <div class="title-section">
+        <mat-icon class="header-icon">notifications</mat-icon>
+        <div>
+          <h1>Notifications</h1>
+          <p class="subtitle">Stay updated with your activity</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button
+          mat-icon-button
+          (click)="loadNotifications()"
+          matTooltip="Refresh"
+        >
+          <mat-icon>refresh</mat-icon>
+        </button>
+        <button
+          mat-stroked-button
+          color="primary"
+          (click)="markAllAsRead()"
+          [disabled]="loading() || unreadCount() === 0"
+        >
+          <mat-icon>done_all</mat-icon>
+          Mark All as Read
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  @if (loading()) {
+    <div class="loading-container">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Loading notifications...</p>
+    </div>
+  }
+
+  <!-- Error State -->
+  @if (error() && !loading()) {
+    <mat-card class="error-card">
+      <div class="error-content">
+        <mat-icon class="error-icon">error_outline</mat-icon>
+        <div>
+          <h3>{{ error() }}</h3>
+          <button mat-raised-button color="primary" (click)="loadNotifications()">
+            <mat-icon>refresh</mat-icon>
+            Retry
+          </button>
+        </div>
+      </div>
+    </mat-card>
+  }
+
+  <!-- Notifications Content -->
+  @if (!loading() && !error()) {
+    <mat-card class="notifications-card">
+      <!-- Tabs -->
+      <mat-tab-group
+        mat-stretch-tabs="false"
+        (selectedIndexChange)="onTabChange($event)"
+        class="notifications-tabs"
+      >
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <span class="tab-label">
+              All
+              @if (notifications().length > 0) {
+                <span class="tab-badge">{{ notifications().length }}</span>
+              }
+            </span>
+          </ng-template>
+        </mat-tab>
+
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <span class="tab-label">
+              <mat-icon class="tab-icon">mark_email_unread</mat-icon>
+              Unread
+              @if (unreadCount() > 0) {
+                <span class="tab-badge unread">{{ unreadCount() }}</span>
+              }
+            </span>
+          </ng-template>
+        </mat-tab>
+      </mat-tab-group>
+
+      <!-- Empty State -->
+      @if (filteredNotifications().length === 0) {
+        <div class="empty-state">
+          <mat-icon class="empty-icon">notifications_none</mat-icon>
+          <h3>No notifications</h3>
+          <p>
+            @if (selectedTab() === 'all') {
+              You're all caught up! No notifications to display.
+            } @else {
+              You don't have any unread notifications.
+            }
+          </p>
+        </div>
+      }
+
+      <!-- Notifications List -->
+      @if (filteredNotifications().length > 0) {
+        <div class="notifications-content">
+          <!-- Today -->
+          @if (groupedNotifications().today.length > 0) {
+            <div class="notification-group">
+              <h3 class="group-title">Today</h3>
+              <mat-list class="notification-list">
+                @for (notification of groupedNotifications().today; track notification.id) {
+                  <mat-list-item
+                    class="notification-item"
+                    [class.unread]="!notification.isRead"
+                    (click)="handleNotificationClick(notification)"
+                  >
+                    <div class="notification-content">
+                      <div class="notification-icon" [ngClass]="getNotificationColor(notification.type)">
+                        <mat-icon>{{ getNotificationIcon(notification.type) }}</mat-icon>
+                        @if (!notification.isRead) {
+                          <span class="unread-badge"></span>
+                        }
+                      </div>
+
+                      <div class="notification-details">
+                        <div class="notification-header-row">
+                          <h4 class="notification-title">{{ notification.title }}</h4>
+                          <span class="notification-time">{{ formatDate(notification.createdAt) }}</span>
+                        </div>
+                        <p class="notification-message">{{ notification.message }}</p>
+                        @if (notification.imageUrl) {
+                          <img [src]="notification.imageUrl" alt="" class="notification-image" />
+                        }
+                      </div>
+
+                      <div class="notification-actions">
+                        <button
+                          mat-icon-button
+                          [matMenuTriggerFor]="menu"
+                          (click)="$event.stopPropagation()"
+                        >
+                          <mat-icon>more_vert</mat-icon>
+                        </button>
+                        <mat-menu #menu="matMenu">
+                          @if (!notification.isRead) {
+                            <button mat-menu-item (click)="markAsRead(notification)">
+                              <mat-icon>done</mat-icon>
+                              <span>Mark as Read</span>
+                            </button>
+                          }
+                          <button mat-menu-item (click)="deleteNotification(notification)">
+                            <mat-icon>delete</mat-icon>
+                            <span>Delete</span>
+                          </button>
+                        </mat-menu>
+                      </div>
+                    </div>
+                  </mat-list-item>
+                  <mat-divider></mat-divider>
+                }
+              </mat-list>
+            </div>
+          }
+
+          <!-- Yesterday -->
+          @if (groupedNotifications().yesterday.length > 0) {
+            <div class="notification-group">
+              <h3 class="group-title">Yesterday</h3>
+              <mat-list class="notification-list">
+                @for (notification of groupedNotifications().yesterday; track notification.id) {
+                  <mat-list-item
+                    class="notification-item"
+                    [class.unread]="!notification.isRead"
+                    (click)="handleNotificationClick(notification)"
+                  >
+                    <div class="notification-content">
+                      <div class="notification-icon" [ngClass]="getNotificationColor(notification.type)">
+                        <mat-icon>{{ getNotificationIcon(notification.type) }}</mat-icon>
+                        @if (!notification.isRead) {
+                          <span class="unread-badge"></span>
+                        }
+                      </div>
+
+                      <div class="notification-details">
+                        <div class="notification-header-row">
+                          <h4 class="notification-title">{{ notification.title }}</h4>
+                          <span class="notification-time">{{ formatDate(notification.createdAt) }}</span>
+                        </div>
+                        <p class="notification-message">{{ notification.message }}</p>
+                        @if (notification.imageUrl) {
+                          <img [src]="notification.imageUrl" alt="" class="notification-image" />
+                        }
+                      </div>
+
+                      <div class="notification-actions">
+                        <button
+                          mat-icon-button
+                          [matMenuTriggerFor]="menu"
+                          (click)="$event.stopPropagation()"
+                        >
+                          <mat-icon>more_vert</mat-icon>
+                        </button>
+                        <mat-menu #menu="matMenu">
+                          @if (!notification.isRead) {
+                            <button mat-menu-item (click)="markAsRead(notification)">
+                              <mat-icon>done</mat-icon>
+                              <span>Mark as Read</span>
+                            </button>
+                          }
+                          <button mat-menu-item (click)="deleteNotification(notification)">
+                            <mat-icon>delete</mat-icon>
+                            <span>Delete</span>
+                          </button>
+                        </mat-menu>
+                      </div>
+                    </div>
+                  </mat-list-item>
+                  <mat-divider></mat-divider>
+                }
+              </mat-list>
+            </div>
+          }
+
+          <!-- This Week -->
+          @if (groupedNotifications().thisWeek.length > 0) {
+            <div class="notification-group">
+              <h3 class="group-title">This Week</h3>
+              <mat-list class="notification-list">
+                @for (notification of groupedNotifications().thisWeek; track notification.id) {
+                  <mat-list-item
+                    class="notification-item"
+                    [class.unread]="!notification.isRead"
+                    (click)="handleNotificationClick(notification)"
+                  >
+                    <div class="notification-content">
+                      <div class="notification-icon" [ngClass]="getNotificationColor(notification.type)">
+                        <mat-icon>{{ getNotificationIcon(notification.type) }}</mat-icon>
+                        @if (!notification.isRead) {
+                          <span class="unread-badge"></span>
+                        }
+                      </div>
+
+                      <div class="notification-details">
+                        <div class="notification-header-row">
+                          <h4 class="notification-title">{{ notification.title }}</h4>
+                          <span class="notification-time">{{ formatDate(notification.createdAt) }}</span>
+                        </div>
+                        <p class="notification-message">{{ notification.message }}</p>
+                        @if (notification.imageUrl) {
+                          <img [src]="notification.imageUrl" alt="" class="notification-image" />
+                        }
+                      </div>
+
+                      <div class="notification-actions">
+                        <button
+                          mat-icon-button
+                          [matMenuTriggerFor]="menu"
+                          (click)="$event.stopPropagation()"
+                        >
+                          <mat-icon>more_vert</mat-icon>
+                        </button>
+                        <mat-menu #menu="matMenu">
+                          @if (!notification.isRead) {
+                            <button mat-menu-item (click)="markAsRead(notification)">
+                              <mat-icon>done</mat-icon>
+                              <span>Mark as Read</span>
+                            </button>
+                          }
+                          <button mat-menu-item (click)="deleteNotification(notification)">
+                            <mat-icon>delete</mat-icon>
+                            <span>Delete</span>
+                          </button>
+                        </mat-menu>
+                      </div>
+                    </div>
+                  </mat-list-item>
+                  <mat-divider></mat-divider>
+                }
+              </mat-list>
+            </div>
+          }
+
+          <!-- Older -->
+          @if (groupedNotifications().older.length > 0) {
+            <div class="notification-group">
+              <h3 class="group-title">Older</h3>
+              <mat-list class="notification-list">
+                @for (notification of groupedNotifications().older; track notification.id) {
+                  <mat-list-item
+                    class="notification-item"
+                    [class.unread]="!notification.isRead"
+                    (click)="handleNotificationClick(notification)"
+                  >
+                    <div class="notification-content">
+                      <div class="notification-icon" [ngClass]="getNotificationColor(notification.type)">
+                        <mat-icon>{{ getNotificationIcon(notification.type) }}</mat-icon>
+                        @if (!notification.isRead) {
+                          <span class="unread-badge"></span>
+                        }
+                      </div>
+
+                      <div class="notification-details">
+                        <div class="notification-header-row">
+                          <h4 class="notification-title">{{ notification.title }}</h4>
+                          <span class="notification-time">{{ formatDate(notification.createdAt) }}</span>
+                        </div>
+                        <p class="notification-message">{{ notification.message }}</p>
+                        @if (notification.imageUrl) {
+                          <img [src]="notification.imageUrl" alt="" class="notification-image" />
+                        }
+                      </div>
+
+                      <div class="notification-actions">
+                        <button
+                          mat-icon-button
+                          [matMenuTriggerFor]="menu"
+                          (click)="$event.stopPropagation()"
+                        >
+                          <mat-icon>more_vert</mat-icon>
+                        </button>
+                        <mat-menu #menu="matMenu">
+                          @if (!notification.isRead) {
+                            <button mat-menu-item (click)="markAsRead(notification)">
+                              <mat-icon>done</mat-icon>
+                              <span>Mark as Read</span>
+                            </button>
+                          }
+                          <button mat-menu-item (click)="deleteNotification(notification)">
+                            <mat-icon>delete</mat-icon>
+                            <span>Delete</span>
+                          </button>
+                        </mat-menu>
+                      </div>
+                    </div>
+                  </mat-list-item>
+                  <mat-divider></mat-divider>
+                }
+              </mat-list>
+            </div>
+          }
+        </div>
+      }
+    </mat-card>
+  }
+</div>

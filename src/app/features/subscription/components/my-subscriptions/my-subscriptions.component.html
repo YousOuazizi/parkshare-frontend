@@ -1,0 +1,357 @@
+<div class="my-subscriptions-container">
+  <!-- Header Section -->
+  <div class="subscriptions-header">
+    <div class="header-content">
+      <h1 class="title">My Subscriptions</h1>
+      <p class="subtitle">Manage your parking subscriptions and billing</p>
+    </div>
+    <button mat-raised-button color="primary" class="add-button" (click)="browsePlans()">
+      <mat-icon>add</mat-icon>
+      New Subscription
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading()" class="loading-spinner">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Loading your subscriptions...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error()" class="error-message">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ error() }}</p>
+    <button mat-raised-button color="primary" (click)="loadSubscriptions()">
+      <mat-icon>refresh</mat-icon>
+      Retry
+    </button>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading() && !error() && subscriptions().length === 0" class="empty-state">
+    <mat-icon>event_busy</mat-icon>
+    <h2>No Active Subscriptions</h2>
+    <p>You don't have any subscriptions yet. Browse our plans to get started!</p>
+    <button mat-raised-button color="primary" (click)="browsePlans()">
+      <mat-icon>explore</mat-icon>
+      Browse Plans
+    </button>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="!loading() && !error() && subscriptions().length > 0" class="subscriptions-content">
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-icon-wrapper primary">
+            <mat-icon>local_parking</mat-icon>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value">{{ subscriptionStats().totalSpots }}</span>
+            <span class="stat-label">Active Spots</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-icon-wrapper accent">
+            <mat-icon>people</mat-icon>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value">{{ subscriptionStats().totalShares }}</span>
+            <span class="stat-label">Shared With</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-icon-wrapper success">
+            <mat-icon>event</mat-icon>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value">{{ subscriptionStats().totalUsage }}</span>
+            <span class="stat-label">Total Usage</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-icon-wrapper info">
+            <mat-icon>trending_up</mat-icon>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value">{{ subscriptionStats().averageUsage }}</span>
+            <span class="stat-label">Avg. Usage</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Tabs for different subscription states -->
+    <mat-tab-group class="subscriptions-tabs" animationDuration="300ms">
+      <!-- Active Subscriptions Tab -->
+      <mat-tab label="Active ({{ activeSubscriptions().length }})">
+        <div class="subscriptions-list">
+          <mat-card
+            *ngFor="let subscription of activeSubscriptions(); trackBy: trackBySubscriptionId"
+            class="subscription-card"
+            [class.selected]="selectedSubscription()?.id === subscription.id"
+            (click)="selectSubscription(subscription)">
+            <!-- Subscription Header -->
+            <mat-card-header>
+              <div class="subscription-image" [style.background-image]="'url(' + getParkingImageUrl(subscription) + ')'"></div>
+              <div class="subscription-info">
+                <mat-card-title>{{ subscription.parking?.title || 'Parking Spot' }}</mat-card-title>
+                <mat-card-subtitle>{{ subscription.parking?.address }}</mat-card-subtitle>
+                <mat-chip [color]="getStatusColor(subscription.status)">
+                  <mat-icon>{{ getStatusIcon(subscription.status) }}</mat-icon>
+                  {{ subscription.status }}
+                </mat-chip>
+              </div>
+              <button mat-icon-button [matMenuTriggerFor]="menu" (click)="$event.stopPropagation()">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              <mat-menu #menu="matMenu">
+                <button mat-menu-item (click)="upgradePlan(subscription)">
+                  <mat-icon>upgrade</mat-icon>
+                  <span>Upgrade Plan</span>
+                </button>
+                <button mat-menu-item (click)="pauseSubscription(subscription)">
+                  <mat-icon>pause</mat-icon>
+                  <span>Pause</span>
+                </button>
+                <button mat-menu-item (click)="cancelSubscription(subscription)">
+                  <mat-icon>cancel</mat-icon>
+                  <span>Cancel</span>
+                </button>
+              </mat-menu>
+            </mat-card-header>
+
+            <!-- Subscription Content -->
+            <mat-card-content>
+              <!-- Plan Details -->
+              <div class="plan-details">
+                <div class="detail-row">
+                  <span class="detail-label">Plan:</span>
+                  <span class="detail-value">{{ subscription.plan?.name || 'N/A' }}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Type:</span>
+                  <span class="detail-value">{{ subscription.plan?.type }}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Price:</span>
+                  <span class="detail-value">{{ formatCurrency(subscription.plan?.price || 0, subscription.plan?.currency || 'USD') }}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Start Date:</span>
+                  <span class="detail-value">{{ formatDate(subscription.startDate) }}</span>
+                </div>
+                <div *ngIf="subscription.endDate" class="detail-row">
+                  <span class="detail-label">End Date:</span>
+                  <span class="detail-value">{{ formatDate(subscription.endDate) }}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Auto Renew:</span>
+                  <span class="detail-value">
+                    <mat-icon [class.enabled]="subscription.autoRenew">
+                      {{ subscription.autoRenew ? 'check_circle' : 'cancel' }}
+                    </mat-icon>
+                    {{ subscription.autoRenew ? 'Enabled' : 'Disabled' }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Expiring Soon Warning -->
+              <div *ngIf="isExpiringSoon(subscription)" class="warning-banner">
+                <mat-icon>warning</mat-icon>
+                <span>Expires in {{ getDaysRemaining(subscription) }} days</span>
+              </div>
+
+              <!-- Usage Progress -->
+              <div class="usage-section">
+                <div class="usage-header">
+                  <span class="usage-label">Usage This Period</span>
+                  <span class="usage-count">{{ subscription.usageCount }} times</span>
+                </div>
+                <mat-progress-bar
+                  mode="determinate"
+                  [value]="getUsagePercentage(subscription)"
+                  color="primary">
+                </mat-progress-bar>
+              </div>
+
+              <!-- Shared Users -->
+              <div *ngIf="subscription.sharedWith && subscription.sharedWith.length > 0" class="shared-section">
+                <h4 class="section-title">Shared With</h4>
+                <div class="shared-users">
+                  <mat-chip
+                    *ngFor="let user of subscription.sharedUsers"
+                    class="user-chip">
+                    <mat-icon>person</mat-icon>
+                    {{ user.firstName }} {{ user.lastName }}
+                    <button matChipRemove (click)="revokeShare(subscription, user.id)">
+                      <mat-icon>cancel</mat-icon>
+                    </button>
+                  </mat-chip>
+                </div>
+              </div>
+
+              <!-- Share Subscription -->
+              <div *ngIf="subscription.plan && (subscription.sharedWith?.length || 0) < subscription.plan.maxShares" class="share-section">
+                <h4 class="section-title">Share Subscription</h4>
+                <div class="share-form">
+                  <mat-form-field appearance="outline" class="share-input">
+                    <mat-label>Email address</mat-label>
+                    <input
+                      matInput
+                      type="email"
+                      [formControl]="shareEmailControl"
+                      placeholder="friend@example.com">
+                    <mat-icon matPrefix>email</mat-icon>
+                  </mat-form-field>
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    (click)="shareSubscription(subscription)"
+                    [disabled]="shareEmailControl.invalid">
+                    <mat-icon>share</mat-icon>
+                    Share
+                  </button>
+                </div>
+                <p class="share-info">
+                  {{ subscription.plan.maxShares - (subscription.sharedWith?.length || 0) }} shares remaining
+                </p>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-tab>
+
+      <!-- Paused Subscriptions Tab -->
+      <mat-tab label="Paused ({{ pausedSubscriptions().length }})">
+        <div class="subscriptions-list">
+          <mat-card
+            *ngFor="let subscription of pausedSubscriptions(); trackBy: trackBySubscriptionId"
+            class="subscription-card paused">
+            <mat-card-header>
+              <div class="subscription-image" [style.background-image]="'url(' + getParkingImageUrl(subscription) + ')'"></div>
+              <div class="subscription-info">
+                <mat-card-title>{{ subscription.parking?.title || 'Parking Spot' }}</mat-card-title>
+                <mat-card-subtitle>{{ subscription.parking?.address }}</mat-card-subtitle>
+                <mat-chip [color]="getStatusColor(subscription.status)">
+                  <mat-icon>{{ getStatusIcon(subscription.status) }}</mat-icon>
+                  {{ subscription.status }}
+                </mat-chip>
+              </div>
+            </mat-card-header>
+
+            <mat-card-content>
+              <p class="paused-message">This subscription is currently paused and not active.</p>
+            </mat-card-content>
+
+            <mat-card-actions>
+              <button mat-raised-button color="primary" (click)="resumeSubscription(subscription)">
+                <mat-icon>play_arrow</mat-icon>
+                Resume
+              </button>
+              <button mat-button (click)="cancelSubscription(subscription)">
+                <mat-icon>cancel</mat-icon>
+                Cancel
+              </button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+      </mat-tab>
+
+      <!-- Inactive Subscriptions Tab -->
+      <mat-tab label="Inactive ({{ inactiveSubscriptions().length }})">
+        <div class="subscriptions-list">
+          <mat-card
+            *ngFor="let subscription of inactiveSubscriptions(); trackBy: trackBySubscriptionId"
+            class="subscription-card inactive">
+            <mat-card-header>
+              <div class="subscription-image" [style.background-image]="'url(' + getParkingImageUrl(subscription) + ')'"></div>
+              <div class="subscription-info">
+                <mat-card-title>{{ subscription.parking?.title || 'Parking Spot' }}</mat-card-title>
+                <mat-card-subtitle>{{ subscription.parking?.address }}</mat-card-subtitle>
+                <mat-chip [color]="getStatusColor(subscription.status)">
+                  <mat-icon>{{ getStatusIcon(subscription.status) }}</mat-icon>
+                  {{ subscription.status }}
+                </mat-chip>
+              </div>
+            </mat-card-header>
+
+            <mat-card-content>
+              <div class="detail-row">
+                <span class="detail-label">End Date:</span>
+                <span class="detail-value">{{ formatDate(subscription.endDate || subscription.updatedAt) }}</span>
+              </div>
+              <p class="inactive-message">This subscription is no longer active.</p>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-tab>
+
+      <!-- Billing History Tab -->
+      <mat-tab label="Billing History">
+        <div class="billing-section">
+          <mat-card class="billing-card">
+            <mat-card-header>
+              <mat-card-title>Payment History</mat-card-title>
+              <mat-card-subtitle>View and download your invoices</mat-card-subtitle>
+            </mat-card-header>
+
+            <mat-card-content>
+              <div class="table-container">
+                <table mat-table [dataSource]="billingHistory()" class="billing-table">
+                  <!-- Date Column -->
+                  <ng-container matColumnDef="date">
+                    <th mat-header-cell *matHeaderCellDef>Date</th>
+                    <td mat-cell *matCellDef="let record">{{ formatDate(record.date) }}</td>
+                  </ng-container>
+
+                  <!-- Amount Column -->
+                  <ng-container matColumnDef="amount">
+                    <th mat-header-cell *matHeaderCellDef>Amount</th>
+                    <td mat-cell *matCellDef="let record">{{ formatCurrency(record.amount, record.currency) }}</td>
+                  </ng-container>
+
+                  <!-- Status Column -->
+                  <ng-container matColumnDef="status">
+                    <th mat-header-cell *matHeaderCellDef>Status</th>
+                    <td mat-cell *matCellDef="let record">
+                      <mat-chip [color]="getBillingStatusColor(record.status)">
+                        {{ record.status | uppercase }}
+                      </mat-chip>
+                    </td>
+                  </ng-container>
+
+                  <!-- Actions Column -->
+                  <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef>Actions</th>
+                    <td mat-cell *matCellDef="let record">
+                      <button
+                        mat-icon-button
+                        [attr.href]="record.invoiceUrl"
+                        matTooltip="Download Invoice">
+                        <mat-icon>download</mat-icon>
+                      </button>
+                    </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="billingColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: billingColumns;"></tr>
+                </table>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>

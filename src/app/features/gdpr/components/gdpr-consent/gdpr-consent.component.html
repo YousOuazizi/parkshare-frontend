@@ -1,0 +1,189 @@
+<div class="gdpr-consent-container">
+  <!-- Header -->
+  <div class="consent-header">
+    <div class="header-content">
+      <div class="title-section">
+        <mat-icon class="header-icon">privacy_tip</mat-icon>
+        <div>
+          <h1>Consent Management</h1>
+          <p class="subtitle">Manage your privacy preferences and consent settings</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button
+          mat-stroked-button
+          color="primary"
+          (click)="toggleHistory()"
+        >
+          <mat-icon>{{ showHistory() ? 'visibility_off' : 'history' }}</mat-icon>
+          {{ showHistory() ? 'Hide History' : 'View History' }}
+        </button>
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="loadConsents()"
+          [disabled]="loading()"
+        >
+          @if (loading()) {
+            <mat-spinner diameter="20" style="display: inline-block; margin-right: 8px;"></mat-spinner>
+          } @else {
+            <mat-icon>refresh</mat-icon>
+          }
+          Refresh
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  @if (loading() && consents().length === 0) {
+    <div class="loading-container">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Loading consent settings...</p>
+    </div>
+  }
+
+  <!-- Error State -->
+  @if (error()) {
+    <mat-card class="error-card">
+      <mat-card-content>
+        <div class="error-content">
+          <mat-icon class="error-icon">error</mat-icon>
+          <div>
+            <h3>Error Loading Consents</h3>
+            <p>{{ error() }}</p>
+            <button mat-raised-button color="primary" (click)="loadConsents()">
+              <mat-icon>refresh</mat-icon>
+              Try Again
+            </button>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  <!-- Consent Settings -->
+  @if (!loading() || consents().length > 0) {
+    <div class="consent-content">
+      <!-- Current Consent Settings -->
+      <mat-card class="consent-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>settings</mat-icon>
+            Your Consent Preferences
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="consent-list">
+            @for (category of consentCategories(); track category.type) {
+              <div class="consent-item">
+                <div class="consent-info">
+                  <div class="consent-icon-wrapper" [class.required]="category.required">
+                    <mat-icon [ngClass]="'consent-icon'">
+                      {{ category.icon }}
+                    </mat-icon>
+                  </div>
+                  <div class="consent-details">
+                    <div class="consent-label-row">
+                      <h3 class="consent-label">{{ category.label }}</h3>
+                      @if (category.required) {
+                        <span class="required-badge">Required</span>
+                      }
+                    </div>
+                    <p class="consent-description">{{ category.description }}</p>
+                  </div>
+                </div>
+                <mat-slide-toggle
+                  [checked]="category.enabled"
+                  (change)="toggleConsent(category)"
+                  [disabled]="category.required"
+                  color="primary"
+                >
+                </mat-slide-toggle>
+              </div>
+              @if ($index < consentCategories().length - 1) {
+                <mat-divider></mat-divider>
+              }
+            }
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Consent History -->
+      @if (showHistory()) {
+        <mat-card class="history-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>history</mat-icon>
+              Consent History
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            @if (consents().length === 0) {
+              <div class="empty-state">
+                <mat-icon>folder_open</mat-icon>
+                <p>No consent history available</p>
+              </div>
+            } @else {
+              <div class="history-content">
+                @for (category of consentCategories(); track category.type) {
+                  @let history = getConsentHistory(category.type);
+                  @if (history.length > 0) {
+                    <div class="history-section">
+                      <h3 class="history-section-title">
+                        <mat-icon>{{ category.icon }}</mat-icon>
+                        {{ category.label }}
+                      </h3>
+                      <mat-list>
+                        @for (consent of history; track consent.id) {
+                          <mat-list-item>
+                            <mat-icon matListItemIcon [class]="getConsentStatusColor(consent)">
+                              {{ getConsentStatusIcon(consent) }}
+                            </mat-icon>
+                            <div matListItemTitle>
+                              {{ consent.granted ? 'Granted' : 'Withdrawn' }}
+                            </div>
+                            <div matListItemLine>
+                              {{ formatDate(consent.granted ? consent.grantedAt || consent.createdAt : consent.withdrawnAt || consent.createdAt) }}
+                            </div>
+                            <div matListItemLine class="consent-meta">
+                              IP: {{ consent.ipAddress }}
+                            </div>
+                          </mat-list-item>
+                        }
+                      </mat-list>
+                    </div>
+                  }
+                }
+              </div>
+            }
+          </mat-card-content>
+        </mat-card>
+      }
+
+      <!-- Information Card -->
+      <mat-card class="info-card">
+        <mat-card-content>
+          <div class="info-content">
+            <mat-icon class="info-icon">info</mat-icon>
+            <div>
+              <h3>About Consent Management</h3>
+              <p>
+                Your privacy matters to us. You have full control over how your data is used.
+                You can grant or withdraw consent at any time for non-required permissions.
+              </p>
+              <ul>
+                <li><strong>Required Consents:</strong> These are essential for ParkShare to function and cannot be disabled</li>
+                <li><strong>Optional Consents:</strong> You can enable or disable these based on your preferences</li>
+                <li><strong>Consent History:</strong> We keep a record of all consent changes for transparency and compliance</li>
+              </ul>
+              <p class="note">
+                All consent changes are logged with timestamps and IP addresses for GDPR compliance.
+              </p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  }
+</div>

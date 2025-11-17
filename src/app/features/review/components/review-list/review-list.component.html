@@ -1,0 +1,239 @@
+<div class="review-list-container">
+  <!-- Header Section -->
+  <div class="list-header">
+    <div class="header-content">
+      <h1 class="title">Reviews</h1>
+      <p class="subtitle">{{ totalItems() }} reviews</p>
+    </div>
+  </div>
+
+  <!-- Review Statistics Section -->
+  @if (statistics()) {
+    <div class="statistics-section">
+      <mat-card class="statistics-card">
+        <div class="stats-overview">
+          <!-- Average Rating -->
+          <div class="average-rating">
+            <div class="rating-number">{{ averageRating().toFixed(1) }}</div>
+            <div class="rating-stars">
+              @for (star of getRatingStars(averageRating()); track $index) {
+                <mat-icon class="star" [class.filled]="star">star</mat-icon>
+              }
+            </div>
+            <div class="rating-count">Based on {{ statistics()!.totalReviews }} reviews</div>
+          </div>
+
+          <!-- Rating Distribution -->
+          <div class="rating-distribution">
+            @for (item of ratingDistribution(); track item.rating) {
+              <div class="distribution-row" (click)="filterByRating(item.rating)">
+                <div class="rating-label">{{ item.rating }} stars</div>
+                <div class="rating-bar-container">
+                  <div class="rating-bar" [style.width.%]="item.percentage"></div>
+                </div>
+                <div class="rating-count">{{ item.count }}</div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Criteria Breakdown -->
+        @if (statistics()!.averageCriteria) {
+          <div class="criteria-breakdown">
+            <h3 class="criteria-title">Rating Breakdown</h3>
+            <div class="criteria-grid">
+              @for (entry of getCriteriaEntries({ id: '', authorId: '', type: 'PARKING' as any, rating: 0, criteria: statistics()!.averageCriteria, isReported: false, createdAt: '', updatedAt: '' }); track entry.key) {
+                <div class="criteria-item">
+                  <div class="criteria-label">{{ getCriteriaLabel(entry.key) }}</div>
+                  <div class="criteria-rating">
+                    <div class="criteria-stars">
+                      @for (star of getRatingStars(entry.value); track $index) {
+                        <mat-icon class="star-small" [class.filled]="star">star</mat-icon>
+                      }
+                    </div>
+                    <span class="criteria-value">{{ entry.value.toFixed(1) }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </mat-card>
+    </div>
+  }
+
+  <!-- Filters Section -->
+  <div class="filters-section">
+    <form [formGroup]="filterForm" class="filters-form">
+      <!-- Rating Filter -->
+      <mat-form-field appearance="outline" class="rating-filter">
+        <mat-label>Filter by Rating</mat-label>
+        <mat-select formControlName="minRating">
+          @for (option of ratingOptions; track option.value) {
+            <mat-option [value]="option.value">{{ option.label }}</mat-option>
+          }
+        </mat-select>
+        <mat-icon matPrefix>filter_list</mat-icon>
+      </mat-form-field>
+
+      <!-- Sort -->
+      <mat-form-field appearance="outline" class="sort-field">
+        <mat-label>Sort By</mat-label>
+        <mat-select formControlName="sortBy">
+          @for (option of sortOptions; track option.value) {
+            <mat-option [value]="option.value">{{ option.label }}</mat-option>
+          }
+        </mat-select>
+        <mat-icon matPrefix>sort</mat-icon>
+      </mat-form-field>
+
+      <!-- Reset Button -->
+      <button mat-stroked-button class="reset-button" (click)="resetFilters()" type="button">
+        <mat-icon>refresh</mat-icon>
+        Reset Filters
+      </button>
+    </form>
+  </div>
+
+  <!-- Loading State -->
+  @if (loading()) {
+    <div class="loading-container">
+      <mat-spinner diameter="60"></mat-spinner>
+      <p class="loading-text">Loading reviews...</p>
+    </div>
+  }
+
+  <!-- Error State -->
+  @else if (error()) {
+    <div class="error-container">
+      <mat-icon class="error-icon">error_outline</mat-icon>
+      <h2 class="error-title">Oops! Something went wrong</h2>
+      <p class="error-message">{{ error() }}</p>
+      <button mat-raised-button color="primary" (click)="loadReviews()">
+        Try Again
+      </button>
+    </div>
+  }
+
+  <!-- Empty State -->
+  @else if (displayedReviews().length === 0) {
+    <div class="empty-state">
+      <mat-icon class="empty-icon">rate_review</mat-icon>
+      <h2 class="empty-title">No Reviews Yet</h2>
+      <p class="empty-message">
+        Be the first to share your experience!
+      </p>
+    </div>
+  }
+
+  <!-- Reviews Grid -->
+  @else {
+    <div class="reviews-grid">
+      @for (review of displayedReviews(); track trackByReviewId($index, review)) {
+        <mat-card class="review-card">
+          <!-- Review Header -->
+          <div class="review-header">
+            <!-- Reviewer Info -->
+            <div class="reviewer-info">
+              <div class="reviewer-avatar">
+                @if (getReviewerAvatar(review)) {
+                  <img [src]="getReviewerAvatar(review)" [alt]="getReviewerName(review)">
+                } @else {
+                  <div class="avatar-initials">{{ getReviewerInitials(review) }}</div>
+                }
+              </div>
+              <div class="reviewer-details">
+                <div class="reviewer-name">{{ getReviewerName(review) }}</div>
+                <div class="review-date">{{ formatDate(review.createdAt) }}</div>
+              </div>
+            </div>
+
+            <!-- Overall Rating -->
+            <div class="overall-rating">
+              <div class="rating-stars">
+                @for (star of getRatingStars(review.rating); track $index) {
+                  <mat-icon class="star" [class.filled]="star">star</mat-icon>
+                }
+              </div>
+              <div class="rating-value">{{ review.rating.toFixed(1) }}</div>
+            </div>
+          </div>
+
+          <!-- Review Content -->
+          <div class="review-content">
+            <!-- Comment -->
+            @if (review.comment) {
+              <p class="review-comment">{{ review.comment }}</p>
+            }
+
+            <!-- Criteria Ratings -->
+            @if (getCriteriaEntries(review).length > 0) {
+              <div class="criteria-list">
+                @for (criterion of getCriteriaEntries(review); track criterion.key) {
+                  <div class="criterion-item">
+                    <span class="criterion-label">{{ getCriteriaLabel(criterion.key) }}</span>
+                    <div class="criterion-rating">
+                      @for (star of getRatingStars(criterion.value); track $index) {
+                        <mat-icon class="star-small" [class.filled]="star">star</mat-icon>
+                      }
+                      <span class="criterion-value">{{ criterion.value.toFixed(1) }}</span>
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+
+          <!-- Owner Response -->
+          @if (review.response) {
+            <div class="owner-response">
+              <div class="response-header">
+                <mat-icon class="response-icon">reply</mat-icon>
+                <span class="response-label">Response from owner</span>
+                @if (review.responseDate) {
+                  <span class="response-date">{{ formatDate(review.responseDate) }}</span>
+                }
+              </div>
+              <p class="response-text">{{ review.response }}</p>
+            </div>
+          }
+
+          <!-- Review Footer -->
+          <div class="review-footer">
+            <!-- Helpful Button -->
+            <button mat-button class="helpful-button">
+              <mat-icon>thumb_up</mat-icon>
+              Helpful
+            </button>
+
+            <!-- Report Button -->
+            @if (!review.isReported) {
+              <button mat-button class="report-button">
+                <mat-icon>flag</mat-icon>
+                Report
+              </button>
+            } @else {
+              <div class="reported-badge">
+                <mat-icon>flag</mat-icon>
+                Reported
+              </div>
+            }
+          </div>
+        </mat-card>
+      }
+    </div>
+
+    <!-- Pagination -->
+    @if (totalItems() > pageSize()) {
+      <mat-paginator
+        class="review-paginator"
+        [length]="totalItems()"
+        [pageSize]="pageSize()"
+        [pageIndex]="pageIndex()"
+        [pageSizeOptions]="[5, 10, 25, 50]"
+        (page)="onPageChange($event)"
+        showFirstLastButtons>
+      </mat-paginator>
+    }
+  }
+</div>

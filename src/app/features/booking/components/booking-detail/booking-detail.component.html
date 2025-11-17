@@ -1,0 +1,347 @@
+<div class="booking-detail-container">
+  <!-- Loading State -->
+  <div *ngIf="isLoading()" class="loading-spinner">
+    <mat-spinner color="primary"></mat-spinner>
+  </div>
+
+  <!-- Booking Details -->
+  <div *ngIf="!isLoading() && booking()" class="booking-detail-content fade-in">
+    <!-- Header -->
+    <div class="booking-header">
+      <button mat-icon-button (click)="goBack()" class="back-button">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="header-content">
+        <h1>Booking Details</h1>
+        <p class="booking-id">ID: {{ bookingId() }}</p>
+      </div>
+      <div class="header-actions">
+        <button mat-icon-button [matMenuTriggerFor]="menu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="shareBooking()">
+            <mat-icon>share</mat-icon>
+            <span>Share</span>
+          </button>
+        </mat-menu>
+      </div>
+    </div>
+
+    <!-- Status Card -->
+    <mat-card class="status-card">
+      <mat-card-content>
+        <div class="status-content">
+          <mat-icon [class]="'status-icon status-' + statusColor()">{{ statusIcon() }}</mat-icon>
+          <div class="status-info">
+            <h2>{{ bookingStatus() }}</h2>
+            <p *ngIf="bookingStatus() === 'CONFIRMED' && !booking()?.checkedIn">
+              {{ timeUntilStart() }}
+            </p>
+          </div>
+        </div>
+        <mat-chip-set aria-label="Booking status">
+          <mat-chip [class]="'status-chip status-chip-' + statusColor()">
+            {{ bookingStatus() }}
+          </mat-chip>
+        </mat-chip-set>
+      </mat-card-content>
+    </mat-card>
+
+    <div class="content-grid">
+      <!-- Left Column -->
+      <div class="left-column">
+        <!-- Parking Details Card -->
+        <mat-card class="parking-card">
+          <div class="parking-image-container">
+            <img [src]="parkingImage()" [alt]="booking()?.parking?.title" class="parking-image">
+            <div class="image-overlay">
+              <button mat-fab color="primary" (click)="getDirections()" matTooltip="Get Directions">
+                <mat-icon>directions</mat-icon>
+              </button>
+            </div>
+          </div>
+          <mat-card-header>
+            <mat-card-title>{{ booking()?.parking?.title }}</mat-card-title>
+            <mat-card-subtitle>
+              <mat-icon class="location-icon">location_on</mat-icon>
+              {{ booking()?.parking?.address }}
+            </mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="parking-info">
+              <div class="info-row">
+                <mat-icon>person</mat-icon>
+                <div class="info-content">
+                  <span class="info-label">Owner</span>
+                  <span class="info-value">{{ ownerName() }}</span>
+                </div>
+                <button mat-icon-button color="primary" (click)="contactOwner()" matTooltip="Contact Owner">
+                  <mat-icon>message</mat-icon>
+                </button>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Booking Time Card -->
+        <mat-card class="time-card">
+          <mat-card-header>
+            <mat-icon mat-card-avatar>schedule</mat-icon>
+            <mat-card-title>Booking Time</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="time-info">
+              <div class="time-item">
+                <mat-icon color="primary">event</mat-icon>
+                <div>
+                  <span class="time-label">Start Time</span>
+                  <span class="time-value">{{ formattedStartTime() }}</span>
+                </div>
+              </div>
+              <mat-divider></mat-divider>
+              <div class="time-item">
+                <mat-icon color="accent">event</mat-icon>
+                <div>
+                  <span class="time-label">End Time</span>
+                  <span class="time-value">{{ formattedEndTime() }}</span>
+                </div>
+              </div>
+              <mat-divider></mat-divider>
+              <div class="time-item">
+                <mat-icon>timer</mat-icon>
+                <div>
+                  <span class="time-label">Duration</span>
+                  <span class="time-value">{{ bookingDuration() }}</span>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Payment Information Card -->
+        <mat-card class="payment-card">
+          <mat-card-header>
+            <mat-icon mat-card-avatar>payment</mat-icon>
+            <mat-card-title>Payment Information</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="payment-info">
+              <!-- Price Breakdown -->
+              <div *ngIf="booking()?.appliedPriceRules && booking()!.appliedPriceRules.length > 0" class="price-breakdown">
+                <div *ngFor="let rule of booking()!.appliedPriceRules" class="price-item">
+                  <span class="price-label">{{ rule.name }}</span>
+                  <span class="price-value">{{ formatCurrency(rule.amount, booking()!.currency) }}</span>
+                </div>
+                <mat-divider></mat-divider>
+              </div>
+
+              <!-- Total -->
+              <div class="total-price">
+                <span class="total-label">Total Amount</span>
+                <span class="total-value">{{ formatCurrency(booking()!.totalPrice, booking()!.currency) }}</span>
+              </div>
+
+              <!-- Payment Status -->
+              <div class="payment-status">
+                <mat-icon [color]="booking()?.paymentId ? 'primary' : 'warn'">
+                  {{ booking()?.paymentId ? 'check_circle' : 'pending' }}
+                </mat-icon>
+                <span>{{ booking()?.paymentId ? 'Payment Confirmed' : 'Payment Pending' }}</span>
+              </div>
+
+              <!-- Payment ID -->
+              <div *ngIf="booking()?.paymentId" class="payment-id">
+                <span class="payment-id-label">Payment ID:</span>
+                <span class="payment-id-value">{{ booking()?.paymentId }}</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Notes Card -->
+        <mat-card *ngIf="booking()?.notes" class="notes-card">
+          <mat-card-header>
+            <mat-icon mat-card-avatar>notes</mat-icon>
+            <mat-card-title>Booking Notes</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p class="notes-text">{{ booking()?.notes }}</p>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <!-- Right Column -->
+      <div class="right-column">
+        <!-- Access Code Card -->
+        <mat-card class="access-card" *ngIf="booking()?.checkedIn || booking()?.accessCode">
+          <mat-card-header>
+            <mat-icon mat-card-avatar color="primary">qr_code_2</mat-icon>
+            <mat-card-title>Access Code</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="qr-code-container">
+              <div *ngIf="qrCodeDataUrl()" class="qr-code">
+                <img [src]="qrCodeDataUrl()!" alt="QR Code" class="qr-image">
+              </div>
+              <div *ngIf="!qrCodeDataUrl() && booking()?.accessCode" class="qr-code-loading">
+                <mat-spinner diameter="50"></mat-spinner>
+              </div>
+            </div>
+
+            <div class="access-code-section">
+              <div class="access-code-header">
+                <span class="access-code-label">Access Code</span>
+                <button mat-icon-button (click)="toggleAccessCode()" matTooltip="Toggle visibility">
+                  <mat-icon>{{ showAccessCode() ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
+              </div>
+              <div class="access-code-value">
+                <span *ngIf="showAccessCode()" class="code">{{ booking()?.accessCode }}</span>
+                <span *ngIf="!showAccessCode()" class="code-hidden">••••••••</span>
+              </div>
+            </div>
+
+            <div class="access-actions">
+              <button mat-raised-button color="primary" (click)="downloadQRCode()" [disabled]="!qrCodeDataUrl()">
+                <mat-icon>download</mat-icon>
+                Download QR Code
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Timeline Card -->
+        <mat-card class="timeline-card">
+          <mat-card-header>
+            <mat-icon mat-card-avatar>timeline</mat-icon>
+            <mat-card-title>Booking Timeline</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="timeline">
+              <div *ngFor="let event of bookingEvents(); let last = last" class="timeline-item">
+                <div class="timeline-marker" [class.completed]="event.completed" [class]="'marker-' + event.color">
+                  <mat-icon>{{ event.icon }}</mat-icon>
+                </div>
+                <div class="timeline-content">
+                  <h4 class="timeline-title" [class.completed]="event.completed">{{ event.title }}</h4>
+                  <p class="timeline-date" *ngIf="event.date">{{ formatDate(event.date) }}</p>
+                  <p class="timeline-date pending" *ngIf="!event.date && !event.completed">Pending</p>
+                </div>
+                <div class="timeline-line" *ngIf="!last" [class.completed]="event.completed"></div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Check-in/Check-out Info -->
+        <mat-card class="checkin-card" *ngIf="booking()?.checkedIn || booking()?.checkedOut">
+          <mat-card-header>
+            <mat-icon mat-card-avatar>info</mat-icon>
+            <mat-card-title>Check-in/Check-out Details</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="checkin-info">
+              <div *ngIf="booking()?.checkedIn" class="checkin-item">
+                <mat-icon color="primary">login</mat-icon>
+                <div>
+                  <span class="checkin-label">Checked In</span>
+                  <span class="checkin-value">{{ formatDate(booking()!.checkedInTime!) }}</span>
+                </div>
+              </div>
+              <mat-divider *ngIf="booking()?.checkedIn && booking()?.checkedOut"></mat-divider>
+              <div *ngIf="booking()?.checkedOut" class="checkin-item">
+                <mat-icon color="accent">logout</mat-icon>
+                <div>
+                  <span class="checkin-label">Checked Out</span>
+                  <span class="checkin-value">{{ formatDate(booking()!.checkedOutTime!) }}</span>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Actions Card -->
+        <mat-card class="actions-card">
+          <mat-card-header>
+            <mat-icon mat-card-avatar>touch_app</mat-icon>
+            <mat-card-title>Quick Actions</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="action-buttons">
+              <!-- Check-in Button -->
+              <button
+                mat-raised-button
+                color="primary"
+                (click)="handleCheckIn()"
+                [disabled]="!canCheckIn() || isProcessing()"
+                class="action-button"
+              >
+                <mat-icon>login</mat-icon>
+                Check In
+              </button>
+
+              <!-- Check-out Button -->
+              <button
+                mat-raised-button
+                color="accent"
+                (click)="handleCheckOut()"
+                [disabled]="!canCheckOut() || isProcessing()"
+                class="action-button"
+              >
+                <mat-icon>logout</mat-icon>
+                Check Out
+              </button>
+
+              <!-- Get Directions Button -->
+              <button
+                mat-stroked-button
+                color="primary"
+                (click)="getDirections()"
+                class="action-button"
+              >
+                <mat-icon>directions</mat-icon>
+                Get Directions
+              </button>
+
+              <!-- Contact Owner Button -->
+              <button
+                mat-stroked-button
+                (click)="contactOwner()"
+                class="action-button"
+              >
+                <mat-icon>message</mat-icon>
+                Contact Owner
+              </button>
+
+              <!-- Get Access Code Button -->
+              <button
+                *ngIf="!booking()?.accessCode && booking()?.checkedIn"
+                mat-stroked-button
+                color="primary"
+                (click)="getAccessCode()"
+                [disabled]="isProcessing()"
+                class="action-button"
+              >
+                <mat-icon>qr_code</mat-icon>
+                Get Access Code
+              </button>
+
+              <!-- Cancel Button -->
+              <button
+                mat-stroked-button
+                color="warn"
+                (click)="handleCancel()"
+                [disabled]="!canCancel() || isProcessing()"
+                class="action-button"
+              >
+                <mat-icon>cancel</mat-icon>
+                Cancel Booking
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div>

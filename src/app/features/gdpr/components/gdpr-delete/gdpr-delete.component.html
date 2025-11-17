@@ -1,0 +1,339 @@
+<div class="gdpr-delete-container">
+  <!-- Header -->
+  <div class="delete-header">
+    <div class="header-content">
+      <div class="title-section">
+        <mat-icon class="header-icon">delete_forever</mat-icon>
+        <div>
+          <h1>Account Deletion</h1>
+          <p class="subtitle">Request permanent deletion of your account and data</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="loadDeletionRequests()"
+          [disabled]="loading()"
+        >
+          @if (loading()) {
+            <mat-spinner diameter="20" style="display: inline-block; margin-right: 8px;"></mat-spinner>
+          } @else {
+            <mat-icon>refresh</mat-icon>
+          }
+          Refresh
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  @if (error()) {
+    <mat-card class="error-card">
+      <mat-card-content>
+        <div class="error-content">
+          <mat-icon class="error-icon">error</mat-icon>
+          <div>
+            <h3>Error Loading Deletion Requests</h3>
+            <p>{{ error() }}</p>
+            <button mat-raised-button color="primary" (click)="loadDeletionRequests()">
+              <mat-icon>refresh</mat-icon>
+              Try Again
+            </button>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  <div class="delete-content">
+    <!-- Pending Request Warning -->
+    @if (hasPendingRequest()) {
+      <mat-card class="pending-card">
+        <mat-card-content>
+          <div class="pending-content">
+            <mat-icon class="pending-icon">pending</mat-icon>
+            <div>
+              <h3>Deletion Request Pending</h3>
+              <p>
+                You already have a pending deletion request. Please wait for it to be processed
+                before submitting a new request. Check the status in the Request History section below.
+              </p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    }
+
+    <!-- Deletion Request Stepper -->
+    @if (!hasPendingRequest()) {
+      <mat-card class="stepper-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>assignment</mat-icon>
+            Request Account Deletion
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-stepper [linear]="true" [selectedIndex]="currentStep()" class="deletion-stepper">
+            <!-- Step 1: Select Reason -->
+            <mat-step [completed]="currentStep() > 0">
+              <ng-template matStepLabel>Select Reason</ng-template>
+              <div class="step-content">
+                <div class="step-header">
+                  <mat-icon>help</mat-icon>
+                  <h3>Why are you leaving?</h3>
+                  <p>Please help us understand why you want to delete your account</p>
+                </div>
+
+                <form [formGroup]="reasonForm" class="reason-form">
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Reason for Deletion</mat-label>
+                    <mat-select formControlName="reason" required>
+                      @for (reason of deletionReasons; track reason.id) {
+                        <mat-option [value]="reason.id">
+                          {{ reason.label }}
+                        </mat-option>
+                      }
+                    </mat-select>
+                    <mat-icon matPrefix>info</mat-icon>
+                  </mat-form-field>
+
+                  @if (reasonForm.get('reason')?.value) {
+                    <div class="reason-description">
+                      @for (reason of deletionReasons; track reason.id) {
+                        @if (reasonForm.get('reason')?.value === reason.id) {
+                          <p>{{ reason.description }}</p>
+                        }
+                      }
+                    </div>
+                  }
+
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Additional Comments (Optional)</mat-label>
+                    <textarea
+                      matInput
+                      formControlName="additionalComments"
+                      rows="4"
+                      placeholder="Tell us more about your decision..."
+                    ></textarea>
+                    <mat-icon matPrefix>comment</mat-icon>
+                  </mat-form-field>
+                </form>
+
+                <div class="step-actions">
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    (click)="nextStep()"
+                    [disabled]="reasonForm.invalid"
+                  >
+                    Next
+                    <mat-icon>arrow_forward</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </mat-step>
+
+            <!-- Step 2: Understand Consequences -->
+            <mat-step [completed]="currentStep() > 1">
+              <ng-template matStepLabel>Understand Consequences</ng-template>
+              <div class="step-content">
+                <div class="step-header warning">
+                  <mat-icon>warning</mat-icon>
+                  <h3>Important: Read Before Proceeding</h3>
+                  <p>Please carefully review what will happen when you delete your account</p>
+                </div>
+
+                <div class="consequences-card">
+                  <h4>
+                    <mat-icon>info</mat-icon>
+                    Account Deletion Consequences
+                  </h4>
+                  <ul class="consequences-list">
+                    @for (consequence of consequences; track $index) {
+                      <li>
+                        <mat-icon>{{ $index === consequences.length - 1 ? 'block' : 'check_circle' }}</mat-icon>
+                        {{ consequence }}
+                      </li>
+                    }
+                  </ul>
+                </div>
+
+                <div class="warning-box">
+                  <mat-icon>priority_high</mat-icon>
+                  <div>
+                    <strong>Warning:</strong> This action is permanent and cannot be reversed.
+                    Make sure you have downloaded any data you want to keep before proceeding.
+                  </div>
+                </div>
+
+                <div class="step-actions">
+                  <button mat-stroked-button (click)="previousStep()">
+                    <mat-icon>arrow_back</mat-icon>
+                    Back
+                  </button>
+                  <button mat-raised-button color="primary" (click)="nextStep()">
+                    I Understand, Continue
+                    <mat-icon>arrow_forward</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </mat-step>
+
+            <!-- Step 3: Verify Identity -->
+            <mat-step [completed]="currentStep() > 2">
+              <ng-template matStepLabel>Verify Identity</ng-template>
+              <div class="step-content">
+                <div class="step-header">
+                  <mat-icon>security</mat-icon>
+                  <h3>Verify Your Identity</h3>
+                  <p>For security reasons, please re-enter your password to confirm your identity</p>
+                </div>
+
+                <form [formGroup]="authForm" class="auth-form">
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Password</mat-label>
+                    <input
+                      matInput
+                      type="password"
+                      formControlName="password"
+                      placeholder="Enter your password"
+                      required
+                    />
+                    <mat-icon matPrefix>lock</mat-icon>
+                    @if (authForm.get('password')?.hasError('required')) {
+                      <mat-error>Password is required</mat-error>
+                    }
+                    @if (authForm.get('password')?.hasError('minlength')) {
+                      <mat-error>Password must be at least 8 characters</mat-error>
+                    }
+                  </mat-form-field>
+                </form>
+
+                <div class="security-note">
+                  <mat-icon>info</mat-icon>
+                  <p>
+                    This verification ensures that only you can request the deletion of your account.
+                    Your password will not be stored or transmitted insecurely.
+                  </p>
+                </div>
+
+                <div class="step-actions">
+                  <button mat-stroked-button (click)="previousStep()">
+                    <mat-icon>arrow_back</mat-icon>
+                    Back
+                  </button>
+                  <button
+                    mat-raised-button
+                    color="warn"
+                    (click)="openConfirmationDialog()"
+                    [disabled]="authForm.invalid || submitting()"
+                  >
+                    @if (submitting()) {
+                      <mat-spinner diameter="20" style="display: inline-block; margin-right: 8px;"></mat-spinner>
+                      Submitting...
+                    } @else {
+                      <mat-icon>delete_forever</mat-icon>
+                      Submit Deletion Request
+                    }
+                  </button>
+                </div>
+              </div>
+            </mat-step>
+          </mat-stepper>
+
+          <div class="cancel-section">
+            <button mat-stroked-button (click)="cancelRequest()" [disabled]="submitting()">
+              <mat-icon>cancel</mat-icon>
+              Cancel and Go Back
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    }
+
+    <!-- Request History -->
+    @if (deletionRequests().length > 0) {
+      <mat-card class="history-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>history</mat-icon>
+            Request History
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="requests-list">
+            @for (request of deletionRequests(); track request.id) {
+              <div class="request-item" [class]="getStatusColor(request.status)">
+                <div class="request-header">
+                  <div class="status-badge" [class]="getStatusColor(request.status)">
+                    <mat-icon>{{ getStatusIcon(request.status) }}</mat-icon>
+                    <span>{{ getStatusLabel(request.status) }}</span>
+                  </div>
+                  <span class="request-date">{{ formatDate(request.createdAt) }}</span>
+                </div>
+
+                <div class="request-details">
+                  @if (request.reason) {
+                    <div class="detail-row">
+                      <mat-icon>info</mat-icon>
+                      <span><strong>Reason:</strong> {{ request.reason }}</span>
+                    </div>
+                  }
+
+                  @if (request.status === DataDeletionStatus.REJECTED && request.rejectionReason) {
+                    <div class="detail-row rejection">
+                      <mat-icon>cancel</mat-icon>
+                      <span><strong>Rejection Reason:</strong> {{ request.rejectionReason }}</span>
+                    </div>
+                  }
+
+                  @if (request.scheduledFor) {
+                    <div class="detail-row">
+                      <mat-icon>schedule</mat-icon>
+                      <span><strong>Scheduled For:</strong> {{ formatDate(request.scheduledFor) }}</span>
+                    </div>
+                  }
+
+                  @if (request.completedAt) {
+                    <div class="detail-row">
+                      <mat-icon>done_all</mat-icon>
+                      <span><strong>Completed At:</strong> {{ formatDate(request.completedAt) }}</span>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        </mat-card-content>
+      </mat-card>
+    }
+
+    <!-- Information Card -->
+    <mat-card class="info-card">
+      <mat-card-content>
+        <div class="info-content">
+          <mat-icon class="info-icon">info</mat-icon>
+          <div>
+            <h3>About Account Deletion</h3>
+            <p>
+              Under GDPR regulations, you have the right to request deletion of your personal data
+              (also known as the "right to be forgotten").
+            </p>
+            <ul>
+              <li><strong>Review Process:</strong> Deletion requests are reviewed within 5-7 business days</li>
+              <li><strong>Data Retention:</strong> Some data may be retained for legal or regulatory compliance</li>
+              <li><strong>Active Obligations:</strong> Complete any pending bookings or payments before deletion</li>
+              <li><strong>Anonymization:</strong> Some public content (like reviews) may be anonymized instead of deleted</li>
+            </ul>
+            <p class="note">
+              If you have any questions or concerns about account deletion, please contact our support team
+              before submitting a deletion request.
+            </p>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

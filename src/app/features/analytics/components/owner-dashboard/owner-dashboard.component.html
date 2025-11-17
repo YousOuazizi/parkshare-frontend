@@ -1,0 +1,303 @@
+<div class="owner-dashboard-container">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-content">
+      <h1 class="title">
+        <mat-icon>business</mat-icon>
+        Owner Dashboard
+      </h1>
+      <div class="header-actions">
+        <button mat-raised-button color="primary" (click)="addNewParking()">
+          <mat-icon>add</mat-icon>
+          Add Parking
+        </button>
+        <button mat-icon-button (click)="refresh()" matTooltip="Refresh">
+          <mat-icon>refresh</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading()" class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Loading your dashboard...</p>
+  </div>
+
+  <!-- Error State -->
+  <mat-card *ngIf="error()" class="error-card">
+    <div class="error-content">
+      <mat-icon color="warn">error</mat-icon>
+      <h3>Oops! Something went wrong</h3>
+      <p>{{ error() }}</p>
+      <button mat-raised-button color="primary" (click)="refresh()">
+        Try Again
+      </button>
+    </div>
+  </mat-card>
+
+  <!-- Dashboard Content -->
+  <div *ngIf="!loading() && !error()" class="dashboard-content">
+
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+      <mat-card class="stat-card">
+        <div class="stat-icon-wrapper success">
+          <mat-icon>attach_money</mat-icon>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ formatCurrency(totalEarnings()) }}</div>
+          <div class="stat-label">Total Earnings</div>
+          <div class="stat-trend positive">
+            <mat-icon>trending_up</mat-icon>
+            <span>+12.5% this month</span>
+          </div>
+        </div>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <div class="stat-icon-wrapper primary">
+          <mat-icon>event</mat-icon>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ totalBookings() }}</div>
+          <div class="stat-label">Total Bookings</div>
+          <div class="stat-trend positive">
+            <mat-icon>trending_up</mat-icon>
+            <span>+8.3% this month</span>
+          </div>
+        </div>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <div class="stat-icon-wrapper info">
+          <mat-icon>query_stats</mat-icon>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ formatPercentage(occupancyRate()) }}</div>
+          <div class="stat-label">Occupancy Rate</div>
+          <div class="stat-trend positive">
+            <mat-icon>trending_up</mat-icon>
+            <span>+3.2% this month</span>
+          </div>
+        </div>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <div class="stat-icon-wrapper accent">
+          <mat-icon>local_parking</mat-icon>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ activeParkings() }}</div>
+          <div class="stat-label">Active Parkings</div>
+          <div class="stat-info">
+            <mat-icon>star</mat-icon>
+            <span>{{ averageRating() }} avg rating</span>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+
+    <!-- Revenue Chart Placeholder -->
+    <mat-card class="chart-card">
+      <div class="card-header">
+        <div class="card-title">
+          <mat-icon>insert_chart</mat-icon>
+          <h2>Revenue Trends</h2>
+        </div>
+        <button mat-button color="primary">
+          View Details
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </div>
+      <mat-divider></mat-divider>
+
+      <div class="chart-placeholder">
+        <mat-icon>show_chart</mat-icon>
+        <p>Revenue chart will be displayed here</p>
+        <small>Monthly revenue trends and growth analytics</small>
+      </div>
+
+      <!-- Simple Revenue List (placeholder for chart) -->
+      <div class="revenue-list">
+        <div *ngFor="let trend of revenueTrends()" class="revenue-item">
+          <span class="month">{{ trend.month }}</span>
+          <div class="revenue-bar-container">
+            <div
+              class="revenue-bar"
+              [style.width.%]="(trend.revenue / 12500 * 100)">
+            </div>
+          </div>
+          <span class="revenue-amount">{{ formatCurrency(trend.revenue) }}</span>
+        </div>
+      </div>
+    </mat-card>
+
+    <!-- Popular Parkings and Recent Bookings -->
+    <div class="content-grid">
+
+      <!-- Popular Parkings -->
+      <mat-card class="section-card">
+        <div class="card-header">
+          <div class="card-title">
+            <mat-icon>trending_up</mat-icon>
+            <h2>Popular Parkings</h2>
+          </div>
+          <button mat-button color="primary" (click)="navigateToParkings()">
+            View All
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </div>
+        <mat-divider></mat-divider>
+
+        <div class="parkings-list">
+          <div *ngIf="popularParkings().length === 0" class="empty-state">
+            <mat-icon>local_parking</mat-icon>
+            <p>No parkings yet</p>
+            <button mat-raised-button color="primary" (click)="addNewParking()">
+              <mat-icon>add</mat-icon>
+              Add Your First Parking
+            </button>
+          </div>
+
+          <div
+            *ngFor="let parking of popularParkings()"
+            class="parking-item"
+            (click)="viewParkingDetails(parking.id)">
+            <div class="parking-main">
+              <div class="parking-header">
+                <mat-icon class="parking-icon">local_parking</mat-icon>
+                <div class="parking-info">
+                  <span class="parking-title">{{ parking.title }}</span>
+                  <span class="parking-address">{{ parking.address }}</span>
+                </div>
+              </div>
+              <div class="parking-stats">
+                <div class="stat-item">
+                  <mat-icon>event</mat-icon>
+                  <span>{{ parking.bookings }} bookings</span>
+                </div>
+                <div class="stat-item">
+                  <mat-icon>attach_money</mat-icon>
+                  <span>{{ formatCurrency(parking.revenue) }}</span>
+                </div>
+              </div>
+              <div class="parking-metrics">
+                <div class="occupancy-badge" [class]="getOccupancyClass(parking.occupancyRate)">
+                  <mat-icon>query_stats</mat-icon>
+                  <span>{{ formatPercentage(parking.occupancyRate) }} occupancy</span>
+                </div>
+                <div class="rating">
+                  <mat-icon *ngFor="let star of getRatingStars(parking.rating)" class="star-icon">
+                    {{ star }}
+                  </mat-icon>
+                  <span class="rating-value">{{ parking.rating }}</span>
+                </div>
+              </div>
+            </div>
+            <mat-icon class="chevron-icon">chevron_right</mat-icon>
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- Recent Bookings -->
+      <mat-card class="section-card">
+        <div class="card-header">
+          <div class="card-title">
+            <mat-icon>history</mat-icon>
+            <h2>Recent Bookings</h2>
+          </div>
+          <button mat-button color="primary" (click)="navigateToBookings()">
+            View All
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </div>
+        <mat-divider></mat-divider>
+
+        <div class="bookings-list">
+          <div *ngIf="recentBookings().length === 0" class="empty-state">
+            <mat-icon>event_busy</mat-icon>
+            <p>No recent bookings</p>
+          </div>
+
+          <div
+            *ngFor="let booking of recentBookings()"
+            class="booking-item"
+            (click)="viewBookingDetails(booking.id)">
+            <div class="booking-info">
+              <div class="booking-header">
+                <mat-icon class="user-icon">person</mat-icon>
+                <div class="booking-main">
+                  <span class="user-name">{{ booking.userName }}</span>
+                  <span class="parking-name">{{ booking.parkingTitle }}</span>
+                </div>
+              </div>
+              <div class="booking-details">
+                <span class="booking-date">
+                  <mat-icon>event</mat-icon>
+                  {{ formatDate(booking.date) }}
+                </span>
+                <span class="booking-amount">{{ formatCurrency(booking.amount) }}</span>
+              </div>
+            </div>
+            <mat-chip [class]="getStatusClass(booking.status)" class="status-chip">
+              <mat-icon class="chip-icon">{{ getStatusIcon(booking.status) }}</mat-icon>
+              {{ booking.status }}
+            </mat-chip>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+
+    <!-- Performance Metrics -->
+    <mat-card class="metrics-card">
+      <div class="card-header">
+        <div class="card-title">
+          <mat-icon>analytics</mat-icon>
+          <h2>Performance Metrics</h2>
+        </div>
+      </div>
+      <mat-divider></mat-divider>
+
+      <div class="metrics-grid">
+        <div class="metric-item">
+          <div class="metric-header">
+            <mat-icon class="metric-icon">visibility</mat-icon>
+            <span class="metric-label">Views to Bookings</span>
+          </div>
+          <div class="metric-value">{{ formatPercentage(conversionRate()) }}</div>
+          <div class="metric-bar">
+            <div class="metric-bar-fill" [style.width.%]="conversionRate()"></div>
+          </div>
+        </div>
+
+        <div class="metric-item">
+          <div class="metric-header">
+            <mat-icon class="metric-icon">schedule</mat-icon>
+            <span class="metric-label">Average Response Time</span>
+          </div>
+          <div class="metric-value">2.5 hours</div>
+          <div class="metric-description">Fast response rate</div>
+        </div>
+
+        <div class="metric-item">
+          <div class="metric-header">
+            <mat-icon class="metric-icon">star</mat-icon>
+            <span class="metric-label">Customer Satisfaction</span>
+          </div>
+          <div class="metric-value">{{ formatPercentage(92) }}</div>
+          <div class="metric-description">Based on reviews</div>
+        </div>
+
+        <div class="metric-item">
+          <div class="metric-header">
+            <mat-icon class="metric-icon">repeat</mat-icon>
+            <span class="metric-label">Repeat Customers</span>
+          </div>
+          <div class="metric-value">{{ formatPercentage(35) }}</div>
+          <div class="metric-description">Customer retention</div>
+        </div>
+      </div>
+    </mat-card>
+  </div>
+</div>

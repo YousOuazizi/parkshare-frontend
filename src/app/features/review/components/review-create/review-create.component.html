@@ -1,0 +1,252 @@
+<div class="review-create-container">
+  <mat-card class="review-form-card">
+    <div class="card-header">
+      <h2 class="card-title">Write a Review</h2>
+      <p class="card-subtitle">Share your experience to help others</p>
+    </div>
+
+    <form [formGroup]="reviewForm" (ngSubmit)="onSubmit()" class="review-form">
+      <!-- Overall Rating Section -->
+      <div class="rating-section">
+        <h3 class="section-title">Overall Rating</h3>
+        <div class="rating-container">
+          <div class="star-selector">
+            @for (star of getStarArray(overallRating()); track star) {
+              <button
+                type="button"
+                class="star-button"
+                [class.filled]="isStarFilled(star, overallRating())"
+                (click)="setOverallRating(star)"
+                [attr.aria-label]="'Rate ' + star + ' stars'"
+                matTooltip="{{ ratingLabels[star - 1] }}">
+                <mat-icon class="star-icon">
+                  {{ isStarFilled(star, overallRating()) ? 'star' : 'star_border' }}
+                </mat-icon>
+              </button>
+            }
+          </div>
+          @if (overallRating() > 0) {
+            <div class="rating-label">{{ getRatingLabel(overallRating()) }}</div>
+          } @else {
+            <div class="rating-label hint">Click stars to rate</div>
+          }
+        </div>
+        @if (overallRating() === 0) {
+          <div class="rating-error">
+            <mat-icon class="error-icon">info</mat-icon>
+            <span>Overall rating is required</span>
+          </div>
+        }
+      </div>
+
+      <!-- Criteria Ratings Section -->
+      <div class="criteria-section">
+        <h3 class="section-title">Rate by Category</h3>
+        <p class="section-subtitle">Help others by rating specific aspects (optional)</p>
+
+        <!-- Cleanliness Rating -->
+        <div class="criterion-item">
+          <div class="criterion-header">
+            <mat-icon class="criterion-icon">cleaning_services</mat-icon>
+            <div class="criterion-info">
+              <span class="criterion-label">Cleanliness</span>
+              <span class="criterion-description">How clean was the parking spot?</span>
+            </div>
+          </div>
+          <div class="criterion-rating">
+            <div class="star-selector small">
+              @for (star of getStarArray(criteriaRatings().cleanliness); track star) {
+                <button
+                  type="button"
+                  class="star-button small"
+                  [class.filled]="isStarFilled(star, criteriaRatings().cleanliness)"
+                  (click)="setCriteriaRating('cleanliness', star)"
+                  [attr.aria-label]="'Rate cleanliness ' + star + ' stars'">
+                  <mat-icon class="star-icon">
+                    {{ isStarFilled(star, criteriaRatings().cleanliness) ? 'star' : 'star_border' }}
+                  </mat-icon>
+                </button>
+              }
+            </div>
+            @if (criteriaRatings().cleanliness > 0) {
+              <span class="rating-value">{{ criteriaRatings().cleanliness }}.0</span>
+            }
+          </div>
+        </div>
+
+        <!-- Location Rating -->
+        <div class="criterion-item">
+          <div class="criterion-header">
+            <mat-icon class="criterion-icon">place</mat-icon>
+            <div class="criterion-info">
+              <span class="criterion-label">Location</span>
+              <span class="criterion-description">How convenient was the location?</span>
+            </div>
+          </div>
+          <div class="criterion-rating">
+            <div class="star-selector small">
+              @for (star of getStarArray(criteriaRatings().location); track star) {
+                <button
+                  type="button"
+                  class="star-button small"
+                  [class.filled]="isStarFilled(star, criteriaRatings().location)"
+                  (click)="setCriteriaRating('location', star)"
+                  [attr.aria-label]="'Rate location ' + star + ' stars'">
+                  <mat-icon class="star-icon">
+                    {{ isStarFilled(star, criteriaRatings().location) ? 'star' : 'star_border' }}
+                  </mat-icon>
+                </button>
+              }
+            </div>
+            @if (criteriaRatings().location > 0) {
+              <span class="rating-value">{{ criteriaRatings().location }}.0</span>
+            }
+          </div>
+        </div>
+
+        <!-- Value Rating -->
+        <div class="criterion-item">
+          <div class="criterion-header">
+            <mat-icon class="criterion-icon">attach_money</mat-icon>
+            <div class="criterion-info">
+              <span class="criterion-label">Value for Money</span>
+              <span class="criterion-description">Was the price fair?</span>
+            </div>
+          </div>
+          <div class="criterion-rating">
+            <div class="star-selector small">
+              @for (star of getStarArray(criteriaRatings().value); track star) {
+                <button
+                  type="button"
+                  class="star-button small"
+                  [class.filled]="isStarFilled(star, criteriaRatings().value)"
+                  (click)="setCriteriaRating('value', star)"
+                  [attr.aria-label]="'Rate value ' + star + ' stars'">
+                  <mat-icon class="star-icon">
+                    {{ isStarFilled(star, criteriaRatings().value) ? 'star' : 'star_border' }}
+                  </mat-icon>
+                </button>
+              }
+            </div>
+            @if (criteriaRatings().value > 0) {
+              <span class="rating-value">{{ criteriaRatings().value }}.0</span>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Comment Section -->
+      <div class="comment-section">
+        <h3 class="section-title">Your Review</h3>
+        <mat-form-field appearance="outline" class="comment-field">
+          <mat-label>Share your experience</mat-label>
+          <textarea
+            matInput
+            formControlName="comment"
+            rows="6"
+            placeholder="Tell us about your parking experience. What did you like? What could be improved?"
+            [maxlength]="MAX_COMMENT_LENGTH"></textarea>
+          <mat-hint align="start">
+            @if (reviewForm.get('comment')?.hasError('minlength')) {
+              <span class="error-hint">
+                Minimum {{ MIN_COMMENT_LENGTH }} characters required
+              </span>
+            } @else {
+              <span>Be specific and honest</span>
+            }
+          </mat-hint>
+          <mat-hint align="end" [class.near-limit]="isCharacterLimitNear()">
+            {{ commentLength() }} / {{ MAX_COMMENT_LENGTH }}
+          </mat-hint>
+        </mat-form-field>
+      </div>
+
+      <!-- Photos Section -->
+      <div class="photos-section">
+        <h3 class="section-title">Add Photos (Optional)</h3>
+        <p class="section-subtitle">Help others by sharing photos of the parking spot</p>
+
+        <!-- Photo Upload Button -->
+        <div class="upload-container">
+          <input
+            type="file"
+            #fileInput
+            accept="image/*"
+            multiple
+            (change)="onPhotoSelected($event)"
+            style="display: none">
+          <button
+            type="button"
+            mat-raised-button
+            color="primary"
+            class="upload-button"
+            (click)="fileInput.click()"
+            [disabled]="photosPreviews().length >= 5">
+            <mat-icon>add_photo_alternate</mat-icon>
+            Add Photos
+          </button>
+          <span class="upload-hint">Up to 5 photos, max 5MB each</span>
+        </div>
+
+        <!-- Photo Previews -->
+        @if (photosPreviews().length > 0) {
+          <div class="photos-preview">
+            @for (photo of photosPreviews(); track $index) {
+              <div class="photo-preview-item">
+                <img [src]="photo.url" alt="Review photo">
+                <button
+                  type="button"
+                  mat-icon-button
+                  class="remove-photo-button"
+                  (click)="removePhoto($index)"
+                  matTooltip="Remove photo">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <button
+          type="button"
+          mat-stroked-button
+          class="cancel-button"
+          (click)="onCancel()"
+          [disabled]="isSubmitting()">
+          Cancel
+        </button>
+        <button
+          type="submit"
+          mat-raised-button
+          color="primary"
+          class="submit-button"
+          [disabled]="!isFormValid() || isSubmitting()">
+          @if (isSubmitting()) {
+            <mat-spinner diameter="20" class="button-spinner"></mat-spinner>
+            <span>Submitting...</span>
+          } @else {
+            <mat-icon>send</mat-icon>
+            <span>Submit Review</span>
+          }
+        </button>
+      </div>
+
+      <!-- Guidelines -->
+      <div class="guidelines">
+        <div class="guidelines-header">
+          <mat-icon class="guidelines-icon">info_outline</mat-icon>
+          <span class="guidelines-title">Review Guidelines</span>
+        </div>
+        <ul class="guidelines-list">
+          <li>Be honest and objective in your review</li>
+          <li>Focus on your personal experience</li>
+          <li>Avoid offensive language or personal attacks</li>
+          <li>Do not include personal contact information</li>
+        </ul>
+      </div>
+    </form>
+  </mat-card>
+</div>

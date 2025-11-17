@@ -1,0 +1,339 @@
+<div class="swap-offers-container">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1 class="title">Swap Offers</h1>
+      <p class="subtitle">Manage your swap offers and requests</p>
+    </div>
+
+    <button
+      mat-raised-button
+      color="primary"
+      routerLink="/swap"
+      class="browse-button">
+      <mat-icon>search</mat-icon>
+      Browse Listings
+    </button>
+  </div>
+
+  <!-- Error Alert -->
+  @if (error()) {
+    <div class="error-alert">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ error() }}</span>
+      <button mat-icon-button (click)="error.set(null)">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  }
+
+  <!-- Loading State -->
+  @if (loading()) {
+    <div class="loading-container">
+      <mat-spinner diameter="60"></mat-spinner>
+      <p class="loading-text">Loading offers...</p>
+    </div>
+  }
+
+  <!-- Offers Tabs -->
+  @if (!loading()) {
+    <mat-tab-group
+      [(selectedIndex)]="selectedTabIndex"
+      class="offers-tabs"
+      animationDuration="300ms">
+
+      <!-- Received Offers Tab -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">inbox</mat-icon>
+          <span class="tab-label">Received ({{ receivedOffers().length }})</span>
+        </ng-template>
+
+        <div class="tab-content">
+          <!-- Empty State -->
+          @if (receivedOffers().length === 0) {
+            <div class="empty-state">
+              <mat-icon class="empty-icon">inbox</mat-icon>
+              <h3 class="empty-title">No Received Offers</h3>
+              <p class="empty-message">You haven't received any swap offers yet</p>
+              <button mat-raised-button color="primary" routerLink="/swap/create">
+                <mat-icon>add</mat-icon>
+                Create Listing
+              </button>
+            </div>
+          }
+
+          <!-- Offers List -->
+          @if (receivedOffers().length > 0) {
+            <div class="offers-grid">
+              @for (offer of receivedOffers(); track trackByOfferId($index, offer)) {
+                <mat-card class="offer-card">
+                  <!-- Status Badge -->
+                  <div class="status-badge" [class]="getStatusClass(offer.status)">
+                    {{ offer.status }}
+                  </div>
+
+                  <mat-card-content class="card-content">
+                    <!-- Offerer Info -->
+                    <div class="offerer-section">
+                      <div class="offerer-header">
+                        <mat-icon class="section-icon">person</mat-icon>
+                        <span class="section-title">From</span>
+                      </div>
+                      <div class="offerer-info">
+                        @if (offer.offerer?.profilePicture) {
+                          <img
+                            [src]="offer.offerer.profilePicture"
+                            [alt]="offer.offerer.firstName"
+                            class="avatar">
+                        } @else {
+                          <div class="avatar-placeholder">
+                            <mat-icon>person</mat-icon>
+                          </div>
+                        }
+                        <div class="offerer-details">
+                          <h4>{{ offer.offerer?.firstName }} {{ offer.offerer?.lastName }}</h4>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Offered Parking -->
+                    @if (offer.offeredParking) {
+                      <div class="parking-section">
+                        <div class="parking-header">
+                          <mat-icon class="section-icon">local_parking</mat-icon>
+                          <span class="section-title">Offering</span>
+                        </div>
+                        <div class="parking-card-mini">
+                          <img
+                            [src]="getPrimaryPhotoUrl(offer.offeredParking.photos)"
+                            [alt]="offer.offeredParking.title"
+                            class="parking-image">
+                          <div class="parking-details">
+                            <h4>{{ offer.offeredParking.title }}</h4>
+                            <p class="address">
+                              <mat-icon>place</mat-icon>
+                              {{ offer.offeredParking.address }}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    }
+
+                    <!-- Your Listing -->
+                    @if (offer.listing?.parking) {
+                      <div class="parking-section">
+                        <div class="parking-header">
+                          <mat-icon class="section-icon">swap_horiz</mat-icon>
+                          <span class="section-title">For Your Spot</span>
+                        </div>
+                        <div class="parking-card-mini">
+                          <img
+                            [src]="getPrimaryPhotoUrl(offer.listing.parking.photos)"
+                            [alt]="offer.listing.parking.title"
+                            class="parking-image">
+                          <div class="parking-details">
+                            <h4>{{ offer.listing.parking.title }}</h4>
+                            <p class="address">
+                              <mat-icon>place</mat-icon>
+                              {{ offer.listing.parking.address }}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    }
+
+                    <!-- Offer Details -->
+                    <div class="details-section">
+                      <div class="detail-item">
+                        <mat-icon>date_range</mat-icon>
+                        <span>{{ formatDateRange(offer.startDate, offer.endDate) }}</span>
+                      </div>
+                      @if (offer.offeredPrice) {
+                        <div class="detail-item price">
+                          <mat-icon>attach_money</mat-icon>
+                          <span>{{ formatPrice(offer.offeredPrice) }}</span>
+                        </div>
+                      }
+                      @if (offer.message) {
+                        <div class="message-box">
+                          <mat-icon>message</mat-icon>
+                          <p>{{ offer.message }}</p>
+                        </div>
+                      }
+                    </div>
+
+                    <!-- Response Message -->
+                    @if (offer.responseMessage) {
+                      <div class="response-message">
+                        <mat-icon>reply</mat-icon>
+                        <p>{{ offer.responseMessage }}</p>
+                      </div>
+                    }
+
+                    <!-- Actions -->
+                    @if (canRespondToOffer(offer)) {
+                      <div class="card-actions">
+                        <button
+                          mat-raised-button
+                          color="primary"
+                          (click)="acceptOffer(offer)"
+                          [disabled]="isProcessing(offer.id)">
+                          @if (isProcessing(offer.id)) {
+                            <mat-spinner diameter="20"></mat-spinner>
+                          } @else {
+                            <mat-icon>check</mat-icon>
+                          }
+                          Accept
+                        </button>
+                        <button
+                          mat-stroked-button
+                          color="warn"
+                          (click)="rejectOffer(offer)"
+                          [disabled]="isProcessing(offer.id)">
+                          <mat-icon>close</mat-icon>
+                          Reject
+                        </button>
+                      </div>
+                    }
+                  </mat-card-content>
+                </mat-card>
+              }
+            </div>
+          }
+        </div>
+      </mat-tab>
+
+      <!-- Sent Offers Tab -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">send</mat-icon>
+          <span class="tab-label">Sent ({{ sentOffers().length }})</span>
+        </ng-template>
+
+        <div class="tab-content">
+          <!-- Empty State -->
+          @if (sentOffers().length === 0) {
+            <div class="empty-state">
+              <mat-icon class="empty-icon">send</mat-icon>
+              <h3 class="empty-title">No Sent Offers</h3>
+              <p class="empty-message">You haven't made any swap offers yet</p>
+              <button mat-raised-button color="primary" routerLink="/swap">
+                <mat-icon>search</mat-icon>
+                Browse Listings
+              </button>
+            </div>
+          }
+
+          <!-- Offers List -->
+          @if (sentOffers().length > 0) {
+            <div class="offers-grid">
+              @for (offer of sentOffers(); track trackByOfferId($index, offer)) {
+                <mat-card class="offer-card">
+                  <!-- Status Badge -->
+                  <div class="status-badge" [class]="getStatusClass(offer.status)">
+                    {{ offer.status }}
+                  </div>
+
+                  <mat-card-content class="card-content">
+                    <!-- Listing Info -->
+                    @if (offer.listing?.parking) {
+                      <div class="parking-section">
+                        <div class="parking-header">
+                          <mat-icon class="section-icon">location_searching</mat-icon>
+                          <span class="section-title">Requesting</span>
+                        </div>
+                        <div class="parking-card-mini">
+                          <img
+                            [src]="getPrimaryPhotoUrl(offer.listing.parking.photos)"
+                            [alt]="offer.listing.parking.title"
+                            class="parking-image">
+                          <div class="parking-details">
+                            <h4>{{ offer.listing.parking.title }}</h4>
+                            <p class="address">
+                              <mat-icon>place</mat-icon>
+                              {{ offer.listing.parking.address }}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    }
+
+                    <!-- Your Offered Parking -->
+                    @if (offer.offeredParking) {
+                      <div class="parking-section">
+                        <div class="parking-header">
+                          <mat-icon class="section-icon">local_parking</mat-icon>
+                          <span class="section-title">Your Offer</span>
+                        </div>
+                        <div class="parking-card-mini">
+                          <img
+                            [src]="getPrimaryPhotoUrl(offer.offeredParking.photos)"
+                            [alt]="offer.offeredParking.title"
+                            class="parking-image">
+                          <div class="parking-details">
+                            <h4>{{ offer.offeredParking.title }}</h4>
+                            <p class="address">
+                              <mat-icon>place</mat-icon>
+                              {{ offer.offeredParking.address }}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    }
+
+                    <!-- Offer Details -->
+                    <div class="details-section">
+                      <div class="detail-item">
+                        <mat-icon>date_range</mat-icon>
+                        <span>{{ formatDateRange(offer.startDate, offer.endDate) }}</span>
+                      </div>
+                      @if (offer.offeredPrice) {
+                        <div class="detail-item price">
+                          <mat-icon>attach_money</mat-icon>
+                          <span>{{ formatPrice(offer.offeredPrice) }}</span>
+                        </div>
+                      }
+                      @if (offer.message) {
+                        <div class="message-box">
+                          <mat-icon>message</mat-icon>
+                          <p>{{ offer.message }}</p>
+                        </div>
+                      }
+                    </div>
+
+                    <!-- Response Message -->
+                    @if (offer.responseMessage) {
+                      <div class="response-message" [class.rejected]="offer.status === 'REJECTED'">
+                        <mat-icon>{{ offer.status === 'ACCEPTED' ? 'check_circle' : 'cancel' }}</mat-icon>
+                        <p>{{ offer.responseMessage }}</p>
+                      </div>
+                    }
+
+                    <!-- Actions -->
+                    @if (canCancelOffer(offer)) {
+                      <div class="card-actions">
+                        <button
+                          mat-stroked-button
+                          color="warn"
+                          (click)="cancelOffer(offer)"
+                          [disabled]="isProcessing(offer.id)">
+                          @if (isProcessing(offer.id)) {
+                            <mat-spinner diameter="20"></mat-spinner>
+                          } @else {
+                            <mat-icon>delete</mat-icon>
+                          }
+                          Cancel Offer
+                        </button>
+                      </div>
+                    }
+                  </mat-card-content>
+                </mat-card>
+              }
+            </div>
+          }
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  }
+</div>

@@ -1,0 +1,744 @@
+.user-dashboard-container {
+  padding: var(--spacing-lg);
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: calc(100vh - 64px);
+
+  @media (max-width: 768px) {
+    padding: var(--spacing-md);
+  }
+}
+
+// Header
+.header {
+  margin-bottom: var(--spacing-lg);
+
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  .title {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: 2rem;
+    font-weight: 500;
+    margin: 0;
+    color: var(--primary-color);
+
+    mat-icon {
+      font-size: 2rem;
+      width: 2rem;
+      height: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      font-size: 1.5rem;
+
+      mat-icon {
+        font-size: 1.5rem;
+        width: 1.5rem;
+        height: 1.5rem;
+      }
+    }
+  }
+
+  .header-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: center;
+  }
+}
+
+// Loading & Error States
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-2xl);
+  gap: var(--spacing-md);
+
+  p {
+    margin: 0;
+    color: rgba(0, 0, 0, 0.6);
+  }
+}
+
+.dark-theme .loading-container p {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.error-card {
+  padding: var(--spacing-2xl);
+  text-align: center;
+  border-radius: var(--border-radius-lg);
+
+  .error-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+
+    mat-icon {
+      font-size: 4rem;
+      width: 4rem;
+      height: 4rem;
+      opacity: 0.5;
+    }
+
+    h3 {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 500;
+    }
+
+    p {
+      margin: 0;
+      color: rgba(0, 0, 0, 0.6);
+    }
+  }
+}
+
+.dark-theme .error-card .error-content p {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+// Dashboard Content
+.dashboard-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+// Statistics Grid
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--spacing-md);
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-card {
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    transition: all var(--transition-fast);
+    cursor: default;
+
+    &:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    .stat-icon-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 60px;
+      height: 60px;
+      border-radius: var(--border-radius-lg);
+      background-color: rgba(0, 150, 136, 0.1);
+
+      mat-icon {
+        font-size: 2rem;
+        width: 2rem;
+        height: 2rem;
+        color: var(--primary-color);
+      }
+
+      &.primary {
+        background-color: rgba(0, 150, 136, 0.1);
+        mat-icon { color: #009688; }
+      }
+
+      &.success {
+        background-color: rgba(76, 175, 80, 0.1);
+        mat-icon { color: #4CAF50; }
+      }
+
+      &.accent {
+        background-color: rgba(255, 87, 34, 0.1);
+        mat-icon { color: #FF5722; }
+      }
+
+      &.info {
+        background-color: rgba(33, 150, 243, 0.1);
+        mat-icon { color: #2196F3; }
+      }
+    }
+
+    .stat-content {
+      flex: 1;
+
+      .stat-value {
+        font-size: 1.75rem;
+        font-weight: 600;
+        color: var(--primary-color);
+        margin-bottom: var(--spacing-xs);
+      }
+
+      .stat-label {
+        font-size: 0.875rem;
+        color: rgba(0, 0, 0, 0.6);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+    }
+  }
+}
+
+.dark-theme .stats-grid .stat-card {
+  .stat-icon-wrapper {
+    &.primary {
+      background-color: rgba(0, 150, 136, 0.2);
+      mat-icon { color: #4DB6AC; }
+    }
+
+    &.success {
+      background-color: rgba(76, 175, 80, 0.2);
+      mat-icon { color: #81C784; }
+    }
+
+    &.accent {
+      background-color: rgba(255, 87, 34, 0.2);
+      mat-icon { color: #FF8A65; }
+    }
+
+    &.info {
+      background-color: rgba(33, 150, 243, 0.2);
+      mat-icon { color: #64B5F6; }
+    }
+  }
+
+  .stat-content .stat-label {
+    color: rgba(255, 255, 255, 0.6);
+  }
+}
+
+// Content Grid
+.content-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: var(--spacing-lg);
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Section Cards
+.section-card {
+  border-radius: var(--border-radius-lg);
+  padding: 0;
+  overflow: hidden;
+
+  .card-header {
+    padding: var(--spacing-lg);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--spacing-md);
+
+    .card-title {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+
+      mat-icon {
+        color: var(--primary-color);
+        font-size: 1.5rem;
+        width: 1.5rem;
+        height: 1.5rem;
+      }
+
+      h2 {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 500;
+        color: var(--primary-color);
+      }
+    }
+  }
+
+  .bookings-list,
+  .saved-list {
+    padding: var(--spacing-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+}
+
+// Empty State
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-2xl);
+  gap: var(--spacing-md);
+
+  mat-icon {
+    font-size: 3rem;
+    width: 3rem;
+    height: 3rem;
+    opacity: 0.3;
+  }
+
+  p {
+    margin: 0;
+    color: rgba(0, 0, 0, 0.6);
+  }
+}
+
+.dark-theme .empty-state p {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+// Booking Item
+.booking-item {
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius-md);
+  background-color: rgba(0, 0, 0, 0.02);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+
+  &:hover {
+    background-color: rgba(0, 150, 136, 0.04);
+    transform: translateX(4px);
+  }
+
+  .booking-info {
+    flex: 1;
+
+    .booking-header {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      margin-bottom: var(--spacing-xs);
+
+      .parking-icon {
+        color: var(--primary-color);
+        font-size: 1.25rem;
+        width: 1.25rem;
+        height: 1.25rem;
+      }
+
+      .parking-title {
+        font-weight: 500;
+        font-size: 1rem;
+      }
+    }
+
+    .booking-details {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      font-size: 0.875rem;
+      color: rgba(0, 0, 0, 0.6);
+
+      .booking-date {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+
+        mat-icon {
+          font-size: 1rem;
+          width: 1rem;
+          height: 1rem;
+        }
+      }
+
+      .booking-amount {
+        font-weight: 600;
+        color: var(--primary-color);
+      }
+    }
+  }
+}
+
+.dark-theme .booking-item {
+  background-color: rgba(255, 255, 255, 0.02);
+
+  &:hover {
+    background-color: rgba(0, 150, 136, 0.1);
+  }
+
+  .booking-info .booking-details {
+    color: rgba(255, 255, 255, 0.6);
+  }
+}
+
+// Saved Item
+.saved-item {
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius-md);
+  background-color: rgba(0, 0, 0, 0.02);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+
+  &:hover {
+    background-color: rgba(0, 150, 136, 0.04);
+    transform: translateX(4px);
+  }
+
+  .parking-info {
+    flex: 1;
+
+    .parking-header {
+      display: flex;
+      gap: var(--spacing-sm);
+      margin-bottom: var(--spacing-sm);
+
+      .location-icon {
+        color: var(--primary-color);
+        font-size: 1.25rem;
+        width: 1.25rem;
+        height: 1.25rem;
+      }
+
+      .parking-main {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+
+        .parking-name {
+          font-weight: 500;
+          font-size: 1rem;
+        }
+
+        .parking-address {
+          font-size: 0.875rem;
+          color: rgba(0, 0, 0, 0.6);
+        }
+      }
+    }
+
+    .parking-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .parking-rating {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+
+        .star-icon {
+          font-size: 1rem;
+          width: 1rem;
+          height: 1rem;
+          color: #FFB300;
+        }
+
+        .rating-value {
+          margin-left: 4px;
+          font-size: 0.875rem;
+          font-weight: 500;
+        }
+      }
+
+      .parking-price {
+        font-weight: 600;
+        color: var(--primary-color);
+      }
+    }
+  }
+}
+
+.dark-theme .saved-item {
+  background-color: rgba(255, 255, 255, 0.02);
+
+  &:hover {
+    background-color: rgba(0, 150, 136, 0.1);
+  }
+
+  .parking-info .parking-header .parking-main .parking-address {
+    color: rgba(255, 255, 255, 0.6);
+  }
+}
+
+// Status Chips
+.status-chip {
+  display: flex !important;
+  align-items: center;
+  gap: 4px;
+  font-weight: 500;
+  font-size: 0.75rem;
+  padding: 4px 12px !important;
+  height: auto !important;
+  min-height: 28px;
+  border-radius: var(--border-radius-md) !important;
+
+  .chip-icon {
+    font-size: 0.875rem;
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+
+  &.status-completed {
+    background-color: #e8f5e9 !important;
+    color: #2e7d32 !important;
+    .chip-icon { color: #2e7d32; }
+  }
+
+  &.status-pending {
+    background-color: #fff3e0 !important;
+    color: #e65100 !important;
+    .chip-icon { color: #e65100; }
+  }
+
+  &.status-confirmed {
+    background-color: #e3f2fd !important;
+    color: #1565c0 !important;
+    .chip-icon { color: #1565c0; }
+  }
+
+  &.status-canceled {
+    background-color: #ffebee !important;
+    color: #c62828 !important;
+    .chip-icon { color: #c62828; }
+  }
+}
+
+.dark-theme .status-chip {
+  &.status-completed {
+    background-color: rgba(76, 175, 80, 0.2) !important;
+    color: #81c784 !important;
+    .chip-icon { color: #81c784; }
+  }
+
+  &.status-pending {
+    background-color: rgba(255, 152, 0, 0.2) !important;
+    color: #ffb74d !important;
+    .chip-icon { color: #ffb74d; }
+  }
+
+  &.status-confirmed {
+    background-color: rgba(33, 150, 243, 0.2) !important;
+    color: #64b5f6 !important;
+    .chip-icon { color: #64b5f6; }
+  }
+
+  &.status-canceled {
+    background-color: rgba(244, 67, 54, 0.2) !important;
+    color: #ef5350 !important;
+    .chip-icon { color: #ef5350; }
+  }
+}
+
+// Chart Card
+.chart-card {
+  border-radius: var(--border-radius-lg);
+  padding: 0;
+  overflow: hidden;
+
+  .card-header {
+    padding: var(--spacing-lg);
+
+    .card-title {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+
+      mat-icon {
+        color: var(--primary-color);
+        font-size: 1.5rem;
+        width: 1.5rem;
+        height: 1.5rem;
+      }
+
+      h2 {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 500;
+        color: var(--primary-color);
+      }
+    }
+  }
+
+  .chart-placeholder {
+    padding: var(--spacing-2xl);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    min-height: 300px;
+    background-color: rgba(0, 0, 0, 0.02);
+
+    mat-icon {
+      font-size: 4rem;
+      width: 4rem;
+      height: 4rem;
+      opacity: 0.3;
+      color: var(--primary-color);
+    }
+
+    p {
+      margin: 0;
+      font-size: 1rem;
+      color: rgba(0, 0, 0, 0.6);
+    }
+
+    small {
+      font-size: 0.875rem;
+      color: rgba(0, 0, 0, 0.4);
+    }
+  }
+}
+
+.dark-theme .chart-card .chart-placeholder {
+  background-color: rgba(255, 255, 255, 0.02);
+
+  p {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  small {
+    color: rgba(255, 255, 255, 0.4);
+  }
+}
+
+// Favorite Locations Card
+.favorite-locations-card {
+  border-radius: var(--border-radius-lg);
+  padding: 0;
+  overflow: hidden;
+
+  .card-header {
+    padding: var(--spacing-lg);
+
+    .card-title {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+
+      mat-icon {
+        color: var(--primary-color);
+        font-size: 1.5rem;
+        width: 1.5rem;
+        height: 1.5rem;
+      }
+
+      h2 {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 500;
+        color: var(--primary-color);
+      }
+    }
+  }
+
+  .favorites-grid {
+    padding: var(--spacing-md);
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: var(--spacing-sm);
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .favorite-item {
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-md);
+    background-color: rgba(0, 0, 0, 0.02);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+
+    &:hover {
+      background-color: rgba(0, 150, 136, 0.04);
+      transform: translateX(4px);
+    }
+
+    .favorite-content {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+
+      .favorite-icon {
+        color: var(--primary-color);
+        font-size: 1.5rem;
+        width: 1.5rem;
+        height: 1.5rem;
+      }
+
+      .favorite-info {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+
+        .favorite-title {
+          font-weight: 500;
+        }
+
+        .favorite-count {
+          font-size: 0.875rem;
+          color: rgba(0, 0, 0, 0.6);
+        }
+      }
+    }
+
+    .chevron-icon {
+      color: rgba(0, 0, 0, 0.3);
+    }
+  }
+}
+
+.dark-theme .favorite-locations-card {
+  .favorite-item {
+    background-color: rgba(255, 255, 255, 0.02);
+
+    &:hover {
+      background-color: rgba(0, 150, 136, 0.1);
+    }
+
+    .favorite-content .favorite-info .favorite-count {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .chevron-icon {
+      color: rgba(255, 255, 255, 0.3);
+    }
+  }
+}
+
+// Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
