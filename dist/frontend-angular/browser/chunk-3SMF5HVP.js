@@ -1,0 +1,1 @@
+import"./chunk-GAL4ENT6.js";var t=[{path:"",loadComponent:()=>import("./chunk-B3BNKGPJ.js").then(o=>o.ProfileComponent)},{path:"edit",loadComponent:()=>import("./chunk-YMXYZRUN.js").then(o=>o.ProfileEditComponent)},{path:"settings",loadComponent:()=>import("./chunk-SQMUMVWA.js").then(o=>o.ProfileSettingsComponent)}];export{t as PROFILE_ROUTES};

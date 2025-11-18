@@ -98,8 +98,8 @@
                       <div class="offerer-info">
                         @if (offer.offerer?.profilePicture) {
                           <img
-                            [src]="offer.offerer.profilePicture"
-                            [alt]="offer.offerer.firstName"
+                            [src]="offer.offerer?.profilePicture"
+                            [alt]="offer.offerer?.firstName"
                             class="avatar"
                           />
                         } @else {

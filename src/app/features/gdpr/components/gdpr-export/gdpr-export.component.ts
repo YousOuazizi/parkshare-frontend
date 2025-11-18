@@ -9,6 +9,7 @@ import { MatTableModule } from "@angular/material/table";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatRadioModule } from "@angular/material/radio";
+import { MatTooltipModule } from "@angular/material/tooltip";
 import { FormsModule } from "@angular/forms";
 
 import { GdprService } from "../../services/gdpr.service";
@@ -47,6 +48,7 @@ interface ExportFormat {
     MatProgressSpinnerModule,
     MatSnackBarModule,
     MatRadioModule,
+    MatTooltipModule,
   ],
   templateUrl: "./gdpr-export.component.html",
   styleUrls: ["./gdpr-export.component.scss"],

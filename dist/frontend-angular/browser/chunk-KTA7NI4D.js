@@ -1,0 +1,1 @@
+var t=(r=>(r.CODE="CODE",r.KEY="KEY",r.REMOTE="REMOTE",r.APP="APP",r.NONE="NONE",r))(t||{});var i=(e=>(e.ACTIVE="ACTIVE",e.PAUSED="PAUSED",e.CANCELLED="CANCELLED",e.EXPIRED="EXPIRED",e))(i||{});export{t as a,i as b};

@@ -1,0 +1,1 @@
+import{a as o}from"./chunk-3OVL36LG.js";import{c as a}from"./chunk-GET3MYAY.js";import{da as e}from"./chunk-JQWXTQXA.js";var m=n=>{let t=e(o),i=e(a),r=n.data.verificationLevel;return t.isAuthenticated()?t.hasMinimumVerificationLevel(r)?!0:(i.navigate(["/verification"],{queryParams:{requiredLevel:r}}),!1):(i.navigate(["/auth/login"]),!1)};export{m as a};

@@ -99,6 +99,16 @@ export class ReviewListComponent implements OnInit {
     }));
   });
 
+  // Computed signal for average criteria entries
+  averageCriteriaEntries = computed(() => {
+    const stats = this.statistics();
+    if (!stats?.averageCriteria) return [];
+
+    return Object.entries(stats.averageCriteria)
+      .filter(([_, value]) => value !== undefined && value !== null)
+      .map(([key, value]) => ({ key, value: value as number }));
+  });
+
   // Filter form
   filterForm = new FormGroup<FilterForm>({
     minRating: new FormControl<number | null>(null),
