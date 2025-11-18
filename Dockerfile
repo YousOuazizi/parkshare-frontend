@@ -16,7 +16,7 @@ COPY . .
 RUN npm run build -- --configuration production
 
 # Stage 2: Serve with Nginx
-FROM nginx:1.25-alpine
+FROM nginx:1.25-alpine AS production
 
 # Copy custom nginx config
 COPY nginx.conf /etc/nginx/nginx.conf
