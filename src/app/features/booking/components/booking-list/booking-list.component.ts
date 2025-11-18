@@ -218,7 +218,13 @@ export class BookingListComponent implements OnInit {
   }
 
   getTabNameByIndex(index: number): BookingTab {
-    const tabs: BookingTab[] = ["all", "upcoming", "active", "past", "cancelled"];
+    const tabs: BookingTab[] = [
+      "all",
+      "upcoming",
+      "active",
+      "past",
+      "cancelled",
+    ];
     return tabs[index] || "all";
   }
 
