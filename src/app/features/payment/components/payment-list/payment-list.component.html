@@ -10,7 +10,11 @@
         <button mat-icon-button (click)="refresh()" matTooltip="Refresh">
           <mat-icon>refresh</mat-icon>
         </button>
-        <button mat-button [matMenuTriggerFor]="exportMenu" class="export-button">
+        <button
+          mat-button
+          [matMenuTriggerFor]="exportMenu"
+          class="export-button"
+        >
           <mat-icon>download</mat-icon>
           Export
         </button>
@@ -36,7 +40,8 @@
         mat-button
         color="primary"
         (click)="clearFilters()"
-        *ngIf="hasActiveFilters()">
+        *ngIf="hasActiveFilters()"
+      >
         <mat-icon>clear</mat-icon>
         Clear Filters
       </button>
@@ -50,8 +55,12 @@
             matInput
             [matDatepicker]="startPicker"
             formControlName="startDate"
-            placeholder="Select start date">
-          <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+            placeholder="Select start date"
+          />
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="startPicker"
+          ></mat-datepicker-toggle>
           <mat-datepicker #startPicker></mat-datepicker>
           <mat-icon matPrefix>calendar_today</mat-icon>
         </mat-form-field>
@@ -62,8 +71,12 @@
             matInput
             [matDatepicker]="endPicker"
             formControlName="endDate"
-            placeholder="Select end date">
-          <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+            placeholder="Select end date"
+          />
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="endPicker"
+          ></mat-datepicker-toggle>
           <mat-datepicker #endPicker></mat-datepicker>
           <mat-icon matPrefix>calendar_today</mat-icon>
         </mat-form-field>
@@ -100,27 +113,39 @@
   </mat-card>
 
   <!-- Empty State -->
-  <mat-card *ngIf="!loading() && !error() && filteredPayments().length === 0" class="empty-card">
+  <mat-card
+    *ngIf="!loading() && !error() && filteredPayments().length === 0"
+    class="empty-card"
+  >
     <div class="empty-content">
       <mat-icon>receipt_long</mat-icon>
       <h3>No Payments Found</h3>
-      <p *ngIf="hasActiveFilters()">Try adjusting your filters to see more results.</p>
+      <p *ngIf="hasActiveFilters()">
+        Try adjusting your filters to see more results.
+      </p>
       <p *ngIf="!hasActiveFilters()">You haven't made any payments yet.</p>
       <button
         *ngIf="hasActiveFilters()"
         mat-raised-button
         color="primary"
-        (click)="clearFilters()">
+        (click)="clearFilters()"
+      >
         Clear Filters
       </button>
     </div>
   </mat-card>
 
   <!-- Desktop Table View -->
-  <div *ngIf="!loading() && !error() && filteredPayments().length > 0" class="table-container hide-mobile">
+  <div
+    *ngIf="!loading() && !error() && filteredPayments().length > 0"
+    class="table-container hide-mobile"
+  >
     <mat-card class="table-card">
-      <table mat-table [dataSource]="paginatedPayments()" class="payments-table">
-
+      <table
+        mat-table
+        [dataSource]="paginatedPayments()"
+        class="payments-table"
+      >
         <!-- Date Column -->
         <ng-container matColumnDef="date">
           <th mat-header-cell *matHeaderCellDef>Date</th>
@@ -139,8 +164,12 @@
             <div class="booking-cell">
               <mat-icon class="cell-icon">local_parking</mat-icon>
               <div class="booking-info">
-                <span class="parking-title">{{ payment.booking?.parking?.title || 'Parking Space' }}</span>
-                <span class="booking-id">ID: {{ payment.bookingId.substring(0, 8) }}...</span>
+                <span class="parking-title">{{
+                  payment.booking?.parking?.title || "Parking Space"
+                }}</span>
+                <span class="booking-id"
+                  >ID: {{ payment.bookingId.substring(0, 8) }}...</span
+                >
               </div>
             </div>
           </td>
@@ -151,7 +180,9 @@
           <th mat-header-cell *matHeaderCellDef>Amount</th>
           <td mat-cell *matCellDef="let payment">
             <div class="amount-cell">
-              <span class="amount">{{ formatCurrency(payment.amount, payment.currency) }}</span>
+              <span class="amount">{{
+                formatCurrency(payment.amount, payment.currency)
+              }}</span>
             </div>
           </td>
         </ng-container>
@@ -161,7 +192,9 @@
           <th mat-header-cell *matHeaderCellDef>Method</th>
           <td mat-cell *matCellDef="let payment">
             <div class="method-cell">
-              <mat-icon class="cell-icon">{{ getPaymentMethodIcon(payment.paymentMethod) }}</mat-icon>
+              <mat-icon class="cell-icon">{{
+                getPaymentMethodIcon(payment.paymentMethod)
+              }}</mat-icon>
               <span>{{ formatPaymentMethod(payment.paymentMethod) }}</span>
             </div>
           </td>
@@ -171,8 +204,13 @@
         <ng-container matColumnDef="status">
           <th mat-header-cell *matHeaderCellDef>Status</th>
           <td mat-cell *matCellDef="let payment">
-            <mat-chip [class]="getStatusClass(payment.status)" class="status-chip">
-              <mat-icon class="chip-icon">{{ getStatusIcon(payment.status) }}</mat-icon>
+            <mat-chip
+              [class]="getStatusClass(payment.status)"
+              class="status-chip"
+            >
+              <mat-icon class="chip-icon">{{
+                getStatusIcon(payment.status)
+              }}</mat-icon>
               {{ payment.status }}
             </mat-chip>
           </td>
@@ -185,7 +223,8 @@
             <button
               mat-icon-button
               (click)="viewPaymentDetails(payment)"
-              matTooltip="View Details">
+              matTooltip="View Details"
+            >
               <mat-icon>visibility</mat-icon>
             </button>
           </td>
@@ -194,9 +233,10 @@
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr
           mat-row
-          *matRowDef="let row; columns: displayedColumns;"
+          *matRowDef="let row; columns: displayedColumns"
           class="payment-row"
-          (click)="viewPaymentDetails(row)"></tr>
+          (click)="viewPaymentDetails(row)"
+        ></tr>
       </table>
 
       <!-- Paginator -->
@@ -206,25 +246,31 @@
         [pageIndex]="pageIndex()"
         [pageSizeOptions]="[5, 10, 25, 50]"
         (page)="onPageChange($event)"
-        showFirstLastButtons>
+        showFirstLastButtons
+      >
       </mat-paginator>
     </mat-card>
   </div>
 
   <!-- Mobile Card View -->
-  <div *ngIf="!loading() && !error() && filteredPayments().length > 0" class="cards-container hide-desktop">
+  <div
+    *ngIf="!loading() && !error() && filteredPayments().length > 0"
+    class="cards-container hide-desktop"
+  >
     <mat-card
       *ngFor="let payment of paginatedPayments()"
       class="payment-card"
-      (click)="viewPaymentDetails(payment)">
-
+      (click)="viewPaymentDetails(payment)"
+    >
       <div class="card-header">
         <div class="card-title">
           <mat-icon>local_parking</mat-icon>
-          <span>{{ payment.booking?.parking?.title || 'Parking Space' }}</span>
+          <span>{{ payment.booking?.parking?.title || "Parking Space" }}</span>
         </div>
         <mat-chip [class]="getStatusClass(payment.status)" class="status-chip">
-          <mat-icon class="chip-icon">{{ getStatusIcon(payment.status) }}</mat-icon>
+          <mat-icon class="chip-icon">{{
+            getStatusIcon(payment.status)
+          }}</mat-icon>
           {{ payment.status }}
         </mat-chip>
       </div>
@@ -240,10 +286,14 @@
 
         <div class="card-row">
           <div class="card-label">
-            <mat-icon>{{ getPaymentMethodIcon(payment.paymentMethod) }}</mat-icon>
+            <mat-icon>{{
+              getPaymentMethodIcon(payment.paymentMethod)
+            }}</mat-icon>
             <span>Payment Method</span>
           </div>
-          <div class="card-value">{{ formatPaymentMethod(payment.paymentMethod) }}</div>
+          <div class="card-value">
+            {{ formatPaymentMethod(payment.paymentMethod) }}
+          </div>
         </div>
 
         <div class="card-row">
@@ -251,7 +301,9 @@
             <mat-icon>attach_money</mat-icon>
             <span>Amount</span>
           </div>
-          <div class="card-value amount">{{ formatCurrency(payment.amount, payment.currency) }}</div>
+          <div class="card-value amount">
+            {{ formatCurrency(payment.amount, payment.currency) }}
+          </div>
         </div>
 
         <div class="card-row">
@@ -259,12 +311,18 @@
             <mat-icon>confirmation_number</mat-icon>
             <span>Booking ID</span>
           </div>
-          <div class="card-value booking-id">{{ payment.bookingId.substring(0, 12) }}...</div>
+          <div class="card-value booking-id">
+            {{ payment.bookingId.substring(0, 12) }}...
+          </div>
         </div>
       </div>
 
       <div class="card-actions">
-        <button mat-button color="primary" (click)="viewPaymentDetails(payment); $event.stopPropagation()">
+        <button
+          mat-button
+          color="primary"
+          (click)="viewPaymentDetails(payment); $event.stopPropagation()"
+        >
           <mat-icon>visibility</mat-icon>
           View Details
         </button>
@@ -279,7 +337,8 @@
         [pageIndex]="pageIndex()"
         [pageSizeOptions]="[5, 10, 25]"
         (page)="onPageChange($event)"
-        showFirstLastButtons>
+        showFirstLastButtons
+      >
       </mat-paginator>
     </mat-card>
   </div>

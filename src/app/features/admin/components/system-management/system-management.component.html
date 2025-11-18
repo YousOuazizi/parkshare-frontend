@@ -2,7 +2,9 @@
   <!-- Header -->
   <div class="header">
     <h1>System Management</h1>
-    <p class="subtitle">Monitor and configure system settings and performance</p>
+    <p class="subtitle">
+      Monitor and configure system settings and performance
+    </p>
     <button mat-raised-button color="primary" (click)="refreshAll()">
       <mat-icon>refresh</mat-icon>
       Refresh All
@@ -23,13 +25,17 @@
       <mat-card-content>
         <div class="health-overview">
           <div class="health-status">
-            <mat-icon [class]="'status-icon-' + systemHealth()!.status"
-                      [style.color]="getHealthStatusColor(systemHealth()!.status)">
+            <mat-icon
+              [class]="'status-icon-' + systemHealth()!.status"
+              [style.color]="getHealthStatusColor(systemHealth()!.status)"
+            >
               {{ getHealthStatusIcon(systemHealth()!.status) }}
             </mat-icon>
             <div class="status-details">
               <div class="status-label">System Status</div>
-              <div class="status-value">{{ systemHealth()!.status | uppercase }}</div>
+              <div class="status-value">
+                {{ systemHealth()!.status | uppercase }}
+              </div>
             </div>
           </div>
 
@@ -37,7 +43,9 @@
             <mat-icon class="metric-icon">schedule</mat-icon>
             <div class="metric-details">
               <div class="metric-label">Uptime</div>
-              <div class="metric-value">{{ formatUptime(systemHealth()!.uptime) }}</div>
+              <div class="metric-value">
+                {{ formatUptime(systemHealth()!.uptime) }}
+              </div>
             </div>
           </div>
 
@@ -45,7 +53,9 @@
             <mat-icon class="metric-icon">access_time</mat-icon>
             <div class="metric-details">
               <div class="metric-label">Last Check</div>
-              <div class="metric-value">{{ formatTimestamp(systemHealth()!.timestamp) }}</div>
+              <div class="metric-value">
+                {{ formatTimestamp(systemHealth()!.timestamp) }}
+              </div>
             </div>
           </div>
         </div>
@@ -56,7 +66,14 @@
             <div class="service-header">
               <mat-icon>storage</mat-icon>
               <span>Database</span>
-              <mat-chip [class]="'chip-' + getServiceStatusColor(systemHealth()!.services.database.status)">
+              <mat-chip
+                [class]="
+                  'chip-' +
+                  getServiceStatusColor(
+                    systemHealth()!.services.database.status
+                  )
+                "
+              >
                 {{ systemHealth()!.services.database.status }}
               </mat-chip>
             </div>
@@ -69,7 +86,12 @@
             <div class="service-header">
               <mat-icon>memory</mat-icon>
               <span>Cache</span>
-              <mat-chip [class]="'chip-' + getServiceStatusColor(systemHealth()!.services.cache.status)">
+              <mat-chip
+                [class]="
+                  'chip-' +
+                  getServiceStatusColor(systemHealth()!.services.cache.status)
+                "
+              >
                 {{ systemHealth()!.services.cache.status }}
               </mat-chip>
             </div>
@@ -82,7 +104,12 @@
             <div class="service-header">
               <mat-icon>cloud_upload</mat-icon>
               <span>Storage</span>
-              <mat-chip [class]="'chip-' + getServiceStatusColor(systemHealth()!.services.storage.status)">
+              <mat-chip
+                [class]="
+                  'chip-' +
+                  getServiceStatusColor(systemHealth()!.services.storage.status)
+                "
+              >
                 {{ systemHealth()!.services.storage.status }}
               </mat-chip>
             </div>
@@ -108,23 +135,39 @@
             <mat-progress-bar
               mode="determinate"
               [value]="systemHealth()!.resources.memory.percentage"
-              [color]="systemHealth()!.resources.memory.percentage > 80 ? 'warn' : 'primary'">
+              [color]="
+                systemHealth()!.resources.memory.percentage > 80
+                  ? 'warn'
+                  : 'primary'
+              "
+            >
             </mat-progress-bar>
-            <span class="percentage-label">{{ formatPercentage(systemHealth()!.resources.memory.percentage) }}</span>
+            <span class="percentage-label">{{
+              formatPercentage(systemHealth()!.resources.memory.percentage)
+            }}</span>
           </div>
 
           <div class="resource-item">
             <div class="resource-header">
               <mat-icon>settings</mat-icon>
               <span>CPU</span>
-              <span class="resource-value">{{ formatPercentage(systemHealth()!.resources.cpu.percentage) }}</span>
+              <span class="resource-value">{{
+                formatPercentage(systemHealth()!.resources.cpu.percentage)
+              }}</span>
             </div>
             <mat-progress-bar
               mode="determinate"
               [value]="systemHealth()!.resources.cpu.percentage"
-              [color]="systemHealth()!.resources.cpu.percentage > 80 ? 'warn' : 'primary'">
+              [color]="
+                systemHealth()!.resources.cpu.percentage > 80
+                  ? 'warn'
+                  : 'primary'
+              "
+            >
             </mat-progress-bar>
-            <span class="percentage-label">{{ formatPercentage(systemHealth()!.resources.cpu.percentage) }}</span>
+            <span class="percentage-label">{{
+              formatPercentage(systemHealth()!.resources.cpu.percentage)
+            }}</span>
           </div>
 
           <div class="resource-item">
@@ -139,9 +182,16 @@
             <mat-progress-bar
               mode="determinate"
               [value]="systemHealth()!.resources.disk.percentage"
-              [color]="systemHealth()!.resources.disk.percentage > 80 ? 'warn' : 'primary'">
+              [color]="
+                systemHealth()!.resources.disk.percentage > 80
+                  ? 'warn'
+                  : 'primary'
+              "
+            >
             </mat-progress-bar>
-            <span class="percentage-label">{{ formatPercentage(systemHealth()!.resources.disk.percentage) }}</span>
+            <span class="percentage-label">{{
+              formatPercentage(systemHealth()!.resources.disk.percentage)
+            }}</span>
           </div>
         </div>
       </mat-card-content>
@@ -172,17 +222,25 @@
             <div class="setting-item">
               <div class="setting-info">
                 <div class="setting-label">Maintenance Mode</div>
-                <div class="setting-description">Enable to prevent user access during maintenance</div>
+                <div class="setting-description">
+                  Enable to prevent user access during maintenance
+                </div>
               </div>
-              <mat-slide-toggle formControlName="maintenanceMode"></mat-slide-toggle>
+              <mat-slide-toggle
+                formControlName="maintenanceMode"
+              ></mat-slide-toggle>
             </div>
 
             <div class="setting-item">
               <div class="setting-info">
                 <div class="setting-label">User Registration</div>
-                <div class="setting-description">Allow new users to register</div>
+                <div class="setting-description">
+                  Allow new users to register
+                </div>
               </div>
-              <mat-slide-toggle formControlName="registrationEnabled"></mat-slide-toggle>
+              <mat-slide-toggle
+                formControlName="registrationEnabled"
+              ></mat-slide-toggle>
             </div>
           </div>
         </mat-expansion-panel>
@@ -199,17 +257,25 @@
             <div class="setting-item">
               <div class="setting-info">
                 <div class="setting-label">Email Verification Required</div>
-                <div class="setting-description">Require email verification for new users</div>
+                <div class="setting-description">
+                  Require email verification for new users
+                </div>
               </div>
-              <mat-slide-toggle formControlName="emailVerificationRequired"></mat-slide-toggle>
+              <mat-slide-toggle
+                formControlName="emailVerificationRequired"
+              ></mat-slide-toggle>
             </div>
 
             <div class="setting-item">
               <div class="setting-info">
                 <div class="setting-label">Phone Verification Required</div>
-                <div class="setting-description">Require phone verification for new users</div>
+                <div class="setting-description">
+                  Require phone verification for new users
+                </div>
               </div>
-              <mat-slide-toggle formControlName="phoneVerificationRequired"></mat-slide-toggle>
+              <mat-slide-toggle
+                formControlName="phoneVerificationRequired"
+              ></mat-slide-toggle>
             </div>
           </div>
         </mat-expansion-panel>
@@ -225,12 +291,12 @@
           <div class="settings-group">
             <mat-form-field appearance="outline">
               <mat-label>Max Upload Size (MB)</mat-label>
-              <input matInput type="number" formControlName="maxUploadSize">
+              <input matInput type="number" formControlName="maxUploadSize" />
             </mat-form-field>
 
             <mat-form-field appearance="outline">
               <mat-label>Session Timeout (seconds)</mat-label>
-              <input matInput type="number" formControlName="sessionTimeout">
+              <input matInput type="number" formControlName="sessionTimeout" />
             </mat-form-field>
           </div>
         </mat-expansion-panel>
@@ -249,24 +315,38 @@
                 <div class="setting-label">Rate Limiting Enabled</div>
                 <div class="setting-description">Limit API request rates</div>
               </div>
-              <mat-slide-toggle formControlName="rateLimitEnabled"></mat-slide-toggle>
+              <mat-slide-toggle
+                formControlName="rateLimitEnabled"
+              ></mat-slide-toggle>
             </div>
 
             <mat-form-field appearance="outline">
               <mat-label>Max Requests</mat-label>
-              <input matInput type="number" formControlName="rateLimitMaxRequests">
+              <input
+                matInput
+                type="number"
+                formControlName="rateLimitMaxRequests"
+              />
             </mat-form-field>
 
             <mat-form-field appearance="outline">
               <mat-label>Window (milliseconds)</mat-label>
-              <input matInput type="number" formControlName="rateLimitWindowMs">
+              <input
+                matInput
+                type="number"
+                formControlName="rateLimitWindowMs"
+              />
             </mat-form-field>
           </div>
         </mat-expansion-panel>
 
         <div class="form-actions">
-          <button mat-raised-button color="primary" (click)="saveSettings()"
-                  [disabled]="settingsSaving()">
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="saveSettings()"
+            [disabled]="settingsSaving()"
+          >
             @if (settingsSaving()) {
               <mat-spinner diameter="20"></mat-spinner>
             } @else {
@@ -297,11 +377,14 @@
               <div class="flag-info">
                 <div class="flag-name">{{ flag.name }}</div>
                 <div class="flag-description">{{ flag.description }}</div>
-                <div class="flag-updated">Updated: {{ formatTimestamp(flag.updatedAt) }}</div>
+                <div class="flag-updated">
+                  Updated: {{ formatTimestamp(flag.updatedAt) }}
+                </div>
               </div>
               <mat-slide-toggle
                 [checked]="flag.enabled"
-                (change)="toggleFeatureFlag(flag)">
+                (change)="toggleFeatureFlag(flag)"
+              >
               </mat-slide-toggle>
             </div>
           }
@@ -353,7 +436,9 @@
             <mat-icon>analytics</mat-icon>
             <div class="stat-info">
               <div class="stat-label">Hit Rate</div>
-              <div class="stat-value">{{ formatPercentage(cacheStats()!.hitRate) }}</div>
+              <div class="stat-value">
+                {{ formatPercentage(cacheStats()!.hitRate) }}
+              </div>
             </div>
           </div>
 
@@ -361,7 +446,9 @@
             <mat-icon>storage</mat-icon>
             <div class="stat-info">
               <div class="stat-label">Memory Usage</div>
-              <div class="stat-value">{{ formatBytes(cacheStats()!.memoryUsage) }}</div>
+              <div class="stat-value">
+                {{ formatBytes(cacheStats()!.memoryUsage) }}
+              </div>
             </div>
           </div>
         </div>
@@ -394,21 +481,27 @@
             <div class="connection-stat">
               <mat-icon class="stat-icon success">link</mat-icon>
               <div class="stat-info">
-                <div class="stat-value">{{ databaseStats()!.connections.active }}</div>
+                <div class="stat-value">
+                  {{ databaseStats()!.connections.active }}
+                </div>
                 <div class="stat-label">Active</div>
               </div>
             </div>
             <div class="connection-stat">
               <mat-icon class="stat-icon accent">pause_circle</mat-icon>
               <div class="stat-info">
-                <div class="stat-value">{{ databaseStats()!.connections.idle }}</div>
+                <div class="stat-value">
+                  {{ databaseStats()!.connections.idle }}
+                </div>
                 <div class="stat-label">Idle</div>
               </div>
             </div>
             <div class="connection-stat">
               <mat-icon class="stat-icon primary">all_inclusive</mat-icon>
               <div class="stat-info">
-                <div class="stat-value">{{ databaseStats()!.connections.total }}</div>
+                <div class="stat-value">
+                  {{ databaseStats()!.connections.total }}
+                </div>
                 <div class="stat-label">Total</div>
               </div>
             </div>
@@ -420,11 +513,15 @@
           <div class="performance-metrics">
             <div class="metric">
               <span class="metric-label">Average Query Time:</span>
-              <span class="metric-value">{{ databaseStats()!.queryPerformance.avgQueryTime }}ms</span>
+              <span class="metric-value"
+                >{{ databaseStats()!.queryPerformance.avgQueryTime }}ms</span
+              >
             </div>
             <div class="metric">
               <span class="metric-label">Slow Queries:</span>
-              <span class="metric-value warn">{{ databaseStats()!.queryPerformance.slowQueries }}</span>
+              <span class="metric-value warn">{{
+                databaseStats()!.queryPerformance.slowQueries
+              }}</span>
             </div>
           </div>
         </div>
@@ -448,7 +545,9 @@
           <table mat-table [dataSource]="systemLogs()" class="logs-table">
             <ng-container matColumnDef="timestamp">
               <th mat-header-cell *matHeaderCellDef>Timestamp</th>
-              <td mat-cell *matCellDef="let log">{{ formatTimestamp(log.timestamp) }}</td>
+              <td mat-cell *matCellDef="let log">
+                {{ formatTimestamp(log.timestamp) }}
+              </td>
             </ng-container>
 
             <ng-container matColumnDef="level">
@@ -466,7 +565,7 @@
             </ng-container>
 
             <tr mat-header-row *matHeaderRowDef="logColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: logColumns;"></tr>
+            <tr mat-row *matRowDef="let row; columns: logColumns"></tr>
           </table>
         </div>
       } @else {

@@ -1,19 +1,19 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { MatCardModule } from '@angular/material/card';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { FormsModule } from '@angular/forms';
+import { Component, OnInit, signal, inject } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { MatCardModule } from "@angular/material/card";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+import { MatDividerModule } from "@angular/material/divider";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
+import { FormsModule } from "@angular/forms";
 
-import { NotificationService } from '../../services/notification.service';
-import { NotificationPreferences } from '../../../../core/models/notification.model';
+import { NotificationService } from "../../services/notification.service";
+import { NotificationPreferences } from "../../../../core/models/notification.model";
 
 interface NotificationCategory {
-  id: keyof NotificationPreferences['email'];
+  id: keyof NotificationPreferences["email"];
   label: string;
   description: string;
   icon: string;
@@ -26,7 +26,7 @@ interface ChannelPreferences {
 }
 
 @Component({
-  selector: 'app-notification-settings',
+  selector: "app-notification-settings",
   standalone: true,
   imports: [
     CommonModule,
@@ -37,10 +37,10 @@ interface ChannelPreferences {
     MatIconModule,
     MatDividerModule,
     MatProgressSpinnerModule,
-    MatSnackBarModule
+    MatSnackBarModule,
   ],
-  templateUrl: './notification-settings.component.html',
-  styleUrls: ['./notification-settings.component.scss']
+  templateUrl: "./notification-settings.component.html",
+  styleUrls: ["./notification-settings.component.scss"],
 })
 export class NotificationSettingsComponent implements OnInit {
   private notificationService = inject(NotificationService);
@@ -54,19 +54,19 @@ export class NotificationSettingsComponent implements OnInit {
       reviews: true,
       swaps: true,
       subscriptions: true,
-      marketing: false
+      marketing: false,
     },
     push: {
       bookings: true,
       payments: true,
       reviews: true,
       swaps: true,
-      messages: true
+      messages: true,
     },
     sms: {
       bookingReminders: true,
-      importantUpdates: true
-    }
+      importantUpdates: true,
+    },
   });
 
   loading = signal<boolean>(false);
@@ -76,89 +76,89 @@ export class NotificationSettingsComponent implements OnInit {
   // Category definitions
   emailCategories: NotificationCategory[] = [
     {
-      id: 'bookings',
-      label: 'Bookings',
-      description: 'Updates about your parking reservations',
-      icon: 'event_available'
+      id: "bookings",
+      label: "Bookings",
+      description: "Updates about your parking reservations",
+      icon: "event_available",
     },
     {
-      id: 'payments',
-      label: 'Payments',
-      description: 'Payment confirmations and receipts',
-      icon: 'payments'
+      id: "payments",
+      label: "Payments",
+      description: "Payment confirmations and receipts",
+      icon: "payments",
     },
     {
-      id: 'reviews',
-      label: 'Reviews',
-      description: 'New reviews and ratings',
-      icon: 'rate_review'
+      id: "reviews",
+      label: "Reviews",
+      description: "New reviews and ratings",
+      icon: "rate_review",
     },
     {
-      id: 'swaps',
-      label: 'Swaps',
-      description: 'Parking swap offers and updates',
-      icon: 'swap_horiz'
+      id: "swaps",
+      label: "Swaps",
+      description: "Parking swap offers and updates",
+      icon: "swap_horiz",
     },
     {
-      id: 'subscriptions',
-      label: 'Subscriptions',
-      description: 'Subscription renewals and updates',
-      icon: 'autorenew'
+      id: "subscriptions",
+      label: "Subscriptions",
+      description: "Subscription renewals and updates",
+      icon: "autorenew",
     },
     {
-      id: 'marketing',
-      label: 'Promotions',
-      description: 'Special offers and promotions',
-      icon: 'local_offer'
-    }
+      id: "marketing",
+      label: "Promotions",
+      description: "Special offers and promotions",
+      icon: "local_offer",
+    },
   ];
 
   pushCategories = [
     {
-      id: 'bookings' as keyof NotificationPreferences['push'],
-      label: 'Bookings',
-      description: 'Instant booking notifications',
-      icon: 'event_available'
+      id: "bookings" as keyof NotificationPreferences["push"],
+      label: "Bookings",
+      description: "Instant booking notifications",
+      icon: "event_available",
     },
     {
-      id: 'payments' as keyof NotificationPreferences['push'],
-      label: 'Payments',
-      description: 'Payment alerts',
-      icon: 'payments'
+      id: "payments" as keyof NotificationPreferences["push"],
+      label: "Payments",
+      description: "Payment alerts",
+      icon: "payments",
     },
     {
-      id: 'reviews' as keyof NotificationPreferences['push'],
-      label: 'Reviews',
-      description: 'New review notifications',
-      icon: 'rate_review'
+      id: "reviews" as keyof NotificationPreferences["push"],
+      label: "Reviews",
+      description: "New review notifications",
+      icon: "rate_review",
     },
     {
-      id: 'swaps' as keyof NotificationPreferences['push'],
-      label: 'Swaps',
-      description: 'Swap offer alerts',
-      icon: 'swap_horiz'
+      id: "swaps" as keyof NotificationPreferences["push"],
+      label: "Swaps",
+      description: "Swap offer alerts",
+      icon: "swap_horiz",
     },
     {
-      id: 'messages' as keyof NotificationPreferences['push'],
-      label: 'Messages',
-      description: 'New message notifications',
-      icon: 'message'
-    }
+      id: "messages" as keyof NotificationPreferences["push"],
+      label: "Messages",
+      description: "New message notifications",
+      icon: "message",
+    },
   ];
 
   smsCategories = [
     {
-      id: 'bookingReminders' as keyof NotificationPreferences['sms'],
-      label: 'Booking Reminders',
-      description: 'SMS reminders for upcoming bookings',
-      icon: 'notifications_active'
+      id: "bookingReminders" as keyof NotificationPreferences["sms"],
+      label: "Booking Reminders",
+      description: "SMS reminders for upcoming bookings",
+      icon: "notifications_active",
     },
     {
-      id: 'importantUpdates' as keyof NotificationPreferences['sms'],
-      label: 'Important Updates',
-      description: 'Critical account and booking updates',
-      icon: 'priority_high'
-    }
+      id: "importantUpdates" as keyof NotificationPreferences["sms"],
+      label: "Important Updates",
+      description: "Critical account and booking updates",
+      icon: "priority_high",
+    },
   ];
 
   ngOnInit(): void {
@@ -176,38 +176,40 @@ export class NotificationSettingsComponent implements OnInit {
     }, 500);
   }
 
-  toggleEmailPreference(category: keyof NotificationPreferences['email']): void {
+  toggleEmailPreference(
+    category: keyof NotificationPreferences["email"],
+  ): void {
     const current = this.preferences();
     const updated = {
       ...current,
       email: {
         ...current.email,
-        [category]: !current.email[category]
-      }
+        [category]: !current.email[category],
+      },
     };
     this.preferences.set(updated);
   }
 
-  togglePushPreference(category: keyof NotificationPreferences['push']): void {
+  togglePushPreference(category: keyof NotificationPreferences["push"]): void {
     const current = this.preferences();
     const updated = {
       ...current,
       push: {
         ...current.push,
-        [category]: !current.push[category]
-      }
+        [category]: !current.push[category],
+      },
     };
     this.preferences.set(updated);
   }
 
-  toggleSmsPreference(category: keyof NotificationPreferences['sms']): void {
+  toggleSmsPreference(category: keyof NotificationPreferences["sms"]): void {
     const current = this.preferences();
     const updated = {
       ...current,
       sms: {
         ...current.sms,
-        [category]: !current.sms[category]
-      }
+        [category]: !current.sms[category],
+      },
     };
     this.preferences.set(updated);
   }
@@ -222,8 +224,8 @@ export class NotificationSettingsComponent implements OnInit {
         reviews: enabled,
         swaps: enabled,
         subscriptions: enabled,
-        marketing: enabled
-      }
+        marketing: enabled,
+      },
     };
     this.preferences.set(updated);
   }
@@ -237,8 +239,8 @@ export class NotificationSettingsComponent implements OnInit {
         payments: enabled,
         reviews: enabled,
         swaps: enabled,
-        messages: enabled
-      }
+        messages: enabled,
+      },
     };
     this.preferences.set(updated);
   }
@@ -249,25 +251,25 @@ export class NotificationSettingsComponent implements OnInit {
       ...current,
       sms: {
         bookingReminders: enabled,
-        importantUpdates: enabled
-      }
+        importantUpdates: enabled,
+      },
     };
     this.preferences.set(updated);
   }
 
   areAllEmailEnabled(): boolean {
     const email = this.preferences().email;
-    return Object.values(email).every(value => value === true);
+    return Object.values(email).every((value) => value === true);
   }
 
   areAllPushEnabled(): boolean {
     const push = this.preferences().push;
-    return Object.values(push).every(value => value === true);
+    return Object.values(push).every((value) => value === true);
   }
 
   areAllSmsEnabled(): boolean {
     const sms = this.preferences().sms;
-    return Object.values(sms).every(value => value === true);
+    return Object.values(sms).every((value) => value === true);
   }
 
   savePreferences(): void {
@@ -277,12 +279,19 @@ export class NotificationSettingsComponent implements OnInit {
     // For now, we'll simulate a save
     setTimeout(() => {
       this.saving.set(false);
-      this.showSnackBar('Notification preferences saved successfully', 'success');
+      this.showSnackBar(
+        "Notification preferences saved successfully",
+        "success",
+      );
     }, 1000);
   }
 
   resetToDefaults(): void {
-    if (confirm('Are you sure you want to reset all notification preferences to defaults?')) {
+    if (
+      confirm(
+        "Are you sure you want to reset all notification preferences to defaults?",
+      )
+    ) {
       this.preferences.set({
         email: {
           bookings: true,
@@ -290,34 +299,34 @@ export class NotificationSettingsComponent implements OnInit {
           reviews: true,
           swaps: true,
           subscriptions: true,
-          marketing: false
+          marketing: false,
         },
         push: {
           bookings: true,
           payments: true,
           reviews: true,
           swaps: true,
-          messages: true
+          messages: true,
         },
         sms: {
           bookingReminders: true,
-          importantUpdates: true
-        }
+          importantUpdates: true,
+        },
       });
-      this.showSnackBar('Preferences reset to defaults', 'info');
+      this.showSnackBar("Preferences reset to defaults", "info");
     }
   }
 
   private showSnackBar(
     message: string,
-    type: 'success' | 'error' | 'info' = 'info',
-    duration: number = 3000
+    type: "success" | "error" | "info" = "info",
+    duration: number = 3000,
   ): void {
-    this.snackBar.open(message, 'Close', {
+    this.snackBar.open(message, "Close", {
       duration,
-      horizontalPosition: 'end',
-      verticalPosition: 'top',
-      panelClass: [`snackbar-${type}`]
+      horizontalPosition: "end",
+      verticalPosition: "top",
+      panelClass: [`snackbar-${type}`],
     });
   }
 }

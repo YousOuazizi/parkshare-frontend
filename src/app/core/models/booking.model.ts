@@ -1,9 +1,9 @@
 export enum BookingStatus {
-  PENDING = 'PENDING',
-  CONFIRMED = 'CONFIRMED',
-  CANCELED = 'CANCELED',
-  COMPLETED = 'COMPLETED',
-  REJECTED = 'REJECTED'
+  PENDING = "PENDING",
+  CONFIRMED = "CONFIRMED",
+  CANCELED = "CANCELED",
+  COMPLETED = "COMPLETED",
+  REJECTED = "REJECTED",
 }
 
 export interface AppliedPriceRule {
@@ -60,6 +60,7 @@ export interface CreateBookingRequest {
 }
 
 export interface BookingSearchParams {
+  [key: string]: string | number | boolean | string[] | number[] | undefined;
   userId?: string;
   parkingId?: string;
   status?: BookingStatus;

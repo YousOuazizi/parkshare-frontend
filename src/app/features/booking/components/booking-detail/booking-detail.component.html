@@ -32,7 +32,9 @@
     <mat-card class="status-card">
       <mat-card-content>
         <div class="status-content">
-          <mat-icon [class]="'status-icon status-' + statusColor()">{{ statusIcon() }}</mat-icon>
+          <mat-icon [class]="'status-icon status-' + statusColor()">{{
+            statusIcon()
+          }}</mat-icon>
           <div class="status-info">
             <h2>{{ bookingStatus() }}</h2>
             <p *ngIf="bookingStatus() === 'CONFIRMED' && !booking()?.checkedIn">
@@ -54,9 +56,18 @@
         <!-- Parking Details Card -->
         <mat-card class="parking-card">
           <div class="parking-image-container">
-            <img [src]="parkingImage()" [alt]="booking()?.parking?.title" class="parking-image">
+            <img
+              [src]="parkingImage()"
+              [alt]="booking()?.parking?.title"
+              class="parking-image"
+            />
             <div class="image-overlay">
-              <button mat-fab color="primary" (click)="getDirections()" matTooltip="Get Directions">
+              <button
+                mat-fab
+                color="primary"
+                (click)="getDirections()"
+                matTooltip="Get Directions"
+              >
                 <mat-icon>directions</mat-icon>
               </button>
             </div>
@@ -76,7 +87,12 @@
                   <span class="info-label">Owner</span>
                   <span class="info-value">{{ ownerName() }}</span>
                 </div>
-                <button mat-icon-button color="primary" (click)="contactOwner()" matTooltip="Contact Owner">
+                <button
+                  mat-icon-button
+                  color="primary"
+                  (click)="contactOwner()"
+                  matTooltip="Contact Owner"
+                >
                   <mat-icon>message</mat-icon>
                 </button>
               </div>
@@ -128,10 +144,21 @@
           <mat-card-content>
             <div class="payment-info">
               <!-- Price Breakdown -->
-              <div *ngIf="booking()?.appliedPriceRules && booking()!.appliedPriceRules.length > 0" class="price-breakdown">
-                <div *ngFor="let rule of booking()!.appliedPriceRules" class="price-item">
+              <div
+                *ngIf="
+                  booking()?.appliedPriceRules &&
+                  booking()!.appliedPriceRules.length > 0
+                "
+                class="price-breakdown"
+              >
+                <div
+                  *ngFor="let rule of booking()!.appliedPriceRules"
+                  class="price-item"
+                >
                   <span class="price-label">{{ rule.name }}</span>
-                  <span class="price-value">{{ formatCurrency(rule.amount, booking()!.currency) }}</span>
+                  <span class="price-value">{{
+                    formatCurrency(rule.amount, booking()!.currency)
+                  }}</span>
                 </div>
                 <mat-divider></mat-divider>
               </div>
@@ -139,15 +166,19 @@
               <!-- Total -->
               <div class="total-price">
                 <span class="total-label">Total Amount</span>
-                <span class="total-value">{{ formatCurrency(booking()!.totalPrice, booking()!.currency) }}</span>
+                <span class="total-value">{{
+                  formatCurrency(booking()!.totalPrice, booking()!.currency)
+                }}</span>
               </div>
 
               <!-- Payment Status -->
               <div class="payment-status">
                 <mat-icon [color]="booking()?.paymentId ? 'primary' : 'warn'">
-                  {{ booking()?.paymentId ? 'check_circle' : 'pending' }}
+                  {{ booking()?.paymentId ? "check_circle" : "pending" }}
                 </mat-icon>
-                <span>{{ booking()?.paymentId ? 'Payment Confirmed' : 'Payment Pending' }}</span>
+                <span>{{
+                  booking()?.paymentId ? "Payment Confirmed" : "Payment Pending"
+                }}</span>
               </div>
 
               <!-- Payment ID -->
@@ -174,7 +205,10 @@
       <!-- Right Column -->
       <div class="right-column">
         <!-- Access Code Card -->
-        <mat-card class="access-card" *ngIf="booking()?.checkedIn || booking()?.accessCode">
+        <mat-card
+          class="access-card"
+          *ngIf="booking()?.checkedIn || booking()?.accessCode"
+        >
           <mat-card-header>
             <mat-icon mat-card-avatar color="primary">qr_code_2</mat-icon>
             <mat-card-title>Access Code</mat-card-title>
@@ -182,9 +216,12 @@
           <mat-card-content>
             <div class="qr-code-container">
               <div *ngIf="qrCodeDataUrl()" class="qr-code">
-                <img [src]="qrCodeDataUrl()!" alt="QR Code" class="qr-image">
+                <img [src]="qrCodeDataUrl()!" alt="QR Code" class="qr-image" />
               </div>
-              <div *ngIf="!qrCodeDataUrl() && booking()?.accessCode" class="qr-code-loading">
+              <div
+                *ngIf="!qrCodeDataUrl() && booking()?.accessCode"
+                class="qr-code-loading"
+              >
                 <mat-spinner diameter="50"></mat-spinner>
               </div>
             </div>
@@ -192,18 +229,33 @@
             <div class="access-code-section">
               <div class="access-code-header">
                 <span class="access-code-label">Access Code</span>
-                <button mat-icon-button (click)="toggleAccessCode()" matTooltip="Toggle visibility">
-                  <mat-icon>{{ showAccessCode() ? 'visibility_off' : 'visibility' }}</mat-icon>
+                <button
+                  mat-icon-button
+                  (click)="toggleAccessCode()"
+                  matTooltip="Toggle visibility"
+                >
+                  <mat-icon>{{
+                    showAccessCode() ? "visibility_off" : "visibility"
+                  }}</mat-icon>
                 </button>
               </div>
               <div class="access-code-value">
-                <span *ngIf="showAccessCode()" class="code">{{ booking()?.accessCode }}</span>
-                <span *ngIf="!showAccessCode()" class="code-hidden">••••••••</span>
+                <span *ngIf="showAccessCode()" class="code">{{
+                  booking()?.accessCode
+                }}</span>
+                <span *ngIf="!showAccessCode()" class="code-hidden"
+                  >••••••••</span
+                >
               </div>
             </div>
 
             <div class="access-actions">
-              <button mat-raised-button color="primary" (click)="downloadQRCode()" [disabled]="!qrCodeDataUrl()">
+              <button
+                mat-raised-button
+                color="primary"
+                (click)="downloadQRCode()"
+                [disabled]="!qrCodeDataUrl()"
+              >
                 <mat-icon>download</mat-icon>
                 Download QR Code
               </button>
@@ -219,23 +271,49 @@
           </mat-card-header>
           <mat-card-content>
             <div class="timeline">
-              <div *ngFor="let event of bookingEvents(); let last = last" class="timeline-item">
-                <div class="timeline-marker" [class.completed]="event.completed" [class]="'marker-' + event.color">
+              <div
+                *ngFor="let event of bookingEvents(); let last = last"
+                class="timeline-item"
+              >
+                <div
+                  class="timeline-marker"
+                  [class.completed]="event.completed"
+                  [class]="'marker-' + event.color"
+                >
                   <mat-icon>{{ event.icon }}</mat-icon>
                 </div>
                 <div class="timeline-content">
-                  <h4 class="timeline-title" [class.completed]="event.completed">{{ event.title }}</h4>
-                  <p class="timeline-date" *ngIf="event.date">{{ formatDate(event.date) }}</p>
-                  <p class="timeline-date pending" *ngIf="!event.date && !event.completed">Pending</p>
+                  <h4
+                    class="timeline-title"
+                    [class.completed]="event.completed"
+                  >
+                    {{ event.title }}
+                  </h4>
+                  <p class="timeline-date" *ngIf="event.date">
+                    {{ formatDate(event.date) }}
+                  </p>
+                  <p
+                    class="timeline-date pending"
+                    *ngIf="!event.date && !event.completed"
+                  >
+                    Pending
+                  </p>
                 </div>
-                <div class="timeline-line" *ngIf="!last" [class.completed]="event.completed"></div>
+                <div
+                  class="timeline-line"
+                  *ngIf="!last"
+                  [class.completed]="event.completed"
+                ></div>
               </div>
             </div>
           </mat-card-content>
         </mat-card>
 
         <!-- Check-in/Check-out Info -->
-        <mat-card class="checkin-card" *ngIf="booking()?.checkedIn || booking()?.checkedOut">
+        <mat-card
+          class="checkin-card"
+          *ngIf="booking()?.checkedIn || booking()?.checkedOut"
+        >
           <mat-card-header>
             <mat-icon mat-card-avatar>info</mat-icon>
             <mat-card-title>Check-in/Check-out Details</mat-card-title>
@@ -246,15 +324,21 @@
                 <mat-icon color="primary">login</mat-icon>
                 <div>
                   <span class="checkin-label">Checked In</span>
-                  <span class="checkin-value">{{ formatDate(booking()!.checkedInTime!) }}</span>
+                  <span class="checkin-value">{{
+                    formatDate(booking()!.checkedInTime!)
+                  }}</span>
                 </div>
               </div>
-              <mat-divider *ngIf="booking()?.checkedIn && booking()?.checkedOut"></mat-divider>
+              <mat-divider
+                *ngIf="booking()?.checkedIn && booking()?.checkedOut"
+              ></mat-divider>
               <div *ngIf="booking()?.checkedOut" class="checkin-item">
                 <mat-icon color="accent">logout</mat-icon>
                 <div>
                   <span class="checkin-label">Checked Out</span>
-                  <span class="checkin-value">{{ formatDate(booking()!.checkedOutTime!) }}</span>
+                  <span class="checkin-value">{{
+                    formatDate(booking()!.checkedOutTime!)
+                  }}</span>
                 </div>
               </div>
             </div>

@@ -106,7 +106,11 @@
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-md);
     border-left: 4px solid #ff9800;
-    background: linear-gradient(135deg, rgba(255, 152, 0, 0.05) 0%, rgba(255, 193, 7, 0.05) 100%);
+    background: linear-gradient(
+      135deg,
+      rgba(255, 152, 0, 0.05) 0%,
+      rgba(255, 193, 7, 0.05) 100%
+    );
 
     .pending-content {
       display: flex;
@@ -550,7 +554,11 @@
   .info-card {
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-sm);
-    background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.05) 0%, rgba(var(--accent-rgb), 0.05) 100%);
+    background: linear-gradient(
+      135deg,
+      rgba(var(--primary-rgb), 0.05) 0%,
+      rgba(var(--accent-rgb), 0.05) 100%
+    );
     border-left: 4px solid var(--primary-color);
 
     mat-card-content {
@@ -634,7 +642,11 @@
 
   .delete-content {
     .pending-card {
-      background: linear-gradient(135deg, rgba(255, 152, 0, 0.1) 0%, rgba(255, 193, 7, 0.1) 100%);
+      background: linear-gradient(
+        135deg,
+        rgba(255, 152, 0, 0.1) 0%,
+        rgba(255, 193, 7, 0.1) 100%
+      );
 
       .pending-content {
         p {
@@ -776,7 +788,11 @@
     }
 
     .info-card {
-      background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.1) 0%, rgba(var(--accent-rgb), 0.1) 100%);
+      background: linear-gradient(
+        135deg,
+        rgba(var(--primary-rgb), 0.1) 0%,
+        rgba(var(--accent-rgb), 0.1) 100%
+      );
 
       .info-content {
         h3 {

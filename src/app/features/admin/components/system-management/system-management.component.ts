@@ -1,20 +1,20 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatTableModule } from '@angular/material/table';
-import { interval } from 'rxjs';
-import { switchMap, startWith } from 'rxjs/operators';
+import { Component, OnInit, signal, inject } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { MatCardModule } from "@angular/material/card";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
+import { MatExpansionModule } from "@angular/material/expansion";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatChipsModule } from "@angular/material/chips";
+import { MatTableModule } from "@angular/material/table";
+import { interval } from "rxjs";
+import { switchMap, startWith } from "rxjs/operators";
 
 import {
   AdminService,
@@ -23,11 +23,11 @@ import {
   FeatureFlag,
   CacheStats,
   DatabaseStats,
-  SystemLog
-} from '../../services/admin.service';
+  SystemLog,
+} from "../../services/admin.service";
 
 @Component({
-  selector: 'app-system-management',
+  selector: "app-system-management",
   standalone: true,
   imports: [
     CommonModule,
@@ -43,10 +43,10 @@ import {
     MatProgressBarModule,
     MatTooltipModule,
     MatChipsModule,
-    MatTableModule
+    MatTableModule,
   ],
-  templateUrl: './system-management.component.html',
-  styleUrls: ['./system-management.component.scss']
+  templateUrl: "./system-management.component.html",
+  styleUrls: ["./system-management.component.scss"],
 })
 export class SystemManagementComponent implements OnInit {
   private adminService = inject(AdminService);
@@ -73,11 +73,11 @@ export class SystemManagementComponent implements OnInit {
     sessionTimeout: new FormControl<number>(3600),
     rateLimitEnabled: new FormControl<boolean>(true),
     rateLimitMaxRequests: new FormControl<number>(100),
-    rateLimitWindowMs: new FormControl<number>(60000)
+    rateLimitWindowMs: new FormControl<number>(60000),
   });
 
   // Table columns for logs
-  logColumns: string[] = ['timestamp', 'level', 'message'];
+  logColumns: string[] = ["timestamp", "level", "message"];
 
   ngOnInit(): void {
     this.loadAllData();
@@ -103,15 +103,15 @@ export class SystemManagementComponent implements OnInit {
     interval(30000) // Refresh every 30 seconds
       .pipe(
         startWith(0),
-        switchMap(() => this.adminService.getSystemHealth())
+        switchMap(() => this.adminService.getSystemHealth()),
       )
       .subscribe({
         next: (health) => {
           this.systemHealth.set(health);
         },
         error: (err) => {
-          console.error('Error refreshing system health:', err);
-        }
+          console.error("Error refreshing system health:", err);
+        },
       });
   }
 
@@ -124,8 +124,8 @@ export class SystemManagementComponent implements OnInit {
         this.systemHealth.set(health);
       },
       error: (err) => {
-        console.error('Error loading system health:', err);
-      }
+        console.error("Error loading system health:", err);
+      },
     });
   }
 
@@ -145,12 +145,12 @@ export class SystemManagementComponent implements OnInit {
           sessionTimeout: settings.sessionTimeout,
           rateLimitEnabled: settings.rateLimit.enabled,
           rateLimitMaxRequests: settings.rateLimit.maxRequests,
-          rateLimitWindowMs: settings.rateLimit.windowMs
+          rateLimitWindowMs: settings.rateLimit.windowMs,
         });
       },
       error: (err) => {
-        console.error('Error loading application settings:', err);
-      }
+        console.error("Error loading application settings:", err);
+      },
     });
   }
 
@@ -171,21 +171,21 @@ export class SystemManagementComponent implements OnInit {
       rateLimit: {
         enabled: formValue.rateLimitEnabled ?? true,
         maxRequests: formValue.rateLimitMaxRequests ?? 100,
-        windowMs: formValue.rateLimitWindowMs ?? 60000
-      }
+        windowMs: formValue.rateLimitWindowMs ?? 60000,
+      },
     };
 
     this.adminService.updateApplicationSettings(settings).subscribe({
       next: (updatedSettings) => {
         this.applicationSettings.set(updatedSettings);
         this.settingsSaving.set(false);
-        alert('Settings saved successfully!');
+        alert("Settings saved successfully!");
       },
       error: (err) => {
-        console.error('Error saving settings:', err);
+        console.error("Error saving settings:", err);
         this.settingsSaving.set(false);
-        alert('Failed to save settings. Please try again.');
-      }
+        alert("Failed to save settings. Please try again.");
+      },
     });
   }
 
@@ -198,8 +198,8 @@ export class SystemManagementComponent implements OnInit {
         this.featureFlags.set(flags);
       },
       error: (err) => {
-        console.error('Error loading feature flags:', err);
-      }
+        console.error("Error loading feature flags:", err);
+      },
     });
   }
 
@@ -210,16 +210,16 @@ export class SystemManagementComponent implements OnInit {
     this.adminService.toggleFeatureFlag(flag.name, !flag.enabled).subscribe({
       next: (updatedFlag) => {
         const flags = this.featureFlags();
-        const index = flags.findIndex(f => f.name === updatedFlag.name);
+        const index = flags.findIndex((f) => f.name === updatedFlag.name);
         if (index !== -1) {
           flags[index] = updatedFlag;
           this.featureFlags.set([...flags]);
         }
       },
       error: (err) => {
-        console.error('Error toggling feature flag:', err);
-        alert('Failed to toggle feature flag. Please try again.');
-      }
+        console.error("Error toggling feature flag:", err);
+        alert("Failed to toggle feature flag. Please try again.");
+      },
     });
   }
 
@@ -232,8 +232,8 @@ export class SystemManagementComponent implements OnInit {
         this.cacheStats.set(stats);
       },
       error: (err) => {
-        console.error('Error loading cache stats:', err);
-      }
+        console.error("Error loading cache stats:", err);
+      },
     });
   }
 
@@ -241,19 +241,19 @@ export class SystemManagementComponent implements OnInit {
    * Clear cache
    */
   clearCache(): void {
-    if (!confirm('Are you sure you want to clear the cache?')) {
+    if (!confirm("Are you sure you want to clear the cache?")) {
       return;
     }
 
     this.adminService.clearCache().subscribe({
       next: () => {
-        alert('Cache cleared successfully!');
+        alert("Cache cleared successfully!");
         this.loadCacheStats();
       },
       error: (err) => {
-        console.error('Error clearing cache:', err);
-        alert('Failed to clear cache. Please try again.');
-      }
+        console.error("Error clearing cache:", err);
+        alert("Failed to clear cache. Please try again.");
+      },
     });
   }
 
@@ -266,8 +266,8 @@ export class SystemManagementComponent implements OnInit {
         this.databaseStats.set(stats);
       },
       error: (err) => {
-        console.error('Error loading database stats:', err);
-      }
+        console.error("Error loading database stats:", err);
+      },
     });
   }
 
@@ -280,8 +280,8 @@ export class SystemManagementComponent implements OnInit {
         this.systemLogs.set(response.logs);
       },
       error: (err) => {
-        console.error('Error loading system logs:', err);
-      }
+        console.error("Error loading system logs:", err);
+      },
     });
   }
 
@@ -290,14 +290,14 @@ export class SystemManagementComponent implements OnInit {
    */
   getHealthStatusIcon(status: string): string {
     switch (status) {
-      case 'healthy':
-        return 'check_circle';
-      case 'degraded':
-        return 'warning';
-      case 'unhealthy':
-        return 'error';
+      case "healthy":
+        return "check_circle";
+      case "degraded":
+        return "warning";
+      case "unhealthy":
+        return "error";
       default:
-        return 'help';
+        return "help";
     }
   }
 
@@ -306,14 +306,14 @@ export class SystemManagementComponent implements OnInit {
    */
   getHealthStatusColor(status: string): string {
     switch (status) {
-      case 'healthy':
-        return 'success';
-      case 'degraded':
-        return 'warn';
-      case 'unhealthy':
-        return 'error';
+      case "healthy":
+        return "success";
+      case "degraded":
+        return "warn";
+      case "unhealthy":
+        return "error";
       default:
-        return 'default';
+        return "default";
     }
   }
 
@@ -321,7 +321,7 @@ export class SystemManagementComponent implements OnInit {
    * Get service status color
    */
   getServiceStatusColor(status: string): string {
-    return status === 'healthy' ? 'success' : 'warn';
+    return status === "healthy" ? "success" : "warn";
   }
 
   /**
@@ -337,20 +337,20 @@ export class SystemManagementComponent implements OnInit {
     if (hours > 0) parts.push(`${hours}h`);
     if (minutes > 0) parts.push(`${minutes}m`);
 
-    return parts.join(' ') || '0m';
+    return parts.join(" ") || "0m";
   }
 
   /**
    * Format bytes
    */
   formatBytes(bytes: number): string {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) return "0 Bytes";
 
     const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
 
-    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
+    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i];
   }
 
   /**
@@ -365,14 +365,14 @@ export class SystemManagementComponent implements OnInit {
    */
   getLogLevelColor(level: string): string {
     switch (level) {
-      case 'error':
-        return 'warn';
-      case 'warn':
-        return 'accent';
-      case 'info':
-        return 'primary';
+      case "error":
+        return "warn";
+      case "warn":
+        return "accent";
+      case "info":
+        return "primary";
       default:
-        return 'default';
+        return "default";
     }
   }
 
@@ -380,13 +380,13 @@ export class SystemManagementComponent implements OnInit {
    * Format timestamp
    */
   formatTimestamp(timestamp: string): string {
-    return new Date(timestamp).toLocaleString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
+    return new Date(timestamp).toLocaleString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
     });
   }
 

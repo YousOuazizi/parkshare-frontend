@@ -163,22 +163,30 @@
 
       &.primary {
         background-color: rgba(0, 150, 136, 0.1);
-        mat-icon { color: #009688; }
+        mat-icon {
+          color: #009688;
+        }
       }
 
       &.success {
         background-color: rgba(76, 175, 80, 0.1);
-        mat-icon { color: #4CAF50; }
+        mat-icon {
+          color: #4caf50;
+        }
       }
 
       &.accent {
         background-color: rgba(255, 87, 34, 0.1);
-        mat-icon { color: #FF5722; }
+        mat-icon {
+          color: #ff5722;
+        }
       }
 
       &.info {
         background-color: rgba(33, 150, 243, 0.1);
-        mat-icon { color: #2196F3; }
+        mat-icon {
+          color: #2196f3;
+        }
       }
     }
 
@@ -206,22 +214,30 @@
   .stat-icon-wrapper {
     &.primary {
       background-color: rgba(0, 150, 136, 0.2);
-      mat-icon { color: #4DB6AC; }
+      mat-icon {
+        color: #4db6ac;
+      }
     }
 
     &.success {
       background-color: rgba(76, 175, 80, 0.2);
-      mat-icon { color: #81C784; }
+      mat-icon {
+        color: #81c784;
+      }
     }
 
     &.accent {
       background-color: rgba(255, 87, 34, 0.2);
-      mat-icon { color: #FF8A65; }
+      mat-icon {
+        color: #ff8a65;
+      }
     }
 
     &.info {
       background-color: rgba(33, 150, 243, 0.2);
-      mat-icon { color: #64B5F6; }
+      mat-icon {
+        color: #64b5f6;
+      }
     }
   }
 
@@ -451,7 +467,7 @@
           font-size: 1rem;
           width: 1rem;
           height: 1rem;
-          color: #FFB300;
+          color: #ffb300;
         }
 
         .rating-value {
@@ -502,25 +518,33 @@
   &.status-completed {
     background-color: #e8f5e9 !important;
     color: #2e7d32 !important;
-    .chip-icon { color: #2e7d32; }
+    .chip-icon {
+      color: #2e7d32;
+    }
   }
 
   &.status-pending {
     background-color: #fff3e0 !important;
     color: #e65100 !important;
-    .chip-icon { color: #e65100; }
+    .chip-icon {
+      color: #e65100;
+    }
   }
 
   &.status-confirmed {
     background-color: #e3f2fd !important;
     color: #1565c0 !important;
-    .chip-icon { color: #1565c0; }
+    .chip-icon {
+      color: #1565c0;
+    }
   }
 
   &.status-canceled {
     background-color: #ffebee !important;
     color: #c62828 !important;
-    .chip-icon { color: #c62828; }
+    .chip-icon {
+      color: #c62828;
+    }
   }
 }
 
@@ -528,25 +552,33 @@
   &.status-completed {
     background-color: rgba(76, 175, 80, 0.2) !important;
     color: #81c784 !important;
-    .chip-icon { color: #81c784; }
+    .chip-icon {
+      color: #81c784;
+    }
   }
 
   &.status-pending {
     background-color: rgba(255, 152, 0, 0.2) !important;
     color: #ffb74d !important;
-    .chip-icon { color: #ffb74d; }
+    .chip-icon {
+      color: #ffb74d;
+    }
   }
 
   &.status-confirmed {
     background-color: rgba(33, 150, 243, 0.2) !important;
     color: #64b5f6 !important;
-    .chip-icon { color: #64b5f6; }
+    .chip-icon {
+      color: #64b5f6;
+    }
   }
 
   &.status-canceled {
     background-color: rgba(244, 67, 54, 0.2) !important;
     color: #ef5350 !important;
-    .chip-icon { color: #ef5350; }
+    .chip-icon {
+      color: #ef5350;
+    }
   }
 }
 

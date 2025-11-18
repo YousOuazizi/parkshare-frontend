@@ -32,7 +32,11 @@
         font-size: 32px;
         font-weight: 700;
         margin: 0;
-        background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+        background: linear-gradient(
+          135deg,
+          var(--primary-color) 0%,
+          var(--accent-color) 100%
+        );
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -122,7 +126,11 @@
     }
 
     &.highlight {
-      background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+      background: linear-gradient(
+        135deg,
+        var(--primary-color) 0%,
+        var(--accent-color) 100%
+      );
       color: white;
 
       .metric-label,
@@ -295,7 +303,11 @@
             .chart-bar {
               width: 100%;
               max-width: 50px;
-              background: linear-gradient(180deg, var(--primary-color) 0%, var(--primary-light) 100%);
+              background: linear-gradient(
+                180deg,
+                var(--primary-color) 0%,
+                var(--primary-light) 100%
+              );
               border-radius: var(--border-radius-sm) var(--border-radius-sm) 0 0;
               transition: all var(--transition-normal);
               cursor: pointer;
@@ -700,7 +712,11 @@
         background-color: rgba(0, 0, 0, 0.02);
 
         &.highlight {
-          background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+          background: linear-gradient(
+            135deg,
+            var(--primary-color) 0%,
+            var(--accent-color) 100%
+          );
           color: white;
 
           .analysis-label {

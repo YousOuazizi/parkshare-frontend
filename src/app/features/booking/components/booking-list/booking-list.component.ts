@@ -1,29 +1,29 @@
-import { Component, OnInit, signal, computed, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { MatCardModule } from '@angular/material/card';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatTableModule } from '@angular/material/table';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatBadgeModule } from '@angular/material/badge';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Component, OnInit, signal, computed, inject } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { MatCardModule } from "@angular/material/card";
+import { MatTabsModule } from "@angular/material/tabs";
+import { MatTableModule } from "@angular/material/table";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+import { MatChipsModule } from "@angular/material/chips";
+import { MatBadgeModule } from "@angular/material/badge";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatSelectModule } from "@angular/material/select";
+import { MatDatepickerModule } from "@angular/material/datepicker";
+import { MatNativeDateModule } from "@angular/material/core";
+import { MatMenuModule } from "@angular/material/menu";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatDialog, MatDialogModule } from "@angular/material/dialog";
+import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
+import { FormsModule } from "@angular/forms";
+import { Router } from "@angular/router";
 
-import { BookingService } from '../../services/booking.service';
-import { Booking, BookingStatus } from '../../../../core/models/booking.model';
+import { BookingService } from "../../services/booking.service";
+import { Booking, BookingStatus } from "../../../../core/models/booking.model";
 
-type BookingTab = 'all' | 'upcoming' | 'active' | 'past' | 'cancelled';
+type BookingTab = "all" | "upcoming" | "active" | "past" | "cancelled";
 
 interface DateRangeFilter {
   startDate: Date | null;
@@ -31,7 +31,7 @@ interface DateRangeFilter {
 }
 
 @Component({
-  selector: 'app-booking-list',
+  selector: "app-booking-list",
   standalone: true,
   imports: [
     CommonModule,
@@ -52,10 +52,10 @@ interface DateRangeFilter {
     MatMenuModule,
     MatTooltipModule,
     MatDialogModule,
-    MatSnackBarModule
+    MatSnackBarModule,
   ],
-  templateUrl: './booking-list.component.html',
-  styleUrls: ['./booking-list.component.scss']
+  templateUrl: "./booking-list.component.html",
+  styleUrls: ["./booking-list.component.scss"],
 })
 export class BookingListComponent implements OnInit {
   private bookingService = inject(BookingService);
@@ -66,28 +66,28 @@ export class BookingListComponent implements OnInit {
   bookings = signal<Booking[]>([]);
   loading = signal<boolean>(true);
   error = signal<string | null>(null);
-  selectedTab = signal<BookingTab>('all');
+  selectedTab = signal<BookingTab>("all");
   dateRangeFilter = signal<DateRangeFilter>({ startDate: null, endDate: null });
-  statusFilter = signal<BookingStatus | 'all'>('all');
+  statusFilter = signal<BookingStatus | "all">("all");
 
   // Available statuses for filter
-  statusOptions: Array<{ value: BookingStatus | 'all'; label: string }> = [
-    { value: 'all', label: 'All Statuses' },
-    { value: BookingStatus.PENDING, label: 'Pending' },
-    { value: BookingStatus.CONFIRMED, label: 'Confirmed' },
-    { value: BookingStatus.CANCELED, label: 'Cancelled' },
-    { value: BookingStatus.COMPLETED, label: 'Completed' },
-    { value: BookingStatus.REJECTED, label: 'Rejected' }
+  statusOptions: Array<{ value: BookingStatus | "all"; label: string }> = [
+    { value: "all", label: "All Statuses" },
+    { value: BookingStatus.PENDING, label: "Pending" },
+    { value: BookingStatus.CONFIRMED, label: "Confirmed" },
+    { value: BookingStatus.CANCELED, label: "Cancelled" },
+    { value: BookingStatus.COMPLETED, label: "Completed" },
+    { value: BookingStatus.REJECTED, label: "Rejected" },
   ];
 
   // Table columns
   displayedColumns: string[] = [
-    'parking',
-    'dates',
-    'status',
-    'price',
-    'accessCode',
-    'actions'
+    "parking",
+    "dates",
+    "status",
+    "price",
+    "accessCode",
+    "actions",
   ];
 
   // Computed filtered bookings based on selected tab and filters
@@ -100,19 +100,19 @@ export class BookingListComponent implements OnInit {
     let filtered = allBookings;
 
     // Filter by tab
-    filtered = filtered.filter(booking => {
+    filtered = filtered.filter((booking) => {
       const now = new Date();
       const startTime = new Date(booking.startTime);
       const endTime = new Date(booking.endTime);
 
       switch (tab) {
-        case 'upcoming':
+        case "upcoming":
           return (
             booking.status === BookingStatus.CONFIRMED &&
             startTime > now &&
             !booking.checkedIn
           );
-        case 'active':
+        case "active":
           return (
             booking.status === BookingStatus.CONFIRMED &&
             startTime <= now &&
@@ -120,12 +120,12 @@ export class BookingListComponent implements OnInit {
             booking.checkedIn &&
             !booking.checkedOut
           );
-        case 'past':
+        case "past":
           return (
             booking.status === BookingStatus.COMPLETED ||
             (endTime < now && booking.checkedOut)
           );
-        case 'cancelled':
+        case "cancelled":
           return booking.status === BookingStatus.CANCELED;
         default:
           return true;
@@ -133,25 +133,28 @@ export class BookingListComponent implements OnInit {
     });
 
     // Filter by status
-    if (statusFilterValue !== 'all') {
-      filtered = filtered.filter(booking => booking.status === statusFilterValue);
+    if (statusFilterValue !== "all") {
+      filtered = filtered.filter(
+        (booking) => booking.status === statusFilterValue,
+      );
     }
 
     // Filter by date range
     if (dateRange.startDate) {
       filtered = filtered.filter(
-        booking => new Date(booking.startTime) >= dateRange.startDate!
+        (booking) => new Date(booking.startTime) >= dateRange.startDate!,
       );
     }
     if (dateRange.endDate) {
       filtered = filtered.filter(
-        booking => new Date(booking.endTime) <= dateRange.endDate!
+        (booking) => new Date(booking.endTime) <= dateRange.endDate!,
       );
     }
 
     // Sort by start time (most recent first)
     return filtered.sort(
-      (a, b) => new Date(b.startTime).getTime() - new Date(a.startTime).getTime()
+      (a, b) =>
+        new Date(b.startTime).getTime() - new Date(a.startTime).getTime(),
     );
   });
 
@@ -162,7 +165,7 @@ export class BookingListComponent implements OnInit {
 
     return {
       all: allBookings.length,
-      upcoming: allBookings.filter(b => {
+      upcoming: allBookings.filter((b) => {
         const startTime = new Date(b.startTime);
         return (
           b.status === BookingStatus.CONFIRMED &&
@@ -170,7 +173,7 @@ export class BookingListComponent implements OnInit {
           !b.checkedIn
         );
       }).length,
-      active: allBookings.filter(b => {
+      active: allBookings.filter((b) => {
         const startTime = new Date(b.startTime);
         const endTime = new Date(b.endTime);
         return (
@@ -181,11 +184,15 @@ export class BookingListComponent implements OnInit {
           !b.checkedOut
         );
       }).length,
-      past: allBookings.filter(b => {
+      past: allBookings.filter((b) => {
         const endTime = new Date(b.endTime);
-        return b.status === BookingStatus.COMPLETED || (endTime < now && b.checkedOut);
+        return (
+          b.status === BookingStatus.COMPLETED ||
+          (endTime < now && b.checkedOut)
+        );
       }).length,
-      cancelled: allBookings.filter(b => b.status === BookingStatus.CANCELED).length
+      cancelled: allBookings.filter((b) => b.status === BookingStatus.CANCELED)
+        .length,
     };
   });
 
@@ -203,10 +210,10 @@ export class BookingListComponent implements OnInit {
         this.loading.set(false);
       },
       error: (err) => {
-        this.error.set('Failed to load bookings. Please try again.');
+        this.error.set("Failed to load bookings. Please try again.");
         this.loading.set(false);
-        this.showSnackBar('Failed to load bookings', 'error');
-      }
+        this.showSnackBar("Failed to load bookings", "error");
+      },
     });
   }
 
@@ -214,13 +221,13 @@ export class BookingListComponent implements OnInit {
     this.selectedTab.set(tab);
   }
 
-  onStatusFilterChange(status: BookingStatus | 'all'): void {
+  onStatusFilterChange(status: BookingStatus | "all"): void {
     this.statusFilter.set(status);
   }
 
-  onDateRangeChange(type: 'start' | 'end', date: Date | null): void {
+  onDateRangeChange(type: "start" | "end", date: Date | null): void {
     const currentRange = this.dateRangeFilter();
-    if (type === 'start') {
+    if (type === "start") {
       this.dateRangeFilter.set({ ...currentRange, startDate: date });
     } else {
       this.dateRangeFilter.set({ ...currentRange, endDate: date });
@@ -228,12 +235,12 @@ export class BookingListComponent implements OnInit {
   }
 
   clearFilters(): void {
-    this.statusFilter.set('all');
+    this.statusFilter.set("all");
     this.dateRangeFilter.set({ startDate: null, endDate: null });
   }
 
   viewDetails(booking: Booking): void {
-    this.router.navigate(['/bookings', booking.id]);
+    this.router.navigate(["/bookings", booking.id]);
   }
 
   canCancel(booking: Booking): boolean {
@@ -248,19 +255,19 @@ export class BookingListComponent implements OnInit {
 
   cancelBooking(booking: Booking): void {
     if (!this.canCancel(booking)) {
-      this.showSnackBar('This booking cannot be cancelled', 'error');
+      this.showSnackBar("This booking cannot be cancelled", "error");
       return;
     }
 
-    if (confirm('Are you sure you want to cancel this booking?')) {
+    if (confirm("Are you sure you want to cancel this booking?")) {
       this.bookingService.cancelBooking(booking.id).subscribe({
         next: () => {
-          this.showSnackBar('Booking cancelled successfully', 'success');
+          this.showSnackBar("Booking cancelled successfully", "success");
           this.loadBookings();
         },
         error: () => {
-          this.showSnackBar('Failed to cancel booking', 'error');
-        }
+          this.showSnackBar("Failed to cancel booking", "error");
+        },
       });
     }
   }
@@ -279,18 +286,18 @@ export class BookingListComponent implements OnInit {
 
   checkIn(booking: Booking): void {
     if (!this.canCheckIn(booking)) {
-      this.showSnackBar('Check-in is not available for this booking', 'error');
+      this.showSnackBar("Check-in is not available for this booking", "error");
       return;
     }
 
     this.bookingService.checkIn(booking.id).subscribe({
       next: () => {
-        this.showSnackBar('Checked in successfully', 'success');
+        this.showSnackBar("Checked in successfully", "success");
         this.loadBookings();
       },
       error: () => {
-        this.showSnackBar('Failed to check in', 'error');
-      }
+        this.showSnackBar("Failed to check in", "error");
+      },
     });
   }
 
@@ -300,91 +307,95 @@ export class BookingListComponent implements OnInit {
 
   checkOut(booking: Booking): void {
     if (!this.canCheckOut(booking)) {
-      this.showSnackBar('Check-out is not available for this booking', 'error');
+      this.showSnackBar("Check-out is not available for this booking", "error");
       return;
     }
 
     this.bookingService.checkOut(booking.id).subscribe({
       next: () => {
-        this.showSnackBar('Checked out successfully', 'success');
+        this.showSnackBar("Checked out successfully", "success");
         this.loadBookings();
       },
       error: () => {
-        this.showSnackBar('Failed to check out', 'error');
-      }
+        this.showSnackBar("Failed to check out", "error");
+      },
     });
   }
 
   getAccessCode(booking: Booking): void {
     if (!booking.checkedIn) {
-      this.showSnackBar('Access code is only available after check-in', 'info');
+      this.showSnackBar("Access code is only available after check-in", "info");
       return;
     }
 
     this.bookingService.getAccessCode(booking.id).subscribe({
       next: (response) => {
-        this.showSnackBar(`Access Code: ${response.accessCode}`, 'success', 5000);
+        this.showSnackBar(
+          `Access Code: ${response.accessCode}`,
+          "success",
+          5000,
+        );
         // Update the booking with the access code
-        const updatedBookings = this.bookings().map(b =>
-          b.id === booking.id ? { ...b, accessCode: response.accessCode } : b
+        const updatedBookings = this.bookings().map((b) =>
+          b.id === booking.id ? { ...b, accessCode: response.accessCode } : b,
         );
         this.bookings.set(updatedBookings);
       },
       error: () => {
-        this.showSnackBar('Failed to get access code', 'error');
-      }
+        this.showSnackBar("Failed to get access code", "error");
+      },
     });
   }
 
   getStatusColor(status: BookingStatus): string {
     const statusColors: Record<BookingStatus, string> = {
-      [BookingStatus.PENDING]: 'warn',
-      [BookingStatus.CONFIRMED]: 'primary',
-      [BookingStatus.CANCELED]: 'default',
-      [BookingStatus.COMPLETED]: 'accent',
-      [BookingStatus.REJECTED]: 'warn'
+      [BookingStatus.PENDING]: "warn",
+      [BookingStatus.CONFIRMED]: "primary",
+      [BookingStatus.CANCELED]: "default",
+      [BookingStatus.COMPLETED]: "accent",
+      [BookingStatus.REJECTED]: "warn",
     };
-    return statusColors[status] || 'default';
+    return statusColors[status] || "default";
   }
 
   getStatusIcon(status: BookingStatus): string {
     const statusIcons: Record<BookingStatus, string> = {
-      [BookingStatus.PENDING]: 'schedule',
-      [BookingStatus.CONFIRMED]: 'check_circle',
-      [BookingStatus.CANCELED]: 'cancel',
-      [BookingStatus.COMPLETED]: 'task_alt',
-      [BookingStatus.REJECTED]: 'error'
+      [BookingStatus.PENDING]: "schedule",
+      [BookingStatus.CONFIRMED]: "check_circle",
+      [BookingStatus.CANCELED]: "cancel",
+      [BookingStatus.COMPLETED]: "task_alt",
+      [BookingStatus.REJECTED]: "error",
     };
-    return statusIcons[status] || 'help';
+    return statusIcons[status] || "help";
   }
 
   formatDate(date: string): string {
-    return new Date(date).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return new Date(date).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   }
 
   formatCurrency(amount: number, currency: string): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: currency || 'USD'
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: currency || "USD",
     }).format(amount);
   }
 
   private showSnackBar(
     message: string,
-    type: 'success' | 'error' | 'info' = 'info',
-    duration: number = 3000
+    type: "success" | "error" | "info" = "info",
+    duration: number = 3000,
   ): void {
-    this.snackBar.open(message, 'Close', {
+    this.snackBar.open(message, "Close", {
       duration,
-      horizontalPosition: 'end',
-      verticalPosition: 'top',
-      panelClass: [`snackbar-${type}`]
+      horizontalPosition: "end",
+      verticalPosition: "top",
+      panelClass: [`snackbar-${type}`],
     });
   }
 }

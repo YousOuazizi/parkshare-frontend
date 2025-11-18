@@ -1,8 +1,8 @@
-import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
-import { inject } from '@angular/core';
-import { Router } from '@angular/router';
-import { catchError, throwError } from 'rxjs';
-import { AuthService } from '../services/auth.service';
+import { HttpInterceptorFn, HttpErrorResponse } from "@angular/common/http";
+import { inject } from "@angular/core";
+import { Router } from "@angular/router";
+import { catchError, throwError } from "rxjs";
+import { AuthService } from "../services/auth.service";
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
@@ -10,7 +10,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      let errorMessage = 'An error occurred';
+      let errorMessage = "An error occurred";
 
       if (error.error instanceof ErrorEvent) {
         // Client-side error
@@ -21,28 +21,33 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
           case 401:
             // Unauthorized - redirect to login
             authService.logout().subscribe();
-            router.navigate(['/auth/login']);
-            errorMessage = 'Session expired. Please login again.';
+            router.navigate(["/auth/login"]);
+            errorMessage = "Session expired. Please login again.";
             break;
           case 403:
-            errorMessage = 'You do not have permission to perform this action.';
+            errorMessage = "You do not have permission to perform this action.";
             break;
           case 404:
-            errorMessage = 'Resource not found.';
+            errorMessage = "Resource not found.";
             break;
           case 429:
-            errorMessage = 'Too many requests. Please try again later.';
+            errorMessage = "Too many requests. Please try again later.";
             break;
           case 500:
-            errorMessage = 'Server error. Please try again later.';
+            errorMessage = "Server error. Please try again later.";
             break;
           default:
-            errorMessage = error.error?.message || `Error: ${error.status} ${error.statusText}`;
+            errorMessage =
+              error.error?.message ||
+              `Error: ${error.status} ${error.statusText}`;
         }
       }
 
-      console.error('HTTP Error:', errorMessage, error);
-      return throwError(() => ({ message: errorMessage, originalError: error }));
-    })
+      console.error("HTTP Error:", errorMessage, error);
+      return throwError(() => ({
+        message: errorMessage,
+        originalError: error,
+      }));
+    }),
   );
 };

@@ -1,11 +1,16 @@
-import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
-import { ApiService } from '../../../core/services/api.service';
-import { API_ENDPOINTS } from '../../../core/constants/api-endpoints';
-import { Review, CreateReviewRequest, ReviewSearchParams, ReviewStatistics } from '../../../core/models';
+import { Injectable, inject } from "@angular/core";
+import { Observable } from "rxjs";
+import { ApiService } from "../../../core/services/api.service";
+import { API_ENDPOINTS } from "../../../core/constants/api-endpoints";
+import {
+  Review,
+  CreateReviewRequest,
+  ReviewSearchParams,
+  ReviewStatistics,
+} from "../../../core/models";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class ReviewService {
   private api = inject(ApiService);
@@ -34,7 +39,10 @@ export class ReviewService {
   /**
    * Update review
    */
-  updateReview(id: string, data: Partial<CreateReviewRequest>): Observable<Review> {
+  updateReview(
+    id: string,
+    data: Partial<CreateReviewRequest>,
+  ): Observable<Review> {
     return this.api.patch<Review>(API_ENDPOINTS.REVIEWS.BY_ID(id), data);
   }
 
@@ -42,7 +50,9 @@ export class ReviewService {
    * Reply to review (owner)
    */
   replyToReview(id: string, response: string): Observable<Review> {
-    return this.api.patch<Review>(API_ENDPOINTS.REVIEWS.REPLY(id), { response });
+    return this.api.patch<Review>(API_ENDPOINTS.REVIEWS.REPLY(id), {
+      response,
+    });
   }
 
   /**
@@ -63,13 +73,17 @@ export class ReviewService {
    * Get parking review statistics
    */
   getParkingStats(parkingId: string): Observable<ReviewStatistics> {
-    return this.api.get<ReviewStatistics>(API_ENDPOINTS.REVIEWS.STATS_PARKING(parkingId));
+    return this.api.get<ReviewStatistics>(
+      API_ENDPOINTS.REVIEWS.STATS_PARKING(parkingId),
+    );
   }
 
   /**
    * Get user review statistics
    */
   getUserStats(userId: string): Observable<ReviewStatistics> {
-    return this.api.get<ReviewStatistics>(API_ENDPOINTS.REVIEWS.STATS_USER(userId));
+    return this.api.get<ReviewStatistics>(
+      API_ENDPOINTS.REVIEWS.STATS_USER(userId),
+    );
   }
 }

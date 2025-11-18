@@ -38,7 +38,6 @@
 
   <!-- Dashboard Content -->
   <div *ngIf="!loading() && !error()" class="dashboard-content">
-
     <!-- Platform Statistics -->
     <div class="stats-grid">
       <mat-card class="stat-card clickable" (click)="navigateToUsers()">
@@ -46,9 +45,13 @@
           <mat-icon>people</mat-icon>
         </div>
         <div class="stat-content">
-          <div class="stat-value">{{ formatNumber(overview().totalUsers) }}</div>
+          <div class="stat-value">
+            {{ formatNumber(overview().totalUsers) }}
+          </div>
           <div class="stat-label">Total Users</div>
-          <div class="stat-subtitle">{{ formatNumber(overview().activeUsers) }} active</div>
+          <div class="stat-subtitle">
+            {{ formatNumber(overview().activeUsers) }} active
+          </div>
         </div>
       </mat-card>
 
@@ -57,9 +60,13 @@
           <mat-icon>local_parking</mat-icon>
         </div>
         <div class="stat-content">
-          <div class="stat-value">{{ formatNumber(overview().totalParkings) }}</div>
+          <div class="stat-value">
+            {{ formatNumber(overview().totalParkings) }}
+          </div>
           <div class="stat-label">Total Parkings</div>
-          <div class="stat-subtitle">{{ formatNumber(overview().activeParkings) }} active</div>
+          <div class="stat-subtitle">
+            {{ formatNumber(overview().activeParkings) }} active
+          </div>
         </div>
       </mat-card>
 
@@ -68,7 +75,9 @@
           <mat-icon>event</mat-icon>
         </div>
         <div class="stat-content">
-          <div class="stat-value">{{ formatNumber(overview().totalBookings) }}</div>
+          <div class="stat-value">
+            {{ formatNumber(overview().totalBookings) }}
+          </div>
           <div class="stat-label">Total Bookings</div>
           <div class="stat-subtitle">All time</div>
         </div>
@@ -79,7 +88,9 @@
           <mat-icon>payments</mat-icon>
         </div>
         <div class="stat-content">
-          <div class="stat-value">{{ formatCurrency(overview().totalRevenue) }}</div>
+          <div class="stat-value">
+            {{ formatCurrency(overview().totalRevenue) }}
+          </div>
           <div class="stat-label">Total Revenue</div>
           <div class="stat-subtitle">Platform earnings</div>
         </div>
@@ -88,7 +99,6 @@
 
     <!-- System Health and Recent Activities -->
     <div class="main-grid">
-
       <!-- System Health -->
       <mat-card class="health-card">
         <div class="card-header">
@@ -110,14 +120,18 @@
                 <mat-icon>memory</mat-icon>
                 <span class="health-label">CPU Usage</span>
               </div>
-              <span class="health-value" [class]="getHealthClass(systemHealth().cpu)">
+              <span
+                class="health-value"
+                [class]="getHealthClass(systemHealth().cpu)"
+              >
                 {{ formatPercentage(systemHealth().cpu) }}
               </span>
             </div>
             <mat-progress-bar
               mode="determinate"
               [value]="systemHealth().cpu"
-              [class]="getHealthClass(systemHealth().cpu)">
+              [class]="getHealthClass(systemHealth().cpu)"
+            >
             </mat-progress-bar>
           </div>
 
@@ -127,14 +141,18 @@
                 <mat-icon>storage</mat-icon>
                 <span class="health-label">Memory Usage</span>
               </div>
-              <span class="health-value" [class]="getHealthClass(systemHealth().memory)">
+              <span
+                class="health-value"
+                [class]="getHealthClass(systemHealth().memory)"
+              >
                 {{ formatPercentage(systemHealth().memory) }}
               </span>
             </div>
             <mat-progress-bar
               mode="determinate"
               [value]="systemHealth().memory"
-              [class]="getHealthClass(systemHealth().memory)">
+              [class]="getHealthClass(systemHealth().memory)"
+            >
             </mat-progress-bar>
           </div>
 
@@ -144,14 +162,18 @@
                 <mat-icon>sd_storage</mat-icon>
                 <span class="health-label">Storage Usage</span>
               </div>
-              <span class="health-value" [class]="getHealthClass(systemHealth().storage)">
+              <span
+                class="health-value"
+                [class]="getHealthClass(systemHealth().storage)"
+              >
                 {{ formatPercentage(systemHealth().storage) }}
               </span>
             </div>
             <mat-progress-bar
               mode="determinate"
               [value]="systemHealth().storage"
-              [class]="getHealthClass(systemHealth().storage)">
+              [class]="getHealthClass(systemHealth().storage)"
+            >
             </mat-progress-bar>
           </div>
 
@@ -160,7 +182,9 @@
               <mat-icon>speed</mat-icon>
               <div class="info-content">
                 <span class="info-label">API Response Time</span>
-                <span class="info-value">{{ systemHealth().apiResponseTime }}ms</span>
+                <span class="info-value"
+                  >{{ systemHealth().apiResponseTime }}ms</span
+                >
               </div>
             </div>
 
@@ -189,14 +213,21 @@
           <div
             *ngFor="let activity of recentActivities()"
             class="activity-item"
-            [class]="getActivityClass(activity.severity)">
+            [class]="getActivityClass(activity.severity)"
+          >
             <div class="activity-icon-wrapper">
-              <mat-icon class="activity-type-icon">{{ getActivityIcon(activity.type) }}</mat-icon>
-              <mat-icon class="severity-icon">{{ getSeverityIcon(activity.severity) }}</mat-icon>
+              <mat-icon class="activity-type-icon">{{
+                getActivityIcon(activity.type)
+              }}</mat-icon>
+              <mat-icon class="severity-icon">{{
+                getSeverityIcon(activity.severity)
+              }}</mat-icon>
             </div>
             <div class="activity-content">
               <p class="activity-description">{{ activity.description }}</p>
-              <span class="activity-time">{{ getRelativeTime(activity.timestamp) }}</span>
+              <span class="activity-time">{{
+                getRelativeTime(activity.timestamp)
+              }}</span>
             </div>
           </div>
         </div>
@@ -205,7 +236,6 @@
 
     <!-- Top Performers and Quick Links -->
     <div class="bottom-grid">
-
       <!-- Top Parkings -->
       <mat-card class="top-card">
         <div class="card-header">
@@ -229,7 +259,8 @@
           <div
             *ngFor="let parking of topParkings(); let i = index"
             class="top-item"
-            (click)="viewParkingDetails(parking.parkingId)">
+            (click)="viewParkingDetails(parking.parkingId)"
+          >
             <div class="rank-badge" [class.top-three]="i < 3">
               {{ i + 1 }}
             </div>
@@ -273,7 +304,8 @@
           <div
             *ngFor="let user of topUsers(); let i = index"
             class="top-item"
-            (click)="viewUserDetails(user.userId)">
+            (click)="viewUserDetails(user.userId)"
+          >
             <div class="rank-badge" [class.top-three]="i < 3">
               {{ i + 1 }}
             </div>
@@ -308,16 +340,20 @@
           <div class="level-item" *ngFor="let level of [0, 1, 2, 3, 4]">
             <div class="level-header">
               <span class="level-label">Level {{ level }}</span>
-              <span class="level-count">{{ verificationStats()['level' + level] }}</span>
+              <span class="level-count">{{
+                verificationStats()["level" + level]
+              }}</span>
             </div>
             <div class="level-bar-container">
               <div
                 class="level-bar"
                 [style.width.%]="getVerificationPercentage(level)"
-                [class]="'level-' + level">
-              </div>
+                [class]="'level-' + level"
+              ></div>
             </div>
-            <span class="level-percentage">{{ formatPercentage(getVerificationPercentage(level)) }}</span>
+            <span class="level-percentage">{{
+              formatPercentage(getVerificationPercentage(level))
+            }}</span>
           </div>
         </div>
       </mat-card>
@@ -334,7 +370,11 @@
       <mat-divider></mat-divider>
 
       <div class="quick-links-grid">
-        <button mat-stroked-button class="quick-link-btn" (click)="navigateToUsers()">
+        <button
+          mat-stroked-button
+          class="quick-link-btn"
+          (click)="navigateToUsers()"
+        >
           <mat-icon>person_add</mat-icon>
           <div class="btn-content">
             <span class="btn-label">User Management</span>
@@ -342,7 +382,11 @@
           </div>
         </button>
 
-        <button mat-stroked-button class="quick-link-btn" (click)="navigateToParkings()">
+        <button
+          mat-stroked-button
+          class="quick-link-btn"
+          (click)="navigateToParkings()"
+        >
           <mat-icon>add_location</mat-icon>
           <div class="btn-content">
             <span class="btn-label">Parking Management</span>
@@ -350,7 +394,11 @@
           </div>
         </button>
 
-        <button mat-stroked-button class="quick-link-btn" (click)="navigateToBookings()">
+        <button
+          mat-stroked-button
+          class="quick-link-btn"
+          (click)="navigateToBookings()"
+        >
           <mat-icon>event_note</mat-icon>
           <div class="btn-content">
             <span class="btn-label">Booking Management</span>
@@ -358,7 +406,11 @@
           </div>
         </button>
 
-        <button mat-stroked-button class="quick-link-btn" (click)="navigateToPayments()">
+        <button
+          mat-stroked-button
+          class="quick-link-btn"
+          (click)="navigateToPayments()"
+        >
           <mat-icon>account_balance_wallet</mat-icon>
           <div class="btn-content">
             <span class="btn-label">Payment Management</span>
@@ -366,7 +418,11 @@
           </div>
         </button>
 
-        <button mat-stroked-button class="quick-link-btn" (click)="navigateToReports()">
+        <button
+          mat-stroked-button
+          class="quick-link-btn"
+          (click)="navigateToReports()"
+        >
           <mat-icon>bar_chart</mat-icon>
           <div class="btn-content">
             <span class="btn-label">Analytics & Reports</span>

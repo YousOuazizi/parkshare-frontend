@@ -3,14 +3,17 @@
   <div class="list-header">
     <div class="header-content">
       <h1 class="title">Parking Swap Marketplace</h1>
-      <p class="subtitle">{{ filteredListings().length }} swap listings available</p>
+      <p class="subtitle">
+        {{ filteredListings().length }} swap listings available
+      </p>
     </div>
 
     <button
       mat-raised-button
       color="primary"
       routerLink="/swap/create"
-      class="create-button">
+      class="create-button"
+    >
       <mat-icon>add</mat-icon>
       Create Listing
     </button>
@@ -25,7 +28,8 @@
         <input
           matInput
           formControlName="searchQuery"
-          placeholder="Search by location or description">
+          placeholder="Search by location or description"
+        />
         <mat-icon matPrefix>search</mat-icon>
       </mat-form-field>
 
@@ -61,7 +65,8 @@
             matInput
             type="number"
             formControlName="minPrice"
-            placeholder="0">
+            placeholder="0"
+          />
           <span matPrefix>$</span>
         </mat-form-field>
 
@@ -73,7 +78,8 @@
             matInput
             type="number"
             formControlName="maxPrice"
-            placeholder="Any">
+            placeholder="Any"
+          />
           <span matPrefix>$</span>
         </mat-form-field>
       </div>
@@ -83,7 +89,8 @@
         mat-stroked-button
         type="button"
         class="reset-button"
-        (click)="resetFilters()">
+        (click)="resetFilters()"
+      >
         <mat-icon>refresh</mat-icon>
         Reset
       </button>
@@ -118,7 +125,9 @@
       <div class="empty-state">
         <mat-icon class="empty-icon">search_off</mat-icon>
         <h3 class="empty-title">No swap listings found</h3>
-        <p class="empty-message">Try adjusting your filters or create a new listing</p>
+        <p class="empty-message">
+          Try adjusting your filters or create a new listing
+        </p>
         <button mat-raised-button color="primary" routerLink="/swap/create">
           <mat-icon>add</mat-icon>
           Create Listing
@@ -129,17 +138,24 @@
     <!-- Listings Grid -->
     @if (filteredListings().length > 0) {
       <div class="listings-grid">
-        @for (listing of filteredListings(); track trackByListingId($index, listing)) {
+        @for (
+          listing of filteredListings();
+          track trackByListingId($index, listing)
+        ) {
           <mat-card class="listing-card">
             <!-- Card Image -->
             <div class="card-image-container">
               <img
                 [src]="getPrimaryPhotoUrl(listing)"
                 [alt]="listing.parking?.title || 'Parking spot'"
-                class="card-image">
+                class="card-image"
+              />
 
               <!-- Status Badge -->
-              <div class="status-badge" [class]="getStatusClass(listing.status)">
+              <div
+                class="status-badge"
+                [class]="getStatusClass(listing.status)"
+              >
                 {{ listing.status }}
               </div>
 
@@ -160,14 +176,20 @@
                   <mat-icon class="section-icon">local_parking</mat-icon>
                   <span class="section-title">Offering</span>
                 </div>
-                <h3 class="parking-title">{{ listing.parking?.title || 'Parking Spot' }}</h3>
+                <h3 class="parking-title">
+                  {{ listing.parking?.title || "Parking Spot" }}
+                </h3>
                 <div class="parking-location">
                   <mat-icon class="location-icon">place</mat-icon>
-                  <span>{{ listing.parking?.address || 'Location not available' }}</span>
+                  <span>{{
+                    listing.parking?.address || "Location not available"
+                  }}</span>
                 </div>
                 <div class="parking-dates">
                   <mat-icon class="date-icon">date_range</mat-icon>
-                  <span>{{ formatDateRange(listing.startDate, listing.endDate) }}</span>
+                  <span>{{
+                    formatDateRange(listing.startDate, listing.endDate)
+                  }}</span>
                 </div>
               </div>
 
@@ -191,7 +213,9 @@
                 @if (listing.price) {
                   <div class="price-container">
                     <span class="price-label">Price Difference:</span>
-                    <span class="price">{{ formatPrice(listing.price, listing.currency) }}</span>
+                    <span class="price">{{
+                      formatPrice(listing.price, listing.currency)
+                    }}</span>
                   </div>
                 } @else {
                   <div class="price-container">
@@ -206,14 +230,16 @@
                   mat-raised-button
                   color="primary"
                   class="action-button"
-                  [disabled]="listing.status !== 'ACTIVE'">
+                  [disabled]="listing.status !== 'ACTIVE'"
+                >
                   <mat-icon>send</mat-icon>
                   Make Offer
                 </button>
                 <button
                   mat-icon-button
                   class="details-button"
-                  matTooltip="View Details">
+                  matTooltip="View Details"
+                >
                   <mat-icon>info</mat-icon>
                 </button>
               </div>

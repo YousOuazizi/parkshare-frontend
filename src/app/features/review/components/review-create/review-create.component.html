@@ -18,15 +18,20 @@
                 [class.filled]="isStarFilled(star, overallRating())"
                 (click)="setOverallRating(star)"
                 [attr.aria-label]="'Rate ' + star + ' stars'"
-                matTooltip="{{ ratingLabels[star - 1] }}">
+                matTooltip="{{ ratingLabels[star - 1] }}"
+              >
                 <mat-icon class="star-icon">
-                  {{ isStarFilled(star, overallRating()) ? 'star' : 'star_border' }}
+                  {{
+                    isStarFilled(star, overallRating()) ? "star" : "star_border"
+                  }}
                 </mat-icon>
               </button>
             }
           </div>
           @if (overallRating() > 0) {
-            <div class="rating-label">{{ getRatingLabel(overallRating()) }}</div>
+            <div class="rating-label">
+              {{ getRatingLabel(overallRating()) }}
+            </div>
           } @else {
             <div class="rating-label hint">Click stars to rate</div>
           }
@@ -42,7 +47,9 @@
       <!-- Criteria Ratings Section -->
       <div class="criteria-section">
         <h3 class="section-title">Rate by Category</h3>
-        <p class="section-subtitle">Help others by rating specific aspects (optional)</p>
+        <p class="section-subtitle">
+          Help others by rating specific aspects (optional)
+        </p>
 
         <!-- Cleanliness Rating -->
         <div class="criterion-item">
@@ -50,26 +57,40 @@
             <mat-icon class="criterion-icon">cleaning_services</mat-icon>
             <div class="criterion-info">
               <span class="criterion-label">Cleanliness</span>
-              <span class="criterion-description">How clean was the parking spot?</span>
+              <span class="criterion-description"
+                >How clean was the parking spot?</span
+              >
             </div>
           </div>
           <div class="criterion-rating">
             <div class="star-selector small">
-              @for (star of getStarArray(criteriaRatings().cleanliness); track star) {
+              @for (
+                star of getStarArray(criteriaRatings().cleanliness);
+                track star
+              ) {
                 <button
                   type="button"
                   class="star-button small"
-                  [class.filled]="isStarFilled(star, criteriaRatings().cleanliness)"
+                  [class.filled]="
+                    isStarFilled(star, criteriaRatings().cleanliness)
+                  "
                   (click)="setCriteriaRating('cleanliness', star)"
-                  [attr.aria-label]="'Rate cleanliness ' + star + ' stars'">
+                  [attr.aria-label]="'Rate cleanliness ' + star + ' stars'"
+                >
                   <mat-icon class="star-icon">
-                    {{ isStarFilled(star, criteriaRatings().cleanliness) ? 'star' : 'star_border' }}
+                    {{
+                      isStarFilled(star, criteriaRatings().cleanliness)
+                        ? "star"
+                        : "star_border"
+                    }}
                   </mat-icon>
                 </button>
               }
             </div>
             @if (criteriaRatings().cleanliness > 0) {
-              <span class="rating-value">{{ criteriaRatings().cleanliness }}.0</span>
+              <span class="rating-value"
+                >{{ criteriaRatings().cleanliness }}.0</span
+              >
             }
           </div>
         </div>
@@ -80,26 +101,40 @@
             <mat-icon class="criterion-icon">place</mat-icon>
             <div class="criterion-info">
               <span class="criterion-label">Location</span>
-              <span class="criterion-description">How convenient was the location?</span>
+              <span class="criterion-description"
+                >How convenient was the location?</span
+              >
             </div>
           </div>
           <div class="criterion-rating">
             <div class="star-selector small">
-              @for (star of getStarArray(criteriaRatings().location); track star) {
+              @for (
+                star of getStarArray(criteriaRatings().location);
+                track star
+              ) {
                 <button
                   type="button"
                   class="star-button small"
-                  [class.filled]="isStarFilled(star, criteriaRatings().location)"
+                  [class.filled]="
+                    isStarFilled(star, criteriaRatings().location)
+                  "
                   (click)="setCriteriaRating('location', star)"
-                  [attr.aria-label]="'Rate location ' + star + ' stars'">
+                  [attr.aria-label]="'Rate location ' + star + ' stars'"
+                >
                   <mat-icon class="star-icon">
-                    {{ isStarFilled(star, criteriaRatings().location) ? 'star' : 'star_border' }}
+                    {{
+                      isStarFilled(star, criteriaRatings().location)
+                        ? "star"
+                        : "star_border"
+                    }}
                   </mat-icon>
                 </button>
               }
             </div>
             @if (criteriaRatings().location > 0) {
-              <span class="rating-value">{{ criteriaRatings().location }}.0</span>
+              <span class="rating-value"
+                >{{ criteriaRatings().location }}.0</span
+              >
             }
           </div>
         </div>
@@ -121,9 +156,14 @@
                   class="star-button small"
                   [class.filled]="isStarFilled(star, criteriaRatings().value)"
                   (click)="setCriteriaRating('value', star)"
-                  [attr.aria-label]="'Rate value ' + star + ' stars'">
+                  [attr.aria-label]="'Rate value ' + star + ' stars'"
+                >
                   <mat-icon class="star-icon">
-                    {{ isStarFilled(star, criteriaRatings().value) ? 'star' : 'star_border' }}
+                    {{
+                      isStarFilled(star, criteriaRatings().value)
+                        ? "star"
+                        : "star_border"
+                    }}
                   </mat-icon>
                 </button>
               }
@@ -145,9 +185,10 @@
             formControlName="comment"
             rows="6"
             placeholder="Tell us about your parking experience. What did you like? What could be improved?"
-            [maxlength]="MAX_COMMENT_LENGTH"></textarea>
+            [maxlength]="MAX_COMMENT_LENGTH"
+          ></textarea>
           <mat-hint align="start">
-            @if (reviewForm.get('comment')?.hasError('minlength')) {
+            @if (reviewForm.get("comment")?.hasError("minlength")) {
               <span class="error-hint">
                 Minimum {{ MIN_COMMENT_LENGTH }} characters required
               </span>
@@ -164,7 +205,9 @@
       <!-- Photos Section -->
       <div class="photos-section">
         <h3 class="section-title">Add Photos (Optional)</h3>
-        <p class="section-subtitle">Help others by sharing photos of the parking spot</p>
+        <p class="section-subtitle">
+          Help others by sharing photos of the parking spot
+        </p>
 
         <!-- Photo Upload Button -->
         <div class="upload-container">
@@ -174,14 +217,16 @@
             accept="image/*"
             multiple
             (change)="onPhotoSelected($event)"
-            style="display: none">
+            style="display: none"
+          />
           <button
             type="button"
             mat-raised-button
             color="primary"
             class="upload-button"
             (click)="fileInput.click()"
-            [disabled]="photosPreviews().length >= 5">
+            [disabled]="photosPreviews().length >= 5"
+          >
             <mat-icon>add_photo_alternate</mat-icon>
             Add Photos
           </button>
@@ -193,13 +238,14 @@
           <div class="photos-preview">
             @for (photo of photosPreviews(); track $index) {
               <div class="photo-preview-item">
-                <img [src]="photo.url" alt="Review photo">
+                <img [src]="photo.url" alt="Review photo" />
                 <button
                   type="button"
                   mat-icon-button
                   class="remove-photo-button"
                   (click)="removePhoto($index)"
-                  matTooltip="Remove photo">
+                  matTooltip="Remove photo"
+                >
                   <mat-icon>close</mat-icon>
                 </button>
               </div>
@@ -215,7 +261,8 @@
           mat-stroked-button
           class="cancel-button"
           (click)="onCancel()"
-          [disabled]="isSubmitting()">
+          [disabled]="isSubmitting()"
+        >
           Cancel
         </button>
         <button
@@ -223,7 +270,8 @@
           mat-raised-button
           color="primary"
           class="submit-button"
-          [disabled]="!isFormValid() || isSubmitting()">
+          [disabled]="!isFormValid() || isSubmitting()"
+        >
           @if (isSubmitting()) {
             <mat-spinner diameter="20" class="button-spinner"></mat-spinner>
             <span>Submitting...</span>

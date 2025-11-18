@@ -1,12 +1,26 @@
-import { Injectable, inject, signal, computed } from '@angular/core';
-import { Router } from '@angular/router';
-import { Observable, BehaviorSubject, tap, catchError, of, interval } from 'rxjs';
-import { ApiService } from './api.service';
-import { StorageService } from './storage.service';
-import { API_ENDPOINTS } from '../constants/api-endpoints';
-import { User, AuthResponse, LoginRequest, RegisterRequest, UserRole, VerificationLevel } from '../models';
-import { environment } from '../../../environments/environment';
-import { jwtDecode } from 'jwt-decode';
+import { Injectable, inject, signal, computed } from "@angular/core";
+import { Router } from "@angular/router";
+import {
+  Observable,
+  BehaviorSubject,
+  tap,
+  catchError,
+  of,
+  interval,
+} from "rxjs";
+import { ApiService } from "./api.service";
+import { StorageService } from "./storage.service";
+import { API_ENDPOINTS } from "../constants/api-endpoints";
+import {
+  User,
+  AuthResponse,
+  LoginRequest,
+  RegisterRequest,
+  UserRole,
+  VerificationLevel,
+} from "../models";
+import { environment } from "../../../environments/environment";
+import { jwtDecode } from "jwt-decode";
 
 interface TokenPayload {
   sub: string;
@@ -17,7 +31,7 @@ interface TokenPayload {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class AuthService {
   private api = inject(ApiService);
@@ -36,24 +50,35 @@ export class AuthService {
 
   // Computed signals for role and verification checks
   isAdmin = computed(() => this.currentUserSignal()?.role === UserRole.ADMIN);
-  isOwner = computed(() => this.currentUserSignal()?.role === UserRole.OWNER || this.currentUserSignal()?.role === UserRole.ADMIN);
-  verificationLevel = computed(() => this.currentUserSignal()?.verificationLevel || VerificationLevel.LEVEL_0);
+  isOwner = computed(
+    () =>
+      this.currentUserSignal()?.role === UserRole.OWNER ||
+      this.currentUserSignal()?.role === UserRole.ADMIN,
+  );
+  verificationLevel = computed(
+    () =>
+      this.currentUserSignal()?.verificationLevel || VerificationLevel.LEVEL_0,
+  );
 
   // Level checks
   canBook = computed(() => {
     const level = this.verificationLevel();
-    return level === VerificationLevel.LEVEL_2 ||
-           level === VerificationLevel.LEVEL_3 ||
-           level === VerificationLevel.LEVEL_4;
+    return (
+      level === VerificationLevel.LEVEL_2 ||
+      level === VerificationLevel.LEVEL_3 ||
+      level === VerificationLevel.LEVEL_4
+    );
   });
 
   canPublishParking = computed(() => {
     const level = this.verificationLevel();
-    return level === VerificationLevel.LEVEL_3 || level === VerificationLevel.LEVEL_4;
+    return (
+      level === VerificationLevel.LEVEL_3 || level === VerificationLevel.LEVEL_4
+    );
   });
 
-  private readonly ACCESS_TOKEN_KEY = 'access_token';
-  private readonly REFRESH_TOKEN_KEY = 'refresh_token';
+  private readonly ACCESS_TOKEN_KEY = "access_token";
+  private readonly REFRESH_TOKEN_KEY = "refresh_token";
   private tokenRefreshSubscription?: any;
 
   constructor() {
@@ -78,13 +103,15 @@ export class AuthService {
    */
   register(request: RegisterRequest): Observable<AuthResponse> {
     this.isLoadingSignal.set(true);
-    return this.api.post<AuthResponse>(API_ENDPOINTS.AUTH.REGISTER, request).pipe(
-      tap(response => this.handleAuthSuccess(response)),
-      catchError(error => {
-        this.isLoadingSignal.set(false);
-        throw error;
-      })
-    );
+    return this.api
+      .post<AuthResponse>(API_ENDPOINTS.AUTH.REGISTER, request)
+      .pipe(
+        tap((response) => this.handleAuthSuccess(response)),
+        catchError((error) => {
+          this.isLoadingSignal.set(false);
+          throw error;
+        }),
+      );
   }
 
   /**
@@ -93,11 +120,11 @@ export class AuthService {
   login(request: LoginRequest): Observable<AuthResponse> {
     this.isLoadingSignal.set(true);
     return this.api.post<AuthResponse>(API_ENDPOINTS.AUTH.LOGIN, request).pipe(
-      tap(response => this.handleAuthSuccess(response)),
-      catchError(error => {
+      tap((response) => this.handleAuthSuccess(response)),
+      catchError((error) => {
         this.isLoadingSignal.set(false);
         throw error;
-      })
+      }),
     );
   }
 
@@ -108,13 +135,13 @@ export class AuthService {
     return this.api.post(API_ENDPOINTS.AUTH.LOGOUT, {}).pipe(
       tap(() => {
         this.clearAuth();
-        this.router.navigate(['/auth/login']);
+        this.router.navigate(["/auth/login"]);
       }),
       catchError(() => {
         this.clearAuth();
-        this.router.navigate(['/auth/login']);
+        this.router.navigate(["/auth/login"]);
         return of(null);
-      })
+      }),
     );
   }
 
@@ -128,18 +155,20 @@ export class AuthService {
       return of({} as AuthResponse);
     }
 
-    return this.api.post<AuthResponse>(API_ENDPOINTS.AUTH.REFRESH, { refreshToken }).pipe(
-      tap(response => {
-        this.storage.setItem(this.ACCESS_TOKEN_KEY, response.accessToken);
-        if (response.refreshToken) {
-          this.storage.setItem(this.REFRESH_TOKEN_KEY, response.refreshToken);
-        }
-      }),
-      catchError(error => {
-        this.clearAuth();
-        throw error;
-      })
-    );
+    return this.api
+      .post<AuthResponse>(API_ENDPOINTS.AUTH.REFRESH, { refreshToken })
+      .pipe(
+        tap((response) => {
+          this.storage.setItem(this.ACCESS_TOKEN_KEY, response.accessToken);
+          if (response.refreshToken) {
+            this.storage.setItem(this.REFRESH_TOKEN_KEY, response.refreshToken);
+          }
+        }),
+        catchError((error) => {
+          this.clearAuth();
+          throw error;
+        }),
+      );
   }
 
   /**
@@ -147,14 +176,14 @@ export class AuthService {
    */
   loadUserProfile(): void {
     this.api.get<User>(API_ENDPOINTS.AUTH.PROFILE).subscribe({
-      next: user => {
+      next: (user) => {
         this.currentUserSignal.set(user);
         this.isAuthenticatedSignal.set(true);
         this.isLoadingSignal.set(false);
       },
       error: () => {
         this.clearAuth();
-      }
+      },
     });
   }
 
@@ -214,7 +243,9 @@ export class AuthService {
    */
   private startTokenRefreshTimer(): void {
     this.stopTokenRefreshTimer();
-    this.tokenRefreshSubscription = interval(environment.tokenRefreshInterval).subscribe(() => {
+    this.tokenRefreshSubscription = interval(
+      environment.tokenRefreshInterval,
+    ).subscribe(() => {
       this.refreshToken().subscribe();
     });
   }
@@ -253,7 +284,7 @@ export class AuthService {
       VerificationLevel.LEVEL_1,
       VerificationLevel.LEVEL_2,
       VerificationLevel.LEVEL_3,
-      VerificationLevel.LEVEL_4
+      VerificationLevel.LEVEL_4,
     ];
     const userLevelIndex = levels.indexOf(userLevel);
     const requiredLevelIndex = levels.indexOf(level);

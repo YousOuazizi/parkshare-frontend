@@ -20,16 +20,24 @@
                 <mat-icon class="star" [class.filled]="star">star</mat-icon>
               }
             </div>
-            <div class="rating-count">Based on {{ statistics()!.totalReviews }} reviews</div>
+            <div class="rating-count">
+              Based on {{ statistics()!.totalReviews }} reviews
+            </div>
           </div>
 
           <!-- Rating Distribution -->
           <div class="rating-distribution">
             @for (item of ratingDistribution(); track item.rating) {
-              <div class="distribution-row" (click)="filterByRating(item.rating)">
+              <div
+                class="distribution-row"
+                (click)="filterByRating(item.rating)"
+              >
                 <div class="rating-label">{{ item.rating }} stars</div>
                 <div class="rating-bar-container">
-                  <div class="rating-bar" [style.width.%]="item.percentage"></div>
+                  <div
+                    class="rating-bar"
+                    [style.width.%]="item.percentage"
+                  ></div>
                 </div>
                 <div class="rating-count">{{ item.count }}</div>
               </div>
@@ -42,16 +50,25 @@
           <div class="criteria-breakdown">
             <h3 class="criteria-title">Rating Breakdown</h3>
             <div class="criteria-grid">
-              @for (entry of getCriteriaEntries({ id: '', authorId: '', type: 'PARKING' as any, rating: 0, criteria: statistics()!.averageCriteria, isReported: false, createdAt: '', updatedAt: '' }); track entry.key) {
+              @for (
+                entry of getCriteriaEntries({ id: '', authorId: '', type: 'PARKING' as any, rating: 0, criteria: statistics()!.averageCriteria, isReported: false, createdAt: '', updatedAt: '' });
+                track entry.key
+              ) {
                 <div class="criteria-item">
-                  <div class="criteria-label">{{ getCriteriaLabel(entry.key) }}</div>
+                  <div class="criteria-label">
+                    {{ getCriteriaLabel(entry.key) }}
+                  </div>
                   <div class="criteria-rating">
                     <div class="criteria-stars">
                       @for (star of getRatingStars(entry.value); track $index) {
-                        <mat-icon class="star-small" [class.filled]="star">star</mat-icon>
+                        <mat-icon class="star-small" [class.filled]="star"
+                          >star</mat-icon
+                        >
                       }
                     </div>
-                    <span class="criteria-value">{{ entry.value.toFixed(1) }}</span>
+                    <span class="criteria-value">{{
+                      entry.value.toFixed(1)
+                    }}</span>
                   </div>
                 </div>
               }
@@ -88,7 +105,12 @@
       </mat-form-field>
 
       <!-- Reset Button -->
-      <button mat-stroked-button class="reset-button" (click)="resetFilters()" type="button">
+      <button
+        mat-stroked-button
+        class="reset-button"
+        (click)="resetFilters()"
+        type="button"
+      >
         <mat-icon>refresh</mat-icon>
         Reset Filters
       </button>
@@ -120,16 +142,17 @@
     <div class="empty-state">
       <mat-icon class="empty-icon">rate_review</mat-icon>
       <h2 class="empty-title">No Reviews Yet</h2>
-      <p class="empty-message">
-        Be the first to share your experience!
-      </p>
+      <p class="empty-message">Be the first to share your experience!</p>
     </div>
   }
 
   <!-- Reviews Grid -->
   @else {
     <div class="reviews-grid">
-      @for (review of displayedReviews(); track trackByReviewId($index, review)) {
+      @for (
+        review of displayedReviews();
+        track trackByReviewId($index, review)
+      ) {
         <mat-card class="review-card">
           <!-- Review Header -->
           <div class="review-header">
@@ -137,14 +160,21 @@
             <div class="reviewer-info">
               <div class="reviewer-avatar">
                 @if (getReviewerAvatar(review)) {
-                  <img [src]="getReviewerAvatar(review)" [alt]="getReviewerName(review)">
+                  <img
+                    [src]="getReviewerAvatar(review)"
+                    [alt]="getReviewerName(review)"
+                  />
                 } @else {
-                  <div class="avatar-initials">{{ getReviewerInitials(review) }}</div>
+                  <div class="avatar-initials">
+                    {{ getReviewerInitials(review) }}
+                  </div>
                 }
               </div>
               <div class="reviewer-details">
                 <div class="reviewer-name">{{ getReviewerName(review) }}</div>
-                <div class="review-date">{{ formatDate(review.createdAt) }}</div>
+                <div class="review-date">
+                  {{ formatDate(review.createdAt) }}
+                </div>
               </div>
             </div>
 
@@ -169,14 +199,26 @@
             <!-- Criteria Ratings -->
             @if (getCriteriaEntries(review).length > 0) {
               <div class="criteria-list">
-                @for (criterion of getCriteriaEntries(review); track criterion.key) {
+                @for (
+                  criterion of getCriteriaEntries(review);
+                  track criterion.key
+                ) {
                   <div class="criterion-item">
-                    <span class="criterion-label">{{ getCriteriaLabel(criterion.key) }}</span>
+                    <span class="criterion-label">{{
+                      getCriteriaLabel(criterion.key)
+                    }}</span>
                     <div class="criterion-rating">
-                      @for (star of getRatingStars(criterion.value); track $index) {
-                        <mat-icon class="star-small" [class.filled]="star">star</mat-icon>
+                      @for (
+                        star of getRatingStars(criterion.value);
+                        track $index
+                      ) {
+                        <mat-icon class="star-small" [class.filled]="star"
+                          >star</mat-icon
+                        >
                       }
-                      <span class="criterion-value">{{ criterion.value.toFixed(1) }}</span>
+                      <span class="criterion-value">{{
+                        criterion.value.toFixed(1)
+                      }}</span>
                     </div>
                   </div>
                 }
@@ -191,7 +233,9 @@
                 <mat-icon class="response-icon">reply</mat-icon>
                 <span class="response-label">Response from owner</span>
                 @if (review.responseDate) {
-                  <span class="response-date">{{ formatDate(review.responseDate) }}</span>
+                  <span class="response-date">{{
+                    formatDate(review.responseDate)
+                  }}</span>
                 }
               </div>
               <p class="response-text">{{ review.response }}</p>
@@ -232,7 +276,8 @@
         [pageIndex]="pageIndex()"
         [pageSizeOptions]="[5, 10, 25, 50]"
         (page)="onPageChange($event)"
-        showFirstLastButtons>
+        showFirstLastButtons
+      >
       </mat-paginator>
     }
   }

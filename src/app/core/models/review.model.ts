@@ -1,6 +1,6 @@
 export enum ReviewType {
-  PARKING = 'PARKING',
-  USER = 'USER'
+  PARKING = "PARKING",
+  USER = "USER",
 }
 
 export interface ReviewCriteria {
@@ -65,6 +65,7 @@ export interface ReviewStatistics {
 }
 
 export interface ReviewSearchParams {
+  [key: string]: string | number | boolean | string[] | number[] | undefined;
   parkingId?: string;
   targetUserId?: string;
   authorId?: string;

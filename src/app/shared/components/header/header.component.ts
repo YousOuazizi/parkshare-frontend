@@ -1,16 +1,16 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterLink, RouterLinkActive } from '@angular/router';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatBadgeModule } from '@angular/material/badge';
-import { MatMenuModule } from '@angular/material/menu';
-import { AuthService } from '../../../core/services/auth.service';
-import { NotificationService } from '../../../features/notification/services/notification.service';
+import { Component, inject, OnInit } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { RouterLink, RouterLinkActive } from "@angular/router";
+import { MatToolbarModule } from "@angular/material/toolbar";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+import { MatBadgeModule } from "@angular/material/badge";
+import { MatMenuModule } from "@angular/material/menu";
+import { AuthService } from "../../../core/services/auth.service";
+import { NotificationService } from "../../../features/notification/services/notification.service";
 
 @Component({
-  selector: 'app-header',
+  selector: "app-header",
   standalone: true,
   imports: [
     CommonModule,
@@ -20,14 +20,12 @@ import { NotificationService } from '../../../features/notification/services/not
     MatButtonModule,
     MatIconModule,
     MatBadgeModule,
-    MatMenuModule
+    MatMenuModule,
   ],
   template: `
     <mat-toolbar color="primary">
       <div class="toolbar-content">
-        <a routerLink="/" class="logo">
-          🅿️ ParkShare
-        </a>
+        <a routerLink="/" class="logo"> 🅿️ ParkShare </a>
 
         <nav class="nav-links">
           <a mat-button routerLink="/parkings" routerLinkActive="active">
@@ -40,10 +38,18 @@ import { NotificationService } from '../../../features/notification/services/not
             </a>
 
             @if (authService.canPublishParking()) {
-              <a mat-button routerLink="/parkings/my-parkings" routerLinkActive="active">
+              <a
+                mat-button
+                routerLink="/parkings/my-parkings"
+                routerLinkActive="active"
+              >
                 Mes Parkings
               </a>
-              <a mat-button routerLink="/analytics/owner" routerLinkActive="active">
+              <a
+                mat-button
+                routerLink="/analytics/owner"
+                routerLinkActive="active"
+              >
                 Analytics
               </a>
             }
@@ -64,7 +70,10 @@ import { NotificationService } from '../../../features/notification/services/not
             </a>
           } @else {
             <button mat-icon-button routerLink="/notifications">
-              <mat-icon [matBadge]="notificationService.unreadCount()" matBadgeColor="warn">
+              <mat-icon
+                [matBadge]="notificationService.unreadCount()"
+                matBadgeColor="warn"
+              >
                 notifications
               </mat-icon>
             </button>
@@ -80,7 +89,9 @@ import { NotificationService } from '../../../features/notification/services/not
               </button>
               <button mat-menu-item routerLink="/verification">
                 <mat-icon>verified_user</mat-icon>
-                <span>Vérification ({{ authService.verificationLevel() }})</span>
+                <span
+                  >Vérification ({{ authService.verificationLevel() }})</span
+                >
               </button>
               <button mat-menu-item routerLink="/gdpr/consent">
                 <mat-icon>privacy_tip</mat-icon>
@@ -97,43 +108,45 @@ import { NotificationService } from '../../../features/notification/services/not
       </div>
     </mat-toolbar>
   `,
-  styles: [`
-    .toolbar-content {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-md);
-    }
-
-    .logo {
-      font-size: 24px;
-      font-weight: bold;
-      text-decoration: none;
-      color: white;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: var(--spacing-sm);
-      flex: 1;
-    }
-
-    .user-menu {
-      display: flex;
-      gap: var(--spacing-sm);
-      align-items: center;
-    }
-
-    a.active {
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    @media (max-width: 768px) {
-      .nav-links a span {
-        display: none;
+  styles: [
+    `
+      .toolbar-content {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-md);
       }
-    }
-  `]
+
+      .logo {
+        font-size: 24px;
+        font-weight: bold;
+        text-decoration: none;
+        color: white;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: var(--spacing-sm);
+        flex: 1;
+      }
+
+      .user-menu {
+        display: flex;
+        gap: var(--spacing-sm);
+        align-items: center;
+      }
+
+      a.active {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      @media (max-width: 768px) {
+        .nav-links a span {
+          display: none;
+        }
+      }
+    `,
+  ],
 })
 export class HeaderComponent implements OnInit {
   authService = inject(AuthService);

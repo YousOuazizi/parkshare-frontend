@@ -164,22 +164,30 @@
 
       &.primary {
         background-color: rgba(0, 150, 136, 0.1);
-        mat-icon { color: #009688; }
+        mat-icon {
+          color: #009688;
+        }
       }
 
       &.success {
         background-color: rgba(76, 175, 80, 0.1);
-        mat-icon { color: #4CAF50; }
+        mat-icon {
+          color: #4caf50;
+        }
       }
 
       &.accent {
         background-color: rgba(255, 87, 34, 0.1);
-        mat-icon { color: #FF5722; }
+        mat-icon {
+          color: #ff5722;
+        }
       }
 
       &.info {
         background-color: rgba(33, 150, 243, 0.1);
-        mat-icon { color: #2196F3; }
+        mat-icon {
+          color: #2196f3;
+        }
       }
     }
 
@@ -213,22 +221,30 @@
   .stat-icon-wrapper {
     &.primary {
       background-color: rgba(0, 150, 136, 0.2);
-      mat-icon { color: #4DB6AC; }
+      mat-icon {
+        color: #4db6ac;
+      }
     }
 
     &.success {
       background-color: rgba(76, 175, 80, 0.2);
-      mat-icon { color: #81C784; }
+      mat-icon {
+        color: #81c784;
+      }
     }
 
     &.accent {
       background-color: rgba(255, 87, 34, 0.2);
-      mat-icon { color: #FF8A65; }
+      mat-icon {
+        color: #ff8a65;
+      }
     }
 
     &.info {
       background-color: rgba(33, 150, 243, 0.2);
-      mat-icon { color: #64B5F6; }
+      mat-icon {
+        color: #64b5f6;
+      }
     }
   }
 
@@ -333,15 +349,15 @@
           font-weight: 600;
 
           &.health-good {
-            color: #4CAF50;
+            color: #4caf50;
           }
 
           &.health-warning {
-            color: #FF9800;
+            color: #ff9800;
           }
 
           &.health-critical {
-            color: #F44336;
+            color: #f44336;
           }
         }
       }
@@ -351,15 +367,15 @@
         border-radius: var(--border-radius-sm);
 
         &.health-good ::ng-deep .mdc-linear-progress__bar-inner {
-          border-color: #4CAF50 !important;
+          border-color: #4caf50 !important;
         }
 
         &.health-warning ::ng-deep .mdc-linear-progress__bar-inner {
-          border-color: #FF9800 !important;
+          border-color: #ff9800 !important;
         }
 
         &.health-critical ::ng-deep .mdc-linear-progress__bar-inner {
-          border-color: #F44336 !important;
+          border-color: #f44336 !important;
         }
       }
     }
@@ -476,19 +492,19 @@
       }
 
       &.activity-success {
-        border-left-color: #4CAF50;
+        border-left-color: #4caf50;
       }
 
       &.activity-info {
-        border-left-color: #2196F3;
+        border-left-color: #2196f3;
       }
 
       &.activity-warning {
-        border-left-color: #FF9800;
+        border-left-color: #ff9800;
       }
 
       &.activity-error {
-        border-left-color: #F44336;
+        border-left-color: #f44336;
       }
 
       .activity-icon-wrapper {
@@ -521,19 +537,19 @@
       }
 
       &.activity-success .activity-icon-wrapper .severity-icon {
-        color: #4CAF50;
+        color: #4caf50;
       }
 
       &.activity-info .activity-icon-wrapper .severity-icon {
-        color: #2196F3;
+        color: #2196f3;
       }
 
       &.activity-warning .activity-icon-wrapper .severity-icon {
-        color: #FF9800;
+        color: #ff9800;
       }
 
       &.activity-error .activity-icon-wrapper .severity-icon {
-        color: #F44336;
+        color: #f44336;
       }
 
       .activity-content {
@@ -649,7 +665,7 @@
         font-size: 0.875rem;
 
         &.top-three {
-          background: linear-gradient(135deg, #FFD700, #FFA500);
+          background: linear-gradient(135deg, #ffd700, #ffa500);
           color: white;
         }
       }
@@ -802,11 +818,21 @@
           height: 100%;
           transition: width var(--transition-normal);
 
-          &.level-0 { background-color: #9E9E9E; }
-          &.level-1 { background-color: #2196F3; }
-          &.level-2 { background-color: #4CAF50; }
-          &.level-3 { background-color: #FF9800; }
-          &.level-4 { background-color: #9C27B0; }
+          &.level-0 {
+            background-color: #9e9e9e;
+          }
+          &.level-1 {
+            background-color: #2196f3;
+          }
+          &.level-2 {
+            background-color: #4caf50;
+          }
+          &.level-3 {
+            background-color: #ff9800;
+          }
+          &.level-4 {
+            background-color: #9c27b0;
+          }
         }
       }
 

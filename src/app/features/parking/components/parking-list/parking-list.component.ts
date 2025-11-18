@@ -1,23 +1,33 @@
-import { Component, OnInit, signal, computed, effect, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatSliderModule } from '@angular/material/slider';
-import { RouterLink } from '@angular/router';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import {
+  Component,
+  OnInit,
+  signal,
+  computed,
+  effect,
+  inject,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { MatCardModule } from "@angular/material/card";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatSelectModule } from "@angular/material/select";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+import { MatChipsModule } from "@angular/material/chips";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatPaginatorModule, PageEvent } from "@angular/material/paginator";
+import { MatButtonToggleModule } from "@angular/material/button-toggle";
+import { MatSliderModule } from "@angular/material/slider";
+import { RouterLink } from "@angular/router";
+import { debounceTime, distinctUntilChanged } from "rxjs/operators";
 
-import { ParkingService } from '../../services/parking.service';
-import { Parking, ParkingSearchParams } from '../../../../core/models/parking.model';
+import { ParkingService } from "../../services/parking.service";
+import {
+  Parking,
+  ParkingSearchParams,
+} from "../../../../core/models/parking.model";
 
 interface FilterForm {
   searchQuery: FormControl<string | null>;
@@ -29,7 +39,7 @@ interface FilterForm {
 }
 
 @Component({
-  selector: 'app-parking-list',
+  selector: "app-parking-list",
   standalone: true,
   imports: [
     CommonModule,
@@ -46,10 +56,10 @@ interface FilterForm {
     MatProgressSpinnerModule,
     MatPaginatorModule,
     MatButtonToggleModule,
-    MatSliderModule
+    MatSliderModule,
   ],
-  templateUrl: './parking-list.component.html',
-  styleUrls: ['./parking-list.component.scss']
+  templateUrl: "./parking-list.component.html",
+  styleUrls: ["./parking-list.component.scss"],
 })
 export class ParkingListComponent implements OnInit {
   private parkingService = inject(ParkingService);
@@ -58,7 +68,7 @@ export class ParkingListComponent implements OnInit {
   parkings = signal<Parking[]>([]);
   loading = signal<boolean>(false);
   error = signal<string | null>(null);
-  viewMode = signal<'grid' | 'map'>('grid');
+  viewMode = signal<"grid" | "map">("grid");
 
   // Pagination signals
   totalItems = signal<number>(0);
@@ -74,34 +84,34 @@ export class ParkingListComponent implements OnInit {
 
   // Filter form
   filterForm = new FormGroup<FilterForm>({
-    searchQuery: new FormControl<string>(''),
+    searchQuery: new FormControl<string>(""),
     minPrice: new FormControl<number>(0),
     maxPrice: new FormControl<number>(200),
     hasEVCharging: new FormControl<boolean | null>(null),
     isVerified: new FormControl<boolean | null>(null),
-    features: new FormControl<string[]>([])
+    features: new FormControl<string[]>([]),
   });
 
   // Available features for filtering
   availableFeatures = [
-    'Covered',
-    'Security Camera',
-    'Well Lit',
-    'Gated',
-    'EV Charging',
-    '24/7 Access',
-    'Wheelchair Accessible',
-    'Valet Service'
+    "Covered",
+    "Security Camera",
+    "Well Lit",
+    "Gated",
+    "EV Charging",
+    "24/7 Access",
+    "Wheelchair Accessible",
+    "Valet Service",
   ];
 
   // Sort options
   sortOptions = [
-    { value: 'price:ASC', label: 'Price: Low to High' },
-    { value: 'price:DESC', label: 'Price: High to Low' },
-    { value: 'rating:DESC', label: 'Rating: High to Low' },
-    { value: 'distance:ASC', label: 'Distance: Nearest' }
+    { value: "price:ASC", label: "Price: Low to High" },
+    { value: "price:DESC", label: "Price: High to Low" },
+    { value: "rating:DESC", label: "Rating: High to Low" },
+    { value: "distance:ASC", label: "Distance: Nearest" },
   ];
-  selectedSort = signal<string>('price:ASC');
+  selectedSort = signal<string>("price:ASC");
 
   constructor() {
     // Effect to reload parkings when sort changes
@@ -134,10 +144,10 @@ export class ParkingListComponent implements OnInit {
         this.loading.set(false);
       },
       error: (err) => {
-        this.error.set('Failed to load parkings. Please try again.');
+        this.error.set("Failed to load parkings. Please try again.");
         this.loading.set(false);
-        console.error('Error loading parkings:', err);
-      }
+        console.error("Error loading parkings:", err);
+      },
     });
   }
 
@@ -146,20 +156,28 @@ export class ParkingListComponent implements OnInit {
    */
   private buildSearchParams(): ParkingSearchParams {
     const formValue = this.filterForm.value;
-    const [sortBy, sortOrder] = (this.selectedSort() || 'price:ASC').split(':');
+    const [sortBy, sortOrder] = (this.selectedSort() || "price:ASC").split(":");
 
     const params: ParkingSearchParams = {
-      sortBy: sortBy === 'price' ? 'basePrice' : sortBy,
-      sortOrder: sortOrder as 'ASC' | 'DESC',
+      sortBy: sortBy === "price" ? "basePrice" : sortBy,
+      sortOrder: sortOrder as "ASC" | "DESC",
       page: 1,
-      limit: 100 // Load all for client-side pagination
+      limit: 100, // Load all for client-side pagination
     };
 
-    if (formValue.minPrice !== null && formValue.minPrice > 0) {
+    if (
+      formValue.minPrice !== null &&
+      formValue.minPrice !== undefined &&
+      formValue.minPrice > 0
+    ) {
       params.minPrice = formValue.minPrice;
     }
 
-    if (formValue.maxPrice !== null && formValue.maxPrice < 200) {
+    if (
+      formValue.maxPrice !== null &&
+      formValue.maxPrice !== undefined &&
+      formValue.maxPrice < 200
+    ) {
       params.maxPrice = formValue.maxPrice;
     }
 
@@ -183,11 +201,9 @@ export class ParkingListComponent implements OnInit {
    */
   private setupFilterListeners(): void {
     // Listen to search query changes
-    this.filterForm.get('searchQuery')?.valueChanges
-      .pipe(
-        debounceTime(500),
-        distinctUntilChanged()
-      )
+    this.filterForm
+      .get("searchQuery")
+      ?.valueChanges.pipe(debounceTime(500), distinctUntilChanged())
       .subscribe(() => {
         this.resetPagination();
         this.loadParkings();
@@ -195,10 +211,7 @@ export class ParkingListComponent implements OnInit {
 
     // Listen to other filter changes
     this.filterForm.valueChanges
-      .pipe(
-        debounceTime(300),
-        distinctUntilChanged()
-      )
+      .pipe(debounceTime(300), distinctUntilChanged())
       .subscribe(() => {
         this.resetPagination();
         this.loadParkings();
@@ -212,7 +225,7 @@ export class ParkingListComponent implements OnInit {
     this.pageIndex.set(event.pageIndex);
     this.pageSize.set(event.pageSize);
     // Scroll to top
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   /**
@@ -225,7 +238,7 @@ export class ParkingListComponent implements OnInit {
   /**
    * Toggle view mode between grid and map
    */
-  toggleViewMode(mode: 'grid' | 'map'): void {
+  toggleViewMode(mode: "grid" | "map"): void {
     this.viewMode.set(mode);
   }
 
@@ -234,14 +247,14 @@ export class ParkingListComponent implements OnInit {
    */
   resetFilters(): void {
     this.filterForm.reset({
-      searchQuery: '',
+      searchQuery: "",
       minPrice: 0,
       maxPrice: 200,
       hasEVCharging: null,
       isVerified: null,
-      features: []
+      features: [],
     });
-    this.selectedSort.set('price:ASC');
+    this.selectedSort.set("price:ASC");
     this.resetPagination();
   }
 
@@ -250,10 +263,11 @@ export class ParkingListComponent implements OnInit {
    */
   getPrimaryPhotoUrl(parking: Parking): string {
     if (parking.photos && parking.photos.length > 0) {
-      const primaryPhoto = parking.photos.find(p => p.order === 0) || parking.photos[0];
+      const primaryPhoto =
+        parking.photos.find((p) => p.order === 0) || parking.photos[0];
       return primaryPhoto.url;
     }
-    return 'assets/images/default-parking.jpg'; // Fallback image
+    return "assets/images/default-parking.jpg"; // Fallback image
   }
 
   /**
@@ -263,31 +277,36 @@ export class ParkingListComponent implements OnInit {
     const parts = [parking.address];
     if (parking.city) parts.push(parking.city);
     if (parking.country) parts.push(parking.country);
-    return parts.join(', ');
+    return parts.join(", ");
   }
 
   /**
    * Get availability status text
    */
   getAvailabilityStatus(parking: Parking): string {
-    if (!parking.isActive) return 'Inactive';
+    if (!parking.isActive) return "Inactive";
 
     const now = new Date();
     const currentDay = now.getDay();
-    const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+    const currentTime = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`;
 
     // Check availability schedule
-    const todaySchedule = parking.availabilitySchedules.find(s => s.dayOfWeek === currentDay);
+    const todaySchedule = parking.availabilitySchedules.find(
+      (s) => s.dayOfWeek === currentDay,
+    );
 
     if (todaySchedule && todaySchedule.isAvailable) {
-      if (currentTime >= todaySchedule.startTime && currentTime <= todaySchedule.endTime) {
-        return 'Available Now';
+      if (
+        currentTime >= todaySchedule.startTime &&
+        currentTime <= todaySchedule.endTime
+      ) {
+        return "Available Now";
       } else {
         return `Available ${todaySchedule.startTime} - ${todaySchedule.endTime}`;
       }
     }
 
-    return 'Check Availability';
+    return "Check Availability";
   }
 
   /**
@@ -297,7 +316,7 @@ export class ParkingListComponent implements OnInit {
     if (!parking.isActive) return false;
 
     const status = this.getAvailabilityStatus(parking);
-    return status === 'Available Now';
+    return status === "Available Now";
   }
 
   /**
@@ -318,11 +337,11 @@ export class ParkingListComponent implements OnInit {
    * Format price with currency
    */
   formatPrice(price: number, currency: string): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: currency || 'USD',
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: currency || "USD",
       minimumFractionDigits: 0,
-      maximumFractionDigits: 2
+      maximumFractionDigits: 2,
     }).format(price);
   }
 

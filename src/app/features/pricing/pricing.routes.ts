@@ -1,15 +1,18 @@
-import { Routes } from '@angular/router';
-import { authGuard } from '../../core/guards/auth.guard';
+import { Routes } from "@angular/router";
+import { authGuard } from "../../core/guards/auth.guard";
 
 export const PRICING_ROUTES: Routes = [
   {
-    path: 'dashboard/:parkingId',
+    path: "dashboard/:parkingId",
     canActivate: [authGuard],
-    loadComponent: () => import('./components/pricing-dashboard/pricing-dashboard.component').then(m => m.PricingDashboardComponent)
+    loadComponent: () =>
+      import("./components/pricing-dashboard/pricing-dashboard.component").then(
+        (m) => m.PricingDashboardComponent,
+      ),
   },
   {
-    path: '',
-    redirectTo: '/parkings',
-    pathMatch: 'full'
-  }
+    path: "",
+    redirectTo: "/parkings",
+    pathMatch: "full",
+  },
 ];

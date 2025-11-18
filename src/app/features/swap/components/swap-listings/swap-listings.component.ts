@@ -1,19 +1,22 @@
-import { Component, OnInit, signal, computed, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { RouterLink } from '@angular/router';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Component, OnInit, signal, computed, inject } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { MatCardModule } from "@angular/material/card";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatSelectModule } from "@angular/material/select";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+import { MatChipsModule } from "@angular/material/chips";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { RouterLink } from "@angular/router";
+import { debounceTime, distinctUntilChanged } from "rxjs/operators";
 
-import { SwapService } from '../../services/swap.service';
-import { SwapListing, SwapListingStatus } from '../../../../core/models/swap.model';
+import { SwapService } from "../../services/swap.service";
+import {
+  SwapListing,
+  SwapListingStatus,
+} from "../../../../core/models/swap.model";
 
 interface FilterForm {
   searchQuery: FormControl<string | null>;
@@ -24,7 +27,7 @@ interface FilterForm {
 }
 
 @Component({
-  selector: 'app-swap-listings',
+  selector: "app-swap-listings",
   standalone: true,
   imports: [
     CommonModule,
@@ -37,10 +40,10 @@ interface FilterForm {
     MatButtonModule,
     MatIconModule,
     MatChipsModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
   ],
-  templateUrl: './swap-listings.component.html',
-  styleUrls: ['./swap-listings.component.scss']
+  templateUrl: "./swap-listings.component.html",
+  styleUrls: ["./swap-listings.component.scss"],
 })
 export class SwapListingsComponent implements OnInit {
   private swapService = inject(SwapService);
@@ -55,32 +58,51 @@ export class SwapListingsComponent implements OnInit {
     const allListings = this.listings();
     const filters = this.filterForm.value;
 
-    return allListings.filter(listing => {
+    return allListings.filter((listing) => {
       // Status filter
       if (filters.status && listing.status !== filters.status) {
         return false;
       }
 
       // Requires exchange filter
-      if (filters.requiresExchange !== null && listing.requiresExchange !== filters.requiresExchange) {
+      if (
+        filters.requiresExchange !== null &&
+        listing.requiresExchange !== filters.requiresExchange
+      ) {
         return false;
       }
 
       // Price filters
-      if (filters.minPrice !== null && listing.price && listing.price < filters.minPrice) {
+      if (
+        filters.minPrice !== null &&
+        filters.minPrice !== undefined &&
+        listing.price &&
+        listing.price < filters.minPrice
+      ) {
         return false;
       }
 
-      if (filters.maxPrice !== null && listing.price && listing.price > filters.maxPrice) {
+      if (
+        filters.maxPrice !== null &&
+        filters.maxPrice !== undefined &&
+        listing.price &&
+        listing.price > filters.maxPrice
+      ) {
         return false;
       }
 
       // Search query filter
       if (filters.searchQuery) {
         const query = filters.searchQuery.toLowerCase();
-        const matchesTitle = listing.parking?.title?.toLowerCase().includes(query);
-        const matchesAddress = listing.parking?.address?.toLowerCase().includes(query);
-        const matchesDescription = listing.description?.toLowerCase().includes(query);
+        const matchesTitle = listing.parking?.title
+          ?.toLowerCase()
+          .includes(query);
+        const matchesAddress = listing.parking?.address
+          ?.toLowerCase()
+          .includes(query);
+        const matchesDescription = listing.description
+          ?.toLowerCase()
+          .includes(query);
 
         if (!matchesTitle && !matchesAddress && !matchesDescription) {
           return false;
@@ -93,26 +115,26 @@ export class SwapListingsComponent implements OnInit {
 
   // Filter form
   filterForm = new FormGroup<FilterForm>({
-    searchQuery: new FormControl<string>(''),
+    searchQuery: new FormControl<string>(""),
     status: new FormControl<SwapListingStatus | null>(null),
     requiresExchange: new FormControl<boolean | null>(null),
     minPrice: new FormControl<number | null>(null),
-    maxPrice: new FormControl<number | null>(null)
+    maxPrice: new FormControl<number | null>(null),
   });
 
   // Status options
   statusOptions = [
-    { value: SwapListingStatus.ACTIVE, label: 'Active' },
-    { value: SwapListingStatus.BOOKED, label: 'Booked' },
-    { value: SwapListingStatus.COMPLETED, label: 'Completed' },
-    { value: SwapListingStatus.CANCELLED, label: 'Cancelled' },
-    { value: SwapListingStatus.EXPIRED, label: 'Expired' }
+    { value: SwapListingStatus.ACTIVE, label: "Active" },
+    { value: SwapListingStatus.BOOKED, label: "Booked" },
+    { value: SwapListingStatus.COMPLETED, label: "Completed" },
+    { value: SwapListingStatus.CANCELLED, label: "Cancelled" },
+    { value: SwapListingStatus.EXPIRED, label: "Expired" },
   ];
 
   // Exchange options
   exchangeOptions = [
-    { value: true, label: 'Requires Exchange' },
-    { value: false, label: 'Cash Only' }
+    { value: true, label: "Requires Exchange" },
+    { value: false, label: "Cash Only" },
   ];
 
   ngOnInit(): void {
@@ -133,10 +155,10 @@ export class SwapListingsComponent implements OnInit {
         this.loading.set(false);
       },
       error: (err) => {
-        this.error.set('Failed to load swap listings. Please try again.');
+        this.error.set("Failed to load swap listings. Please try again.");
         this.loading.set(false);
-        console.error('Error loading swap listings:', err);
-      }
+        console.error("Error loading swap listings:", err);
+      },
     });
   }
 
@@ -145,10 +167,7 @@ export class SwapListingsComponent implements OnInit {
    */
   private setupFilterListeners(): void {
     this.filterForm.valueChanges
-      .pipe(
-        debounceTime(300),
-        distinctUntilChanged()
-      )
+      .pipe(debounceTime(300), distinctUntilChanged())
       .subscribe(() => {
         // Filters are automatically applied via computed signal
       });
@@ -159,11 +178,11 @@ export class SwapListingsComponent implements OnInit {
    */
   resetFilters(): void {
     this.filterForm.reset({
-      searchQuery: '',
+      searchQuery: "",
       status: null,
       requiresExchange: null,
       minPrice: null,
-      maxPrice: null
+      maxPrice: null,
     });
   }
 
@@ -174,7 +193,7 @@ export class SwapListingsComponent implements OnInit {
     if (listing.parking?.photos && listing.parking.photos.length > 0) {
       return listing.parking.photos[0].url;
     }
-    return 'assets/images/default-parking.jpg';
+    return "assets/images/default-parking.jpg";
   }
 
   /**
@@ -183,17 +202,17 @@ export class SwapListingsComponent implements OnInit {
   getStatusColor(status: SwapListingStatus): string {
     switch (status) {
       case SwapListingStatus.ACTIVE:
-        return 'primary';
+        return "primary";
       case SwapListingStatus.BOOKED:
-        return 'accent';
+        return "accent";
       case SwapListingStatus.COMPLETED:
-        return 'success';
+        return "success";
       case SwapListingStatus.CANCELLED:
-        return 'warn';
+        return "warn";
       case SwapListingStatus.EXPIRED:
-        return 'default';
+        return "default";
       default:
-        return 'default';
+        return "default";
     }
   }
 
@@ -203,17 +222,17 @@ export class SwapListingsComponent implements OnInit {
   getStatusClass(status: SwapListingStatus): string {
     switch (status) {
       case SwapListingStatus.ACTIVE:
-        return 'status-active';
+        return "status-active";
       case SwapListingStatus.BOOKED:
-        return 'status-booked';
+        return "status-booked";
       case SwapListingStatus.COMPLETED:
-        return 'status-completed';
+        return "status-completed";
       case SwapListingStatus.CANCELLED:
-        return 'status-cancelled';
+        return "status-cancelled";
       case SwapListingStatus.EXPIRED:
-        return 'status-expired';
+        return "status-expired";
       default:
-        return '';
+        return "";
     }
   }
 
@@ -221,13 +240,13 @@ export class SwapListingsComponent implements OnInit {
    * Format price with currency
    */
   formatPrice(price: number | undefined, currency: string | undefined): string {
-    if (!price) return 'Negotiable';
+    if (!price) return "Negotiable";
 
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: currency || 'USD',
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: currency || "USD",
       minimumFractionDigits: 0,
-      maximumFractionDigits: 2
+      maximumFractionDigits: 2,
     }).format(price);
   }
 
@@ -238,8 +257,15 @@ export class SwapListingsComponent implements OnInit {
     const start = new Date(startDate);
     const end = new Date(endDate);
 
-    const startStr = start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    const endStr = end.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const startStr = start.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+    });
+    const endStr = end.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
 
     return `${startStr} - ${endStr}`;
   }
@@ -249,7 +275,7 @@ export class SwapListingsComponent implements OnInit {
    */
   getPreferredLocationText(listing: SwapListing): string {
     if (!listing.preferredLocation) {
-      return 'Any location';
+      return "Any location";
     }
 
     const radiusMiles = (listing.preferredLocation.radius / 1609.34).toFixed(1);

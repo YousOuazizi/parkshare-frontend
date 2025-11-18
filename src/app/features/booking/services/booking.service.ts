@@ -1,11 +1,17 @@
-import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
-import { ApiService } from '../../../core/services/api.service';
-import { API_ENDPOINTS } from '../../../core/constants/api-endpoints';
-import { Booking, CreateBookingRequest, BookingSearchParams, BookingStatistics, BookingStatus } from '../../../core/models';
+import { Injectable, inject } from "@angular/core";
+import { Observable } from "rxjs";
+import { ApiService } from "../../../core/services/api.service";
+import { API_ENDPOINTS } from "../../../core/constants/api-endpoints";
+import {
+  Booking,
+  CreateBookingRequest,
+  BookingSearchParams,
+  BookingStatistics,
+  BookingStatus,
+} from "../../../core/models";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class BookingService {
   private api = inject(ApiService);
@@ -34,7 +40,10 @@ export class BookingService {
   /**
    * Update booking
    */
-  updateBooking(id: string, data: Partial<CreateBookingRequest>): Observable<Booking> {
+  updateBooking(
+    id: string,
+    data: Partial<CreateBookingRequest>,
+  ): Observable<Booking> {
     return this.api.patch<Booking>(API_ENDPOINTS.BOOKINGS.BY_ID(id), data);
   }
 
@@ -45,7 +54,7 @@ export class BookingService {
     return this.api.patch<Booking>(
       API_ENDPOINTS.BOOKINGS.UPDATE_STATUS(id),
       {},
-      { params: { status } }
+      { params: { status } },
     );
   }
 
@@ -74,7 +83,10 @@ export class BookingService {
    * Get access code
    */
   getAccessCode(id: string): Observable<{ accessCode: string }> {
-    return this.api.post<{ accessCode: string }>(API_ENDPOINTS.BOOKINGS.ACCESS_CODE(id), {});
+    return this.api.post<{ accessCode: string }>(
+      API_ENDPOINTS.BOOKINGS.ACCESS_CODE(id),
+      {},
+    );
   }
 
   /**
@@ -88,6 +100,8 @@ export class BookingService {
    * Get parking booking statistics
    */
   getParkingStats(parkingId: string): Observable<BookingStatistics> {
-    return this.api.get<BookingStatistics>(API_ENDPOINTS.BOOKINGS.STATS_PARKING(parkingId));
+    return this.api.get<BookingStatistics>(
+      API_ENDPOINTS.BOOKINGS.STATS_PARKING(parkingId),
+    );
   }
 }

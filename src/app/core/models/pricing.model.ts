@@ -1,15 +1,15 @@
 export enum PriceRuleType {
-  TIME_BASED = 'TIME_BASED',
-  DAY_BASED = 'DAY_BASED',
-  DATE_BASED = 'DATE_BASED',
-  DURATION_BASED = 'DURATION_BASED',
-  DISCOUNT = 'DISCOUNT'
+  TIME_BASED = "TIME_BASED",
+  DAY_BASED = "DAY_BASED",
+  DATE_BASED = "DATE_BASED",
+  DURATION_BASED = "DURATION_BASED",
+  DISCOUNT = "DISCOUNT",
 }
 
 export enum AlgorithmType {
-  BASE = 'BASE',
-  ML = 'ML',
-  EVENT = 'EVENT'
+  BASE = "BASE",
+  ML = "ML",
+  EVENT = "EVENT",
 }
 
 export interface TimeCondition {
@@ -37,7 +37,7 @@ export interface PriceRule {
   name: string;
   description?: string;
   type: PriceRuleType;
-  adjustmentType: 'PERCENTAGE' | 'FIXED';
+  adjustmentType: "PERCENTAGE" | "FIXED";
   adjustmentValue: number;
   conditions: {
     time?: TimeCondition;

@@ -1,17 +1,17 @@
-import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
-import { ApiService } from '../../../core/services/api.service';
-import { API_ENDPOINTS } from '../../../core/constants/api-endpoints';
+import { Injectable, inject } from "@angular/core";
+import { Observable } from "rxjs";
+import { ApiService } from "../../../core/services/api.service";
+import { API_ENDPOINTS } from "../../../core/constants/api-endpoints";
 import {
   SwapListing,
   SwapOffer,
   SwapTransaction,
   CreateSwapListingRequest,
-  CreateSwapOfferRequest
-} from '../../../core/models';
+  CreateSwapOfferRequest,
+} from "../../../core/models";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class SwapService {
   private api = inject(ApiService);
@@ -22,7 +22,10 @@ export class SwapService {
   }
 
   getListings(params?: any): Observable<SwapListing[]> {
-    return this.api.get<SwapListing[]>(API_ENDPOINTS.SWAP.LISTINGS.BASE, params);
+    return this.api.get<SwapListing[]>(
+      API_ENDPOINTS.SWAP.LISTINGS.BASE,
+      params,
+    );
   }
 
   getMyListings(): Observable<SwapListing[]> {
@@ -33,8 +36,14 @@ export class SwapService {
     return this.api.get<SwapListing>(API_ENDPOINTS.SWAP.LISTINGS.BY_ID(id));
   }
 
-  updateListing(id: string, data: Partial<CreateSwapListingRequest>): Observable<SwapListing> {
-    return this.api.patch<SwapListing>(API_ENDPOINTS.SWAP.LISTINGS.BY_ID(id), data);
+  updateListing(
+    id: string,
+    data: Partial<CreateSwapListingRequest>,
+  ): Observable<SwapListing> {
+    return this.api.patch<SwapListing>(
+      API_ENDPOINTS.SWAP.LISTINGS.BY_ID(id),
+      data,
+    );
   }
 
   cancelListing(id: string): Observable<void> {
@@ -54,7 +63,10 @@ export class SwapService {
     return this.api.get<SwapOffer>(API_ENDPOINTS.SWAP.OFFERS.BY_ID(id));
   }
 
-  updateOffer(id: string, data: Partial<CreateSwapOfferRequest>): Observable<SwapOffer> {
+  updateOffer(
+    id: string,
+    data: Partial<CreateSwapOfferRequest>,
+  ): Observable<SwapOffer> {
     return this.api.patch<SwapOffer>(API_ENDPOINTS.SWAP.OFFERS.BY_ID(id), data);
   }
 
@@ -62,8 +74,15 @@ export class SwapService {
     return this.api.post<void>(API_ENDPOINTS.SWAP.OFFERS.CANCEL(id), {});
   }
 
-  respondToOffer(id: string, accept: boolean, message?: string): Observable<SwapOffer> {
-    return this.api.post<SwapOffer>(API_ENDPOINTS.SWAP.OFFERS.RESPOND(id), { accept, message });
+  respondToOffer(
+    id: string,
+    accept: boolean,
+    message?: string,
+  ): Observable<SwapOffer> {
+    return this.api.post<SwapOffer>(API_ENDPOINTS.SWAP.OFFERS.RESPOND(id), {
+      accept,
+      message,
+    });
   }
 
   completeSwap(id: string): Observable<SwapOffer> {
@@ -72,10 +91,14 @@ export class SwapService {
 
   // Transactions
   getTransactions(): Observable<SwapTransaction[]> {
-    return this.api.get<SwapTransaction[]>(API_ENDPOINTS.SWAP.TRANSACTIONS.BASE);
+    return this.api.get<SwapTransaction[]>(
+      API_ENDPOINTS.SWAP.TRANSACTIONS.BASE,
+    );
   }
 
   getTransactionById(id: string): Observable<SwapTransaction> {
-    return this.api.get<SwapTransaction>(API_ENDPOINTS.SWAP.TRANSACTIONS.BY_ID(id));
+    return this.api.get<SwapTransaction>(
+      API_ENDPOINTS.SWAP.TRANSACTIONS.BY_ID(id),
+    );
   }
 }

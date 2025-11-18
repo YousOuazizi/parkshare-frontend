@@ -34,10 +34,13 @@
               formControlName="firstName"
               placeholder="John"
               autocomplete="given-name"
-            >
+            />
             <mat-icon matPrefix>person</mat-icon>
-            @if (registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched) {
-              <mat-error>{{ getErrorMessage('firstName') }}</mat-error>
+            @if (
+              registerForm.get("firstName")?.invalid &&
+              registerForm.get("firstName")?.touched
+            ) {
+              <mat-error>{{ getErrorMessage("firstName") }}</mat-error>
             }
           </mat-form-field>
 
@@ -49,9 +52,12 @@
               formControlName="lastName"
               placeholder="Doe"
               autocomplete="family-name"
-            >
-            @if (registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched) {
-              <mat-error>{{ getErrorMessage('lastName') }}</mat-error>
+            />
+            @if (
+              registerForm.get("lastName")?.invalid &&
+              registerForm.get("lastName")?.touched
+            ) {
+              <mat-error>{{ getErrorMessage("lastName") }}</mat-error>
             }
           </mat-form-field>
         </div>
@@ -64,10 +70,13 @@
             formControlName="email"
             placeholder="you@example.com"
             autocomplete="email"
-          >
+          />
           <mat-icon matPrefix>email</mat-icon>
-          @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
-            <mat-error>{{ getErrorMessage('email') }}</mat-error>
+          @if (
+            registerForm.get("email")?.invalid &&
+            registerForm.get("email")?.touched
+          ) {
+            <mat-error>{{ getErrorMessage("email") }}</mat-error>
           }
         </mat-form-field>
 
@@ -79,10 +88,13 @@
             formControlName="phone"
             placeholder="+1234567890"
             autocomplete="tel"
-          >
+          />
           <mat-icon matPrefix>phone</mat-icon>
-          @if (registerForm.get('phone')?.invalid && registerForm.get('phone')?.touched) {
-            <mat-error>{{ getErrorMessage('phone') }}</mat-error>
+          @if (
+            registerForm.get("phone")?.invalid &&
+            registerForm.get("phone")?.touched
+          ) {
+            <mat-error>{{ getErrorMessage("phone") }}</mat-error>
           }
         </mat-form-field>
 
@@ -109,7 +121,7 @@
             formControlName="password"
             placeholder="Create a strong password"
             autocomplete="new-password"
-          >
+          />
           <mat-icon matPrefix>lock</mat-icon>
           <button
             mat-icon-button
@@ -118,10 +130,15 @@
             (click)="togglePasswordVisibility()"
             [attr.aria-label]="'Hide password'"
           >
-            <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+            <mat-icon>{{
+              hidePassword() ? "visibility_off" : "visibility"
+            }}</mat-icon>
           </button>
-          @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
-            <mat-error>{{ getErrorMessage('password') }}</mat-error>
+          @if (
+            registerForm.get("password")?.invalid &&
+            registerForm.get("password")?.touched
+          ) {
+            <mat-error>{{ getErrorMessage("password") }}</mat-error>
           }
         </mat-form-field>
 
@@ -133,7 +150,7 @@
             formControlName="confirmPassword"
             placeholder="Re-enter your password"
             autocomplete="new-password"
-          >
+          />
           <mat-icon matPrefix>lock</mat-icon>
           <button
             mat-icon-button
@@ -142,10 +159,15 @@
             (click)="toggleConfirmPasswordVisibility()"
             [attr.aria-label]="'Hide password'"
           >
-            <mat-icon>{{ hideConfirmPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+            <mat-icon>{{
+              hideConfirmPassword() ? "visibility_off" : "visibility"
+            }}</mat-icon>
           </button>
-          @if (registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched) {
-            <mat-error>{{ getErrorMessage('confirmPassword') }}</mat-error>
+          @if (
+            registerForm.get("confirmPassword")?.invalid &&
+            registerForm.get("confirmPassword")?.touched
+          ) {
+            <mat-error>{{ getErrorMessage("confirmPassword") }}</mat-error>
           }
         </mat-form-field>
 
@@ -156,8 +178,13 @@
             and
             <a href="/privacy" target="_blank">Privacy Policy</a>
           </mat-checkbox>
-          @if (registerForm.get('acceptTerms')?.invalid && registerForm.get('acceptTerms')?.touched) {
-            <div class="error-message">You must accept the terms and conditions</div>
+          @if (
+            registerForm.get("acceptTerms")?.invalid &&
+            registerForm.get("acceptTerms")?.touched
+          ) {
+            <div class="error-message">
+              You must accept the terms and conditions
+            </div>
           }
         </div>
 

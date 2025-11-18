@@ -26,7 +26,9 @@
         <div class="step-header">
           <mat-icon class="step-icon">local_parking</mat-icon>
           <h2 class="step-title">Choose Your Parking Spot</h2>
-          <p class="step-description">Select the parking spot you want to offer for swap</p>
+          <p class="step-description">
+            Select the parking spot you want to offer for swap
+          </p>
         </div>
 
         <!-- Loading State -->
@@ -49,7 +51,10 @@
               }
             </mat-select>
             <mat-icon matPrefix>local_parking</mat-icon>
-            @if (parkingForm.get('parkingId')?.hasError('required') && parkingForm.get('parkingId')?.touched) {
+            @if (
+              parkingForm.get("parkingId")?.hasError("required") &&
+              parkingForm.get("parkingId")?.touched
+            ) {
               <mat-error>Please select a parking spot</mat-error>
             }
           </mat-form-field>
@@ -60,7 +65,8 @@
               <img
                 [src]="getParkingPhotoUrl(selectedParking)"
                 [alt]="selectedParking.title"
-                class="preview-image">
+                class="preview-image"
+              />
               <div class="preview-details">
                 <h3>{{ selectedParking.title }}</h3>
                 <p class="address">
@@ -69,7 +75,8 @@
                 </p>
                 <p class="price">
                   <mat-icon>attach_money</mat-icon>
-                  {{ selectedParking.basePrice }} {{ selectedParking.currency }}/hour
+                  {{ selectedParking.basePrice }}
+                  {{ selectedParking.currency }}/hour
                 </p>
               </div>
             </div>
@@ -82,7 +89,11 @@
             <mat-icon class="empty-icon">local_parking</mat-icon>
             <h3>No Parking Spots Found</h3>
             <p>You need to add a parking spot before creating a swap listing</p>
-            <button mat-raised-button color="primary" routerLink="/parking/create">
+            <button
+              mat-raised-button
+              color="primary"
+              routerLink="/parking/create"
+            >
               <mat-icon>add</mat-icon>
               Add Parking Spot
             </button>
@@ -96,7 +107,8 @@
             mat-raised-button
             color="primary"
             matStepperNext
-            [disabled]="!parkingForm.valid">
+            [disabled]="!parkingForm.valid"
+          >
             Next
             <mat-icon>arrow_forward</mat-icon>
           </button>
@@ -110,7 +122,9 @@
         <div class="step-header">
           <mat-icon class="step-icon">date_range</mat-icon>
           <h2 class="step-title">Select Dates</h2>
-          <p class="step-description">When is your parking available for swap?</p>
+          <p class="step-description">
+            When is your parking available for swap?
+          </p>
         </div>
 
         <!-- Date Range -->
@@ -122,10 +136,17 @@
               [matDatepicker]="startPicker"
               formControlName="startDate"
               [min]="minDate"
-              required>
-            <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+              required
+            />
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="startPicker"
+            ></mat-datepicker-toggle>
             <mat-datepicker #startPicker></mat-datepicker>
-            @if (datesForm.get('startDate')?.hasError('required') && datesForm.get('startDate')?.touched) {
+            @if (
+              datesForm.get("startDate")?.hasError("required") &&
+              datesForm.get("startDate")?.touched
+            ) {
               <mat-error>Start date is required</mat-error>
             }
           </mat-form-field>
@@ -137,13 +158,20 @@
               [matDatepicker]="endPicker"
               formControlName="endDate"
               [min]="datesForm.get('startDate')?.value || minDate"
-              required>
-            <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+              required
+            />
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="endPicker"
+            ></mat-datepicker-toggle>
             <mat-datepicker #endPicker></mat-datepicker>
-            @if (datesForm.get('endDate')?.hasError('required') && datesForm.get('endDate')?.touched) {
+            @if (
+              datesForm.get("endDate")?.hasError("required") &&
+              datesForm.get("endDate")?.touched
+            ) {
               <mat-error>End date is required</mat-error>
             }
-            @if (!validateDates() && datesForm.get('endDate')?.touched) {
+            @if (!validateDates() && datesForm.get("endDate")?.touched) {
               <mat-error>End date must be after start date</mat-error>
             }
           </mat-form-field>
@@ -166,7 +194,8 @@
             mat-raised-button
             color="primary"
             matStepperNext
-            [disabled]="!datesForm.valid || !validateDates()">
+            [disabled]="!datesForm.valid || !validateDates()"
+          >
             Next
             <mat-icon>arrow_forward</mat-icon>
           </button>
@@ -191,9 +220,14 @@
             formControlName="description"
             rows="4"
             maxlength="500"
-            placeholder="Describe your ideal swap location, requirements, or additional details..."></textarea>
+            placeholder="Describe your ideal swap location, requirements, or additional details..."
+          ></textarea>
           <mat-icon matPrefix>description</mat-icon>
-          <mat-hint align="end">{{ preferencesForm.get('description')?.value?.length || 0 }}/500</mat-hint>
+          <mat-hint align="end"
+            >{{
+              preferencesForm.get("description")?.value?.length || 0
+            }}/500</mat-hint
+          >
         </mat-form-field>
 
         <!-- Exchange Type -->
@@ -201,14 +235,15 @@
           <mat-slide-toggle
             formControlName="requiresExchange"
             color="primary"
-            (change)="onExchangeToggle($event.checked)">
+            (change)="onExchangeToggle($event.checked)"
+          >
             <div class="toggle-content">
               <mat-icon>swap_horiz</mat-icon>
               <span>Requires Parking Exchange</span>
             </div>
           </mat-slide-toggle>
           <p class="helper-text">
-            @if (preferencesForm.get('requiresExchange')?.value) {
+            @if (preferencesForm.get("requiresExchange")?.value) {
               You're looking for a parking spot swap
             } @else {
               You're offering your parking for cash only
@@ -219,7 +254,7 @@
         <!-- Price (Optional for Exchange, Required for Cash) -->
         <div class="price-section">
           <h3 class="section-title">
-            @if (preferencesForm.get('requiresExchange')?.value) {
+            @if (preferencesForm.get("requiresExchange")?.value) {
               Price Difference (Optional)
             } @else {
               Rental Price
@@ -229,7 +264,7 @@
           <div class="price-inputs">
             <mat-form-field appearance="outline" class="price-field">
               <mat-label>
-                @if (preferencesForm.get('requiresExchange')?.value) {
+                @if (preferencesForm.get("requiresExchange")?.value) {
                   Price Difference
                 } @else {
                   Price
@@ -240,12 +275,13 @@
                 type="number"
                 formControlName="price"
                 min="0"
-                placeholder="0.00">
+                placeholder="0.00"
+              />
               <span matPrefix>$</span>
-              @if (preferencesForm.get('price')?.hasError('required')) {
+              @if (preferencesForm.get("price")?.hasError("required")) {
                 <mat-error>Price is required for cash-only listings</mat-error>
               }
-              @if (preferencesForm.get('price')?.hasError('min')) {
+              @if (preferencesForm.get("price")?.hasError("min")) {
                 <mat-error>Price must be greater than 0</mat-error>
               }
             </mat-form-field>
@@ -262,8 +298,9 @@
           </div>
 
           <p class="helper-text">
-            @if (preferencesForm.get('requiresExchange')?.value) {
-              Enter amount if your parking is worth more/less than desired location
+            @if (preferencesForm.get("requiresExchange")?.value) {
+              Enter amount if your parking is worth more/less than desired
+              location
             } @else {
               Enter the rental price for your parking
             }
@@ -271,7 +308,7 @@
         </div>
 
         <!-- Preferred Location (Optional) -->
-        @if (preferencesForm.get('requiresExchange')?.value) {
+        @if (preferencesForm.get("requiresExchange")?.value) {
           <div class="location-section">
             <h3 class="section-title">Preferred Location (Optional)</h3>
             <p class="helper-text">Specify a preferred area for the swap</p>
@@ -284,7 +321,8 @@
                   type="number"
                   formControlName="preferredLatitude"
                   step="0.000001"
-                  placeholder="40.7128">
+                  placeholder="40.7128"
+                />
                 <mat-icon matPrefix>my_location</mat-icon>
               </mat-form-field>
 
@@ -295,7 +333,8 @@
                   type="number"
                   formControlName="preferredLongitude"
                   step="0.000001"
-                  placeholder="-74.0060">
+                  placeholder="-74.0060"
+                />
                 <mat-icon matPrefix>place</mat-icon>
               </mat-form-field>
 
@@ -306,7 +345,8 @@
                   type="number"
                   formControlName="preferredRadius"
                   min="0"
-                  placeholder="5000">
+                  placeholder="5000"
+                />
                 <mat-icon matPrefix>radio_button_unchecked</mat-icon>
               </mat-form-field>
             </div>
@@ -323,7 +363,8 @@
             mat-raised-button
             color="primary"
             (click)="onSubmit()"
-            [disabled]="!preferencesForm.valid || submitting()">
+            [disabled]="!preferencesForm.valid || submitting()"
+          >
             @if (submitting()) {
               <mat-spinner diameter="20"></mat-spinner>
             } @else {

@@ -1,4 +1,4 @@
-@use '@angular/material' as mat;
+@use "@angular/material" as mat;
 
 .review-list-container {
   max-width: 1200px;
@@ -122,7 +122,11 @@
 
               .rating-bar {
                 height: 100%;
-                background: linear-gradient(90deg, var(--accent-color), var(--primary-color));
+                background: linear-gradient(
+                  90deg,
+                  var(--accent-color),
+                  var(--primary-color)
+                );
                 transition: width var(--transition-normal);
                 border-radius: 4px;
               }
@@ -347,7 +351,11 @@
             height: 56px;
             border-radius: 50%;
             overflow: hidden;
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            background: linear-gradient(
+              135deg,
+              var(--primary-color),
+              var(--primary-light)
+            );
             display: flex;
             align-items: center;
             justify-content: center;

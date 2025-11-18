@@ -1,40 +1,40 @@
-import { Component, OnInit, signal, computed, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
-import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatChipsModule } from '@angular/material/chip';
-import { MatTableModule } from '@angular/material/table';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatDialogModule, MatDialog } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatTabsModule } from '@angular/material/tabs';
+import { Component, OnInit, signal, computed, inject } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { Router } from "@angular/router";
+import { FormControl, ReactiveFormsModule, Validators } from "@angular/forms";
+import { MatCardModule } from "@angular/material/card";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { MatChipsModule } from "@angular/material/chips";
+import { MatTableModule } from "@angular/material/table";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatMenuModule } from "@angular/material/menu";
+import { MatDialogModule, MatDialog } from "@angular/material/dialog";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
+import { MatTabsModule } from "@angular/material/tabs";
 
-import { SubscriptionService } from '../../services/subscription.service';
+import { SubscriptionService } from "../../services/subscription.service";
 import {
   Subscription,
   SubscriptionStatus,
-  SubscriptionUsageReport
-} from '../../../../core/models';
+  SubscriptionUsageReport,
+} from "../../../../core/models";
 
 interface BillingRecord {
   id: string;
   date: string;
   amount: number;
   currency: string;
-  status: 'paid' | 'pending' | 'failed';
+  status: "paid" | "pending" | "failed";
   invoiceUrl?: string;
 }
 
 @Component({
-  selector: 'app-my-subscriptions',
+  selector: "app-my-subscriptions",
   standalone: true,
   imports: [
     CommonModule,
@@ -52,10 +52,10 @@ interface BillingRecord {
     MatFormFieldModule,
     MatInputModule,
     MatSnackBarModule,
-    MatTabsModule
+    MatTabsModule,
   ],
-  templateUrl: './my-subscriptions.component.html',
-  styleUrls: ['./my-subscriptions.component.scss']
+  templateUrl: "./my-subscriptions.component.html",
+  styleUrls: ["./my-subscriptions.component.scss"],
 })
 export class MySubscriptionsComponent implements OnInit {
   private subscriptionService = inject(SubscriptionService);
@@ -73,68 +73,83 @@ export class MySubscriptionsComponent implements OnInit {
 
   // Computed signal for active subscriptions
   activeSubscriptions = computed(() =>
-    this.subscriptions().filter(sub => sub.status === SubscriptionStatus.ACTIVE)
+    this.subscriptions().filter(
+      (sub) => sub.status === SubscriptionStatus.ACTIVE,
+    ),
   );
 
   // Computed signal for paused subscriptions
   pausedSubscriptions = computed(() =>
-    this.subscriptions().filter(sub => sub.status === SubscriptionStatus.PAUSED)
+    this.subscriptions().filter(
+      (sub) => sub.status === SubscriptionStatus.PAUSED,
+    ),
   );
 
   // Computed signal for cancelled/expired subscriptions
   inactiveSubscriptions = computed(() =>
     this.subscriptions().filter(
-      sub => sub.status === SubscriptionStatus.CANCELLED || sub.status === SubscriptionStatus.EXPIRED
-    )
+      (sub) =>
+        sub.status === SubscriptionStatus.CANCELLED ||
+        sub.status === SubscriptionStatus.EXPIRED,
+    ),
   );
 
   // Computed signal for subscription statistics
   subscriptionStats = computed(() => {
     const subs = this.activeSubscriptions();
     const totalSpots = subs.length;
-    const totalShares = subs.reduce((sum, sub) => sum + (sub.sharedWith?.length || 0), 0);
-    const totalUsage = subs.reduce((sum, sub) => sum + (sub.usageCount || 0), 0);
+    const totalShares = subs.reduce(
+      (sum, sub) => sum + (sub.sharedWith?.length || 0),
+      0,
+    );
+    const totalUsage = subs.reduce(
+      (sum, sub) => sum + (sub.usageCount || 0),
+      0,
+    );
 
     return {
       totalSpots,
       totalShares,
       totalUsage,
-      averageUsage: totalSpots > 0 ? Math.round(totalUsage / totalSpots) : 0
+      averageUsage: totalSpots > 0 ? Math.round(totalUsage / totalSpots) : 0,
     };
   });
 
   // Mock billing history (in real app, would come from API)
   billingHistory = signal<BillingRecord[]>([
     {
-      id: '1',
-      date: '2025-11-01',
+      id: "1",
+      date: "2025-11-01",
       amount: 24.99,
-      currency: 'USD',
-      status: 'paid',
-      invoiceUrl: '#'
+      currency: "USD",
+      status: "paid",
+      invoiceUrl: "#",
     },
     {
-      id: '2',
-      date: '2025-10-01',
+      id: "2",
+      date: "2025-10-01",
       amount: 24.99,
-      currency: 'USD',
-      status: 'paid',
-      invoiceUrl: '#'
+      currency: "USD",
+      status: "paid",
+      invoiceUrl: "#",
     },
     {
-      id: '3',
-      date: '2025-09-01',
+      id: "3",
+      date: "2025-09-01",
       amount: 24.99,
-      currency: 'USD',
-      status: 'paid',
-      invoiceUrl: '#'
-    }
+      currency: "USD",
+      status: "paid",
+      invoiceUrl: "#",
+    },
   ]);
 
-  billingColumns: string[] = ['date', 'amount', 'status', 'actions'];
+  billingColumns: string[] = ["date", "amount", "status", "actions"];
 
   // Share email form control
-  shareEmailControl = new FormControl('', [Validators.required, Validators.email]);
+  shareEmailControl = new FormControl("", [
+    Validators.required,
+    Validators.email,
+  ]);
 
   // Enum reference for template
   SubscriptionStatus = SubscriptionStatus;
@@ -162,10 +177,10 @@ export class MySubscriptionsComponent implements OnInit {
         }
       },
       error: (err) => {
-        this.error.set('Failed to load subscriptions. Please try again.');
+        this.error.set("Failed to load subscriptions. Please try again.");
         this.loading.set(false);
-        console.error('Error loading subscriptions:', err);
-      }
+        console.error("Error loading subscriptions:", err);
+      },
     });
   }
 
@@ -189,10 +204,10 @@ export class MySubscriptionsComponent implements OnInit {
         this.loadingUsage.set(false);
       },
       error: (err) => {
-        console.error('Error loading usage report:', err);
+        console.error("Error loading usage report:", err);
         this.loadingUsage.set(false);
         // Don't show error, just log it
-      }
+      },
     });
   }
 
@@ -200,16 +215,16 @@ export class MySubscriptionsComponent implements OnInit {
    * Pause subscription
    */
   pauseSubscription(subscription: Subscription): void {
-    if (confirm('Are you sure you want to pause this subscription?')) {
+    if (confirm("Are you sure you want to pause this subscription?")) {
       this.subscriptionService.pauseSubscription(subscription.id).subscribe({
         next: () => {
-          this.showSuccess('Subscription paused successfully');
+          this.showSuccess("Subscription paused successfully");
           this.loadSubscriptions();
         },
         error: (err) => {
-          this.showError('Failed to pause subscription');
-          console.error('Error pausing subscription:', err);
-        }
+          this.showError("Failed to pause subscription");
+          console.error("Error pausing subscription:", err);
+        },
       });
     }
   }
@@ -220,13 +235,13 @@ export class MySubscriptionsComponent implements OnInit {
   resumeSubscription(subscription: Subscription): void {
     this.subscriptionService.resumeSubscription(subscription.id).subscribe({
       next: () => {
-        this.showSuccess('Subscription resumed successfully');
+        this.showSuccess("Subscription resumed successfully");
         this.loadSubscriptions();
       },
       error: (err) => {
-        this.showError('Failed to resume subscription');
-        console.error('Error resuming subscription:', err);
-      }
+        this.showError("Failed to resume subscription");
+        console.error("Error resuming subscription:", err);
+      },
     });
   }
 
@@ -239,13 +254,13 @@ export class MySubscriptionsComponent implements OnInit {
     if (confirm(message)) {
       this.subscriptionService.cancelSubscription(subscription.id).subscribe({
         next: () => {
-          this.showSuccess('Subscription cancelled successfully');
+          this.showSuccess("Subscription cancelled successfully");
           this.loadSubscriptions();
         },
         error: (err) => {
-          this.showError('Failed to cancel subscription');
-          console.error('Error cancelling subscription:', err);
-        }
+          this.showError("Failed to cancel subscription");
+          console.error("Error cancelling subscription:", err);
+        },
       });
     }
   }
@@ -257,7 +272,7 @@ export class MySubscriptionsComponent implements OnInit {
     const email = this.shareEmailControl.value?.trim();
 
     if (!email || this.shareEmailControl.invalid) {
-      this.showError('Please enter a valid email address');
+      this.showError("Please enter a valid email address");
       return;
     }
 
@@ -270,36 +285,38 @@ export class MySubscriptionsComponent implements OnInit {
       return;
     }
 
-    this.subscriptionService.shareSubscription(subscription.id, email).subscribe({
-      next: () => {
-        this.showSuccess(`Subscription shared with ${email}`);
-        this.shareEmailControl.reset();
-        this.loadSubscriptions();
-      },
-      error: (err) => {
-        this.showError('Failed to share subscription');
-        console.error('Error sharing subscription:', err);
-      }
-    });
+    this.subscriptionService
+      .shareSubscription(subscription.id, email)
+      .subscribe({
+        next: () => {
+          this.showSuccess(`Subscription shared with ${email}`);
+          this.shareEmailControl.reset();
+          this.loadSubscriptions();
+        },
+        error: (err) => {
+          this.showError("Failed to share subscription");
+          console.error("Error sharing subscription:", err);
+        },
+      });
   }
 
   /**
    * Revoke subscription share
    */
   revokeShare(subscription: Subscription, userId: string): void {
-    if (confirm('Are you sure you want to revoke this share?')) {
+    if (confirm("Are you sure you want to revoke this share?")) {
       // In real app, would need share ID
       const shareId = `${subscription.id}-${userId}`;
 
       this.subscriptionService.revokeShare(shareId).subscribe({
         next: () => {
-          this.showSuccess('Share revoked successfully');
+          this.showSuccess("Share revoked successfully");
           this.loadSubscriptions();
         },
         error: (err) => {
-          this.showError('Failed to revoke share');
-          console.error('Error revoking share:', err);
-        }
+          this.showError("Failed to revoke share");
+          console.error("Error revoking share:", err);
+        },
       });
     }
   }
@@ -308,8 +325,8 @@ export class MySubscriptionsComponent implements OnInit {
    * Navigate to upgrade plan
    */
   upgradePlan(subscription: Subscription): void {
-    this.router.navigate(['/subscriptions/plans'], {
-      queryParams: { upgrade: subscription.id }
+    this.router.navigate(["/subscriptions/plans"], {
+      queryParams: { upgrade: subscription.id },
     });
   }
 
@@ -317,7 +334,7 @@ export class MySubscriptionsComponent implements OnInit {
    * Navigate to browse plans
    */
   browsePlans(): void {
-    this.router.navigate(['/subscriptions/plans']);
+    this.router.navigate(["/subscriptions/plans"]);
   }
 
   /**
@@ -326,14 +343,14 @@ export class MySubscriptionsComponent implements OnInit {
   getStatusColor(status: SubscriptionStatus): string {
     switch (status) {
       case SubscriptionStatus.ACTIVE:
-        return 'primary';
+        return "primary";
       case SubscriptionStatus.PAUSED:
-        return 'accent';
+        return "accent";
       case SubscriptionStatus.CANCELLED:
       case SubscriptionStatus.EXPIRED:
-        return 'warn';
+        return "warn";
       default:
-        return '';
+        return "";
     }
   }
 
@@ -343,15 +360,15 @@ export class MySubscriptionsComponent implements OnInit {
   getStatusIcon(status: SubscriptionStatus): string {
     switch (status) {
       case SubscriptionStatus.ACTIVE:
-        return 'check_circle';
+        return "check_circle";
       case SubscriptionStatus.PAUSED:
-        return 'pause_circle';
+        return "pause_circle";
       case SubscriptionStatus.CANCELLED:
-        return 'cancel';
+        return "cancel";
       case SubscriptionStatus.EXPIRED:
-        return 'event_busy';
+        return "event_busy";
       default:
-        return 'info';
+        return "info";
     }
   }
 
@@ -360,14 +377,14 @@ export class MySubscriptionsComponent implements OnInit {
    */
   getBillingStatusColor(status: string): string {
     switch (status) {
-      case 'paid':
-        return 'primary';
-      case 'pending':
-        return 'accent';
-      case 'failed':
-        return 'warn';
+      case "paid":
+        return "primary";
+      case "pending":
+        return "accent";
+      case "failed":
+        return "warn";
       default:
-        return '';
+        return "";
     }
   }
 
@@ -391,10 +408,10 @@ export class MySubscriptionsComponent implements OnInit {
    * Format date
    */
   formatDate(dateString: string): string {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   }
 
@@ -402,9 +419,9 @@ export class MySubscriptionsComponent implements OnInit {
    * Format currency
    */
   formatCurrency(amount: number, currency: string): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: currency || 'USD'
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: currency || "USD",
     }).format(amount);
   }
 
@@ -434,21 +451,24 @@ export class MySubscriptionsComponent implements OnInit {
    * Get parking spot image URL
    */
   getParkingImageUrl(subscription: Subscription): string {
-    if (subscription.parking?.photos && subscription.parking.photos.length > 0) {
+    if (
+      subscription.parking?.photos &&
+      subscription.parking.photos.length > 0
+    ) {
       return subscription.parking.photos[0].url;
     }
-    return 'assets/images/default-parking.jpg';
+    return "assets/images/default-parking.jpg";
   }
 
   /**
    * Show success message
    */
   private showSuccess(message: string): void {
-    this.snackBar.open(message, 'Close', {
+    this.snackBar.open(message, "Close", {
       duration: 3000,
-      horizontalPosition: 'end',
-      verticalPosition: 'top',
-      panelClass: ['success-snackbar']
+      horizontalPosition: "end",
+      verticalPosition: "top",
+      panelClass: ["success-snackbar"],
     });
   }
 
@@ -456,11 +476,11 @@ export class MySubscriptionsComponent implements OnInit {
    * Show error message
    */
   private showError(message: string): void {
-    this.snackBar.open(message, 'Close', {
+    this.snackBar.open(message, "Close", {
       duration: 5000,
-      horizontalPosition: 'end',
-      verticalPosition: 'top',
-      panelClass: ['error-snackbar']
+      horizontalPosition: "end",
+      verticalPosition: "top",
+      panelClass: ["error-snackbar"],
     });
   }
 

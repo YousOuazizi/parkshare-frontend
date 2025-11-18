@@ -26,10 +26,12 @@
             formControlName="email"
             placeholder="you@example.com"
             autocomplete="email"
-          >
+          />
           <mat-icon matPrefix>email</mat-icon>
-          @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
-            <mat-error>{{ getErrorMessage('email') }}</mat-error>
+          @if (
+            loginForm.get("email")?.invalid && loginForm.get("email")?.touched
+          ) {
+            <mat-error>{{ getErrorMessage("email") }}</mat-error>
           }
         </mat-form-field>
 
@@ -41,7 +43,7 @@
             formControlName="password"
             placeholder="Enter your password"
             autocomplete="current-password"
-          >
+          />
           <mat-icon matPrefix>lock</mat-icon>
           <button
             mat-icon-button
@@ -50,10 +52,15 @@
             (click)="togglePasswordVisibility()"
             [attr.aria-label]="'Hide password'"
           >
-            <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+            <mat-icon>{{
+              hidePassword() ? "visibility_off" : "visibility"
+            }}</mat-icon>
           </button>
-          @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
-            <mat-error>{{ getErrorMessage('password') }}</mat-error>
+          @if (
+            loginForm.get("password")?.invalid &&
+            loginForm.get("password")?.touched
+          ) {
+            <mat-error>{{ getErrorMessage("password") }}</mat-error>
           }
         </mat-form-field>
 
