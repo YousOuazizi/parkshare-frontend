@@ -32,6 +32,7 @@ import { MatDialogModule, MatDialog } from "@angular/material/dialog";
 import { MatCardModule } from "@angular/material/card";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatDividerModule } from "@angular/material/divider";
 import { SelectionModel } from "@angular/cdk/collections";
 import { debounceTime, distinctUntilChanged } from "rxjs/operators";
 
@@ -70,6 +71,7 @@ interface FilterForm {
     MatCardModule,
     MatProgressSpinnerModule,
     MatTooltipModule,
+    MatDividerModule,
   ],
   templateUrl: "./user-management.component.html",
   styleUrls: ["./user-management.component.scss"],

@@ -259,6 +259,15 @@ export class ParkingListComponent implements OnInit {
   }
 
   /**
+   * Remove a feature from the active filters
+   */
+  removeFeature(feature: string): void {
+    const currentFeatures = this.filterForm.value.features || [];
+    const updatedFeatures = currentFeatures.filter((f) => f !== feature);
+    this.filterForm.patchValue({ features: updatedFeatures });
+  }
+
+  /**
    * Get primary photo URL for parking
    */
   getPrimaryPhotoUrl(parking: Parking): string {

@@ -12,6 +12,7 @@ import {
   FormGroup,
   Validators,
   ReactiveFormsModule,
+  FormsModule,
   FormArray,
 } from "@angular/forms";
 import { Router } from "@angular/router";
@@ -55,6 +56,7 @@ interface DaySchedule {
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    FormsModule,
     MatStepperModule,
     MatFormFieldModule,
     MatInputModule,

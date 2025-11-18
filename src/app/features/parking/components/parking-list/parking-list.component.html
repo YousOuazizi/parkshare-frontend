@@ -138,11 +138,7 @@
       <span class="filters-label">Active Filters:</span>
       <mat-chip-set aria-label="Active filters">
         @for (feature of filterForm.value.features; track feature) {
-          <mat-chip
-            (removed)="filterForm.patchValue({
-              features: filterForm.value.features?.filter(f => f !== feature)
-            })"
-          >
+          <mat-chip (removed)="removeFeature(feature)">
             {{ feature }}
             <button matChipRemove>
               <mat-icon>cancel</mat-icon>

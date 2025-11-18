@@ -311,13 +311,13 @@
           </div>
 
           <div class="reviews-list" *ngIf="reviews().length > 0">
-            <div class="review-item" *ngFor="let review of reviews()">
+            <div class="review-item" *ngFor="let review of reviews(); last as isLast">
               <div class="review-header">
                 <div class="reviewer-info">
                   <div class="reviewer-avatar">
                     <img
                       *ngIf="review.author?.profilePicture"
-                      [src]="review.author.profilePicture"
+                      [src]="review.author?.profilePicture"
                       [alt]="getReviewerName(review)"
                     />
                     <div
@@ -386,7 +386,7 @@
                 </div>
               </div>
 
-              <mat-divider *ngIf="!$last"></mat-divider>
+              <mat-divider *ngIf="!isLast"></mat-divider>
             </div>
           </div>
         </mat-card-content>

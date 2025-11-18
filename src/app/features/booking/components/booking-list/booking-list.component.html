@@ -110,11 +110,7 @@
       <!-- Tabs -->
       <mat-tab-group
         mat-stretch-tabs="false"
-        (selectedIndexChange)="
-          onTabChange(
-            ['all', 'upcoming', 'active', 'past', 'cancelled'][$event]
-          )
-        "
+        (selectedIndexChange)="onTabChange(getTabNameByIndex($event))"
         class="bookings-tabs"
       >
         <mat-tab>
@@ -220,8 +216,8 @@
                 <div class="parking-info">
                   @if (booking.parking?.photos?.[0]?.url) {
                     <img
-                      [src]="booking.parking.photos[0].url"
-                      [alt]="booking.parking.title"
+                      [src]="booking.parking?.photos?.[0]?.url"
+                      [alt]="booking.parking?.title"
                       class="parking-image"
                     />
                   }
@@ -264,7 +260,7 @@
                     [color]="getStatusColor(booking.status)"
                     highlighted
                   >
-                    <mat-icon [matChipAvatar]>{{
+                    <mat-icon matChipAvatar>{{
                       getStatusIcon(booking.status)
                     }}</mat-icon>
                     {{ booking.status }}
@@ -389,8 +385,8 @@
               <div class="booking-card-header">
                 @if (booking.parking?.photos?.[0]?.url) {
                   <img
-                    [src]="booking.parking.photos[0].url"
-                    [alt]="booking.parking.title"
+                    [src]="booking.parking?.photos?.[0]?.url"
+                    [alt]="booking.parking?.title"
                     class="booking-card-image"
                   />
                 }

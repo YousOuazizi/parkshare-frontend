@@ -252,6 +252,12 @@ export class AdminDashboardComponent implements OnInit {
     );
   }
 
+  getVerificationCount(level: number): number {
+    const stats = this.verificationStats();
+    const levelKey = `level${level}` as keyof typeof stats;
+    return stats[levelKey];
+  }
+
   getVerificationPercentage(level: number): number {
     const total = this.getTotalVerifications();
     if (total === 0) return 0;

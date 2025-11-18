@@ -46,14 +46,11 @@
         </div>
 
         <!-- Criteria Breakdown -->
-        @if (statistics()!.averageCriteria) {
+        @if (averageCriteriaEntries().length > 0) {
           <div class="criteria-breakdown">
             <h3 class="criteria-title">Rating Breakdown</h3>
             <div class="criteria-grid">
-              @for (
-                entry of getCriteriaEntries({ id: '', authorId: '', type: 'PARKING' as any, rating: 0, criteria: statistics()!.averageCriteria, isReported: false, createdAt: '', updatedAt: '' });
-                track entry.key
-              ) {
+              @for (entry of averageCriteriaEntries(); track entry.key) {
                 <div class="criteria-item">
                   <div class="criteria-label">
                     {{ getCriteriaLabel(entry.key) }}

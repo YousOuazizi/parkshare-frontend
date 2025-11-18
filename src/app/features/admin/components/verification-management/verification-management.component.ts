@@ -32,6 +32,7 @@ import { MatCardModule } from "@angular/material/card";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatExpansionModule } from "@angular/material/expansion";
+import { MatDividerModule } from "@angular/material/divider";
 import { SelectionModel } from "@angular/cdk/collections";
 import { debounceTime, distinctUntilChanged } from "rxjs/operators";
 
@@ -75,6 +76,7 @@ interface RejectForm {
     MatProgressSpinnerModule,
     MatTooltipModule,
     MatExpansionModule,
+    MatDividerModule,
   ],
   templateUrl: "./verification-management.component.html",
   styleUrls: ["./verification-management.component.scss"],
