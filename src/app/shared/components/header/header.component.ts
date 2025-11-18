@@ -6,6 +6,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { MatBadgeModule } from "@angular/material/badge";
 import { MatMenuModule } from "@angular/material/menu";
+import { MatDividerModule } from "@angular/material/divider";
 import { AuthService } from "../../../core/services/auth.service";
 import { NotificationService } from "../../../features/notification/services/notification.service";
 
@@ -21,6 +22,7 @@ import { NotificationService } from "../../../features/notification/services/not
     MatIconModule,
     MatBadgeModule,
     MatMenuModule,
+    MatDividerModule,
   ],
   template: `
     <mat-toolbar color="primary">
