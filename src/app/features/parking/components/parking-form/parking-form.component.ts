@@ -1,21 +1,39 @@
-import { Component, OnInit, signal, computed, inject, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormArray } from '@angular/forms';
-import { Router } from '@angular/router';
-import { MatStepperModule } from '@angular/material/stepper';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatSelectModule } from '@angular/material/select';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatCardModule } from '@angular/material/card';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { ParkingService } from '../../services/parking.service';
-import { AccessMethod, CreateParkingRequest, Parking, AvailabilitySchedule } from '../../../../core/models';
+import {
+  Component,
+  OnInit,
+  signal,
+  computed,
+  inject,
+  input,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+  FormArray,
+} from "@angular/forms";
+import { Router } from "@angular/router";
+import { MatStepperModule } from "@angular/material/stepper";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+import { MatSelectModule } from "@angular/material/select";
+import { MatCheckboxModule } from "@angular/material/checkbox";
+import { MatChipsModule } from "@angular/material/chips";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
+import { MatCardModule } from "@angular/material/card";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
+import { ParkingService } from "../../services/parking.service";
+import {
+  AccessMethod,
+  CreateParkingRequest,
+  Parking,
+  AvailabilitySchedule,
+} from "../../../../core/models";
 
 interface PhotoPreview {
   file: File;
@@ -32,7 +50,7 @@ interface DaySchedule {
 }
 
 @Component({
-  selector: 'app-parking-form',
+  selector: "app-parking-form",
   standalone: true,
   imports: [
     CommonModule,
@@ -48,10 +66,10 @@ interface DaySchedule {
     MatSlideToggleModule,
     MatCardModule,
     MatProgressSpinnerModule,
-    MatSnackBarModule
+    MatSnackBarModule,
   ],
-  templateUrl: './parking-form.component.html',
-  styleUrls: ['./parking-form.component.scss']
+  templateUrl: "./parking-form.component.html",
+  styleUrls: ["./parking-form.component.scss"],
 })
 export class ParkingFormComponent implements OnInit {
   private fb = inject(FormBuilder);
@@ -81,32 +99,74 @@ export class ParkingFormComponent implements OnInit {
 
   // Available features
   availableFeatures = [
-    'Covered',
-    'Security Camera',
-    'Well Lit',
-    'Easy Access',
-    'Reserved',
-    'Valet Available',
-    'Handicap Accessible',
-    '24/7 Access',
-    'Indoor',
-    'Outdoor',
-    'Gated',
-    'Monitored'
+    "Covered",
+    "Security Camera",
+    "Well Lit",
+    "Easy Access",
+    "Reserved",
+    "Valet Available",
+    "Handicap Accessible",
+    "24/7 Access",
+    "Indoor",
+    "Outdoor",
+    "Gated",
+    "Monitored",
   ];
 
   // Currency options
-  currencies = ['USD', 'EUR', 'GBP', 'CAD', 'AUD'];
+  currencies = ["USD", "EUR", "GBP", "CAD", "AUD"];
 
   // Days of the week for availability
   weekDays: DaySchedule[] = [
-    { day: 'Sunday', dayOfWeek: 0, enabled: true, startTime: '00:00', endTime: '23:59' },
-    { day: 'Monday', dayOfWeek: 1, enabled: true, startTime: '00:00', endTime: '23:59' },
-    { day: 'Tuesday', dayOfWeek: 2, enabled: true, startTime: '00:00', endTime: '23:59' },
-    { day: 'Wednesday', dayOfWeek: 3, enabled: true, startTime: '00:00', endTime: '23:59' },
-    { day: 'Thursday', dayOfWeek: 4, enabled: true, startTime: '00:00', endTime: '23:59' },
-    { day: 'Friday', dayOfWeek: 5, enabled: true, startTime: '00:00', endTime: '23:59' },
-    { day: 'Saturday', dayOfWeek: 6, enabled: true, startTime: '00:00', endTime: '23:59' }
+    {
+      day: "Sunday",
+      dayOfWeek: 0,
+      enabled: true,
+      startTime: "00:00",
+      endTime: "23:59",
+    },
+    {
+      day: "Monday",
+      dayOfWeek: 1,
+      enabled: true,
+      startTime: "00:00",
+      endTime: "23:59",
+    },
+    {
+      day: "Tuesday",
+      dayOfWeek: 2,
+      enabled: true,
+      startTime: "00:00",
+      endTime: "23:59",
+    },
+    {
+      day: "Wednesday",
+      dayOfWeek: 3,
+      enabled: true,
+      startTime: "00:00",
+      endTime: "23:59",
+    },
+    {
+      day: "Thursday",
+      dayOfWeek: 4,
+      enabled: true,
+      startTime: "00:00",
+      endTime: "23:59",
+    },
+    {
+      day: "Friday",
+      dayOfWeek: 5,
+      enabled: true,
+      startTime: "00:00",
+      endTime: "23:59",
+    },
+    {
+      day: "Saturday",
+      dayOfWeek: 6,
+      enabled: true,
+      startTime: "00:00",
+      endTime: "23:59",
+    },
   ];
 
   ngOnInit(): void {
@@ -120,31 +180,51 @@ export class ParkingFormComponent implements OnInit {
   private initializeForms(): void {
     // Step 1: Basic Information
     this.basicInfoForm = this.fb.group({
-      title: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(100)]],
-      description: ['', [Validators.required, Validators.minLength(20), Validators.maxLength(1000)]],
+      title: [
+        "",
+        [
+          Validators.required,
+          Validators.minLength(5),
+          Validators.maxLength(100),
+        ],
+      ],
+      description: [
+        "",
+        [
+          Validators.required,
+          Validators.minLength(20),
+          Validators.maxLength(1000),
+        ],
+      ],
       accessMethod: [AccessMethod.CODE, Validators.required],
-      accessInstructions: ['', Validators.maxLength(500)]
+      accessInstructions: ["", Validators.maxLength(500)],
     });
 
     // Step 2: Location
     this.locationForm = this.fb.group({
-      address: ['', Validators.required],
-      city: ['', Validators.required],
-      country: ['', Validators.required],
-      latitude: [null, [Validators.required, Validators.min(-90), Validators.max(90)]],
-      longitude: [null, [Validators.required, Validators.min(-180), Validators.max(180)]]
+      address: ["", Validators.required],
+      city: ["", Validators.required],
+      country: ["", Validators.required],
+      latitude: [
+        null,
+        [Validators.required, Validators.min(-90), Validators.max(90)],
+      ],
+      longitude: [
+        null,
+        [Validators.required, Validators.min(-180), Validators.max(180)],
+      ],
     });
 
     // Step 3: Pricing & Size
     this.pricingForm = this.fb.group({
       basePrice: [null, [Validators.required, Validators.min(0.01)]],
-      currency: ['USD', Validators.required],
+      currency: ["USD", Validators.required],
       hasEVCharging: [false],
       size: this.fb.group({
         length: [null, [Validators.required, Validators.min(1)]],
         width: [null, [Validators.required, Validators.min(1)]],
-        height: [null, [Validators.required, Validators.min(1)]]
-      })
+        height: [null, [Validators.required, Validators.min(1)]],
+      }),
     });
 
     // Step 4: Photos (handled separately with file uploads)
@@ -154,7 +234,7 @@ export class ParkingFormComponent implements OnInit {
 
     // Step 5: Availability
     this.availabilityForm = this.fb.group({
-      schedules: this.fb.array([])
+      schedules: this.fb.array([]),
     });
   }
 
@@ -169,10 +249,12 @@ export class ParkingFormComponent implements OnInit {
         this.isLoading.set(false);
       },
       error: (error) => {
-        console.error('Error loading parking:', error);
-        this.snackBar.open('Failed to load parking data', 'Close', { duration: 3000 });
+        console.error("Error loading parking:", error);
+        this.snackBar.open("Failed to load parking data", "Close", {
+          duration: 3000,
+        });
         this.isLoading.set(false);
-      }
+      },
     });
   }
 
@@ -182,7 +264,7 @@ export class ParkingFormComponent implements OnInit {
       title: parking.title,
       description: parking.description,
       accessMethod: parking.accessMethod,
-      accessInstructions: parking.accessInstructions
+      accessInstructions: parking.accessInstructions,
     });
 
     // Location
@@ -191,7 +273,7 @@ export class ParkingFormComponent implements OnInit {
       city: parking.city,
       country: parking.country,
       latitude: parking.latitude,
-      longitude: parking.longitude
+      longitude: parking.longitude,
     });
 
     // Pricing
@@ -199,7 +281,7 @@ export class ParkingFormComponent implements OnInit {
       basePrice: parking.basePrice,
       currency: parking.currency,
       hasEVCharging: parking.hasEVCharging,
-      size: parking.size
+      size: parking.size,
     });
 
     // Features
@@ -207,8 +289,10 @@ export class ParkingFormComponent implements OnInit {
 
     // Availability schedules
     if (parking.availabilitySchedules?.length > 0) {
-      parking.availabilitySchedules.forEach(schedule => {
-        const daySchedule = this.weekDays.find(d => d.dayOfWeek === schedule.dayOfWeek);
+      parking.availabilitySchedules.forEach((schedule) => {
+        const daySchedule = this.weekDays.find(
+          (d) => d.dayOfWeek === schedule.dayOfWeek,
+        );
         if (daySchedule) {
           daySchedule.enabled = schedule.isAvailable;
           daySchedule.startTime = schedule.startTime;
@@ -228,14 +312,18 @@ export class ParkingFormComponent implements OnInit {
 
     files.forEach((file, index) => {
       // Validate file type
-      if (!file.type.startsWith('image/')) {
-        this.snackBar.open('Only image files are allowed', 'Close', { duration: 3000 });
+      if (!file.type.startsWith("image/")) {
+        this.snackBar.open("Only image files are allowed", "Close", {
+          duration: 3000,
+        });
         return;
       }
 
       // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        this.snackBar.open('Image size must be less than 5MB', 'Close', { duration: 3000 });
+        this.snackBar.open("Image size must be less than 5MB", "Close", {
+          duration: 3000,
+        });
         return;
       }
 
@@ -245,19 +333,19 @@ export class ParkingFormComponent implements OnInit {
         const preview: PhotoPreview = {
           file,
           url: e.target?.result as string,
-          order: currentPreviews.length + index
+          order: currentPreviews.length + index,
         };
-        this.photosPreviews.update(previews => [...previews, preview]);
+        this.photosPreviews.update((previews) => [...previews, preview]);
       };
       reader.readAsDataURL(file);
     });
 
     // Clear input
-    input.value = '';
+    input.value = "";
   }
 
   removePhoto(index: number): void {
-    this.photosPreviews.update(previews => {
+    this.photosPreviews.update((previews) => {
       const updated = previews.filter((_, i) => i !== index);
       // Reorder remaining photos
       return updated.map((p, i) => ({ ...p, order: i }));
@@ -266,9 +354,12 @@ export class ParkingFormComponent implements OnInit {
 
   movePhotoUp(index: number): void {
     if (index === 0) return;
-    this.photosPreviews.update(previews => {
+    this.photosPreviews.update((previews) => {
       const updated = [...previews];
-      [updated[index - 1], updated[index]] = [updated[index], updated[index - 1]];
+      [updated[index - 1], updated[index]] = [
+        updated[index],
+        updated[index - 1],
+      ];
       return updated.map((p, i) => ({ ...p, order: i }));
     });
   }
@@ -276,18 +367,21 @@ export class ParkingFormComponent implements OnInit {
   movePhotoDown(index: number): void {
     const previews = this.photosPreviews();
     if (index === previews.length - 1) return;
-    this.photosPreviews.update(previews => {
+    this.photosPreviews.update((previews) => {
       const updated = [...previews];
-      [updated[index], updated[index + 1]] = [updated[index + 1], updated[index]];
+      [updated[index], updated[index + 1]] = [
+        updated[index + 1],
+        updated[index],
+      ];
       return updated.map((p, i) => ({ ...p, order: i }));
     });
   }
 
   // Feature selection
   toggleFeature(feature: string): void {
-    this.selectedFeatures.update(features => {
+    this.selectedFeatures.update((features) => {
       if (features.includes(feature)) {
-        return features.filter(f => f !== feature);
+        return features.filter((f) => f !== feature);
       } else {
         return [...features, feature];
       }
@@ -302,16 +396,24 @@ export class ParkingFormComponent implements OnInit {
   searchAddress(query: string): void {
     // TODO: Implement Google Places API autocomplete
     // This is a placeholder for future integration
-    console.log('Searching for address:', query);
-    this.snackBar.open('Address autocomplete will be integrated with Google Places API', 'Close', {
-      duration: 2000
-    });
+    console.log("Searching for address:", query);
+    this.snackBar.open(
+      "Address autocomplete will be integrated with Google Places API",
+      "Close",
+      {
+        duration: 2000,
+      },
+    );
   }
 
   // Use current location
   useCurrentLocation(): void {
     if (!navigator.geolocation) {
-      this.snackBar.open('Geolocation is not supported by your browser', 'Close', { duration: 3000 });
+      this.snackBar.open(
+        "Geolocation is not supported by your browser",
+        "Close",
+        { duration: 3000 },
+      );
       return;
     }
 
@@ -320,16 +422,20 @@ export class ParkingFormComponent implements OnInit {
       (position) => {
         this.locationForm.patchValue({
           latitude: position.coords.latitude,
-          longitude: position.coords.longitude
+          longitude: position.coords.longitude,
         });
         this.isLoading.set(false);
-        this.snackBar.open('Location captured successfully', 'Close', { duration: 2000 });
+        this.snackBar.open("Location captured successfully", "Close", {
+          duration: 2000,
+        });
       },
       (error) => {
-        console.error('Error getting location:', error);
-        this.snackBar.open('Failed to get current location', 'Close', { duration: 3000 });
+        console.error("Error getting location:", error);
+        this.snackBar.open("Failed to get current location", "Close", {
+          duration: 3000,
+        });
         this.isLoading.set(false);
-      }
+      },
     );
   }
 
@@ -342,7 +448,9 @@ export class ParkingFormComponent implements OnInit {
   async onSubmit(): Promise<void> {
     // Validate all forms
     if (!this.isFormValid()) {
-      this.snackBar.open('Please fill in all required fields', 'Close', { duration: 3000 });
+      this.snackBar.open("Please fill in all required fields", "Close", {
+        duration: 3000,
+      });
       return;
     }
 
@@ -365,19 +473,19 @@ export class ParkingFormComponent implements OnInit {
       }
 
       this.snackBar.open(
-        `Parking ${this.isEditMode() ? 'updated' : 'created'} successfully!`,
-        'Close',
-        { duration: 3000 }
+        `Parking ${this.isEditMode() ? "updated" : "created"} successfully!`,
+        "Close",
+        { duration: 3000 },
       );
 
       // Navigate to parking details or list
-      this.router.navigate(['/parking', result.id]);
+      this.router.navigate(["/parking", result.id]);
     } catch (error) {
-      console.error('Error saving parking:', error);
+      console.error("Error saving parking:", error);
       this.snackBar.open(
-        `Failed to ${this.isEditMode() ? 'update' : 'create'} parking`,
-        'Close',
-        { duration: 3000 }
+        `Failed to ${this.isEditMode() ? "update" : "create"} parking`,
+        "Close",
+        { duration: 3000 },
       );
     } finally {
       this.isSaving.set(false);
@@ -389,7 +497,7 @@ export class ParkingFormComponent implements OnInit {
       this.basicInfoForm.valid &&
       this.locationForm.valid &&
       this.pricingForm.valid &&
-      this.weekDays.some(day => day.enabled)
+      this.weekDays.some((day) => day.enabled)
     );
   }
 
@@ -399,13 +507,14 @@ export class ParkingFormComponent implements OnInit {
     const pricing = this.pricingForm.value;
 
     // Prepare availability schedules
-    const availabilitySchedules: AvailabilitySchedule[] = this.weekDays
-      .map(day => ({
+    const availabilitySchedules: AvailabilitySchedule[] = this.weekDays.map(
+      (day) => ({
         dayOfWeek: day.dayOfWeek,
         startTime: day.startTime,
         endTime: day.endTime,
-        isAvailable: day.enabled
-      }));
+        isAvailable: day.enabled,
+      }),
+    );
 
     return {
       title: basicInfo.title,
@@ -422,7 +531,7 @@ export class ParkingFormComponent implements OnInit {
       hasEVCharging: pricing.hasEVCharging,
       size: pricing.size,
       features: this.selectedFeatures(),
-      availabilitySchedules
+      availabilitySchedules,
     };
   }
 
@@ -430,32 +539,33 @@ export class ParkingFormComponent implements OnInit {
     return new Promise((resolve, reject) => {
       this.parkingService.createParking(data).subscribe({
         next: resolve,
-        error: reject
+        error: reject,
       });
     });
   }
 
   private async updateParking(data: CreateParkingRequest): Promise<Parking> {
     const id = this.parkingId();
-    if (!id) throw new Error('Parking ID is required for update');
+    if (!id) throw new Error("Parking ID is required for update");
 
     return new Promise((resolve, reject) => {
       this.parkingService.updateParking(id, data).subscribe({
         next: resolve,
-        error: reject
+        error: reject,
       });
     });
   }
 
   private async uploadPhotos(parkingId: string): Promise<void> {
     const photos = this.photosPreviews();
-    const uploadPromises = photos.map(photo =>
-      new Promise((resolve, reject) => {
-        this.parkingService.uploadPhoto(parkingId, photo.file).subscribe({
-          next: resolve,
-          error: reject
-        });
-      })
+    const uploadPromises = photos.map(
+      (photo) =>
+        new Promise((resolve, reject) => {
+          this.parkingService.uploadPhoto(parkingId, photo.file).subscribe({
+            next: resolve,
+            error: reject,
+          });
+        }),
     );
 
     await Promise.all(uploadPromises);
@@ -463,8 +573,8 @@ export class ParkingFormComponent implements OnInit {
 
   // Cancel and go back
   onCancel(): void {
-    if (confirm('Are you sure you want to cancel? All changes will be lost.')) {
-      this.router.navigate(['/parking']);
+    if (confirm("Are you sure you want to cancel? All changes will be lost.")) {
+      this.router.navigate(["/parking"]);
     }
   }
 }

@@ -1,17 +1,34 @@
-import { Component, OnInit, signal, computed, inject, input, output } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import {
+  Component,
+  OnInit,
+  signal,
+  computed,
+  inject,
+  input,
+  output,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from "@angular/forms";
+import { MatCardModule } from "@angular/material/card";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
-import { ReviewService } from '../../services/review.service';
-import { CreateReviewRequest, Review, ReviewType } from '../../../../core/models';
+import { ReviewService } from "../../services/review.service";
+import {
+  CreateReviewRequest,
+  Review,
+  ReviewType,
+} from "../../../../core/models";
 
 interface PhotoPreview {
   file: File;
@@ -19,7 +36,7 @@ interface PhotoPreview {
 }
 
 @Component({
-  selector: 'app-review-create',
+  selector: "app-review-create",
   standalone: true,
   imports: [
     CommonModule,
@@ -31,10 +48,10 @@ interface PhotoPreview {
     MatIconModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
-    MatTooltipModule
+    MatTooltipModule,
   ],
-  templateUrl: './review-create.component.html',
-  styleUrls: ['./review-create.component.scss']
+  templateUrl: "./review-create.component.html",
+  styleUrls: ["./review-create.component.scss"],
 })
 export class ReviewCreateComponent implements OnInit {
   private fb = inject(FormBuilder);
@@ -61,7 +78,7 @@ export class ReviewCreateComponent implements OnInit {
   }>({
     cleanliness: 0,
     location: 0,
-    value: 0
+    value: 0,
   });
 
   // Computed signal for form validity
@@ -71,7 +88,7 @@ export class ReviewCreateComponent implements OnInit {
 
   // Computed signal for character count
   commentLength = computed(() => {
-    const comment = this.reviewForm.get('comment')?.value || '';
+    const comment = this.reviewForm.get("comment")?.value || "";
     return comment.length;
   });
 
@@ -83,7 +100,7 @@ export class ReviewCreateComponent implements OnInit {
   readonly MIN_COMMENT_LENGTH = 10;
 
   // Rating labels
-  ratingLabels = ['Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
+  ratingLabels = ["Poor", "Fair", "Good", "Very Good", "Excellent"];
 
   ngOnInit(): void {
     this.initializeForm();
@@ -92,13 +109,13 @@ export class ReviewCreateComponent implements OnInit {
   private initializeForm(): void {
     this.reviewForm = this.fb.group({
       comment: [
-        '',
+        "",
         [
           Validators.required,
           Validators.minLength(this.MIN_COMMENT_LENGTH),
-          Validators.maxLength(this.MAX_COMMENT_LENGTH)
-        ]
-      ]
+          Validators.maxLength(this.MAX_COMMENT_LENGTH),
+        ],
+      ],
     });
   }
 
@@ -112,10 +129,13 @@ export class ReviewCreateComponent implements OnInit {
   /**
    * Set criteria rating
    */
-  setCriteriaRating(criterion: 'cleanliness' | 'location' | 'value', rating: number): void {
-    this.criteriaRatings.update(ratings => ({
+  setCriteriaRating(
+    criterion: "cleanliness" | "location" | "value",
+    rating: number,
+  ): void {
+    this.criteriaRatings.update((ratings) => ({
       ...ratings,
-      [criterion]: rating
+      [criterion]: rating,
     }));
   }
 
@@ -137,7 +157,7 @@ export class ReviewCreateComponent implements OnInit {
    * Get rating label
    */
   getRatingLabel(rating: number): string {
-    if (rating === 0) return 'Not rated';
+    if (rating === 0) return "Not rated";
     return this.ratingLabels[rating - 1];
   }
 
@@ -153,20 +173,26 @@ export class ReviewCreateComponent implements OnInit {
 
     // Limit to 5 photos
     if (currentPreviews.length + files.length > 5) {
-      this.snackBar.open('You can upload a maximum of 5 photos', 'Close', { duration: 3000 });
+      this.snackBar.open("You can upload a maximum of 5 photos", "Close", {
+        duration: 3000,
+      });
       return;
     }
 
     files.forEach((file) => {
       // Validate file type
-      if (!file.type.startsWith('image/')) {
-        this.snackBar.open('Only image files are allowed', 'Close', { duration: 3000 });
+      if (!file.type.startsWith("image/")) {
+        this.snackBar.open("Only image files are allowed", "Close", {
+          duration: 3000,
+        });
         return;
       }
 
       // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        this.snackBar.open('Image size must be less than 5MB', 'Close', { duration: 3000 });
+        this.snackBar.open("Image size must be less than 5MB", "Close", {
+          duration: 3000,
+        });
         return;
       }
 
@@ -175,22 +201,24 @@ export class ReviewCreateComponent implements OnInit {
       reader.onload = (e: ProgressEvent<FileReader>) => {
         const preview: PhotoPreview = {
           file,
-          url: e.target?.result as string
+          url: e.target?.result as string,
         };
-        this.photosPreviews.update(previews => [...previews, preview]);
+        this.photosPreviews.update((previews) => [...previews, preview]);
       };
       reader.readAsDataURL(file);
     });
 
     // Clear input
-    input.value = '';
+    input.value = "";
   }
 
   /**
    * Remove photo
    */
   removePhoto(index: number): void {
-    this.photosPreviews.update(previews => previews.filter((_, i) => i !== index));
+    this.photosPreviews.update((previews) =>
+      previews.filter((_, i) => i !== index),
+    );
   }
 
   /**
@@ -200,9 +228,13 @@ export class ReviewCreateComponent implements OnInit {
     // Validate form
     if (!this.isFormValid()) {
       if (this.overallRating() === 0) {
-        this.snackBar.open('Please select an overall rating', 'Close', { duration: 3000 });
+        this.snackBar.open("Please select an overall rating", "Close", {
+          duration: 3000,
+        });
       } else {
-        this.snackBar.open('Please fill in all required fields', 'Close', { duration: 3000 });
+        this.snackBar.open("Please fill in all required fields", "Close", {
+          duration: 3000,
+        });
       }
       return;
     }
@@ -220,10 +252,12 @@ export class ReviewCreateComponent implements OnInit {
       if (this.photosPreviews().length > 0) {
         // Note: Photo upload functionality would need to be added to ReviewService
         // For now, we'll skip this as it's not in the current service implementation
-        console.log('Photo upload not yet implemented in ReviewService');
+        console.log("Photo upload not yet implemented in ReviewService");
       }
 
-      this.snackBar.open('Review submitted successfully!', 'Close', { duration: 3000 });
+      this.snackBar.open("Review submitted successfully!", "Close", {
+        duration: 3000,
+      });
 
       // Emit review created event
       this.reviewCreated.emit(review);
@@ -231,8 +265,12 @@ export class ReviewCreateComponent implements OnInit {
       // Reset form
       this.resetForm();
     } catch (error) {
-      console.error('Error submitting review:', error);
-      this.snackBar.open('Failed to submit review. Please try again.', 'Close', { duration: 3000 });
+      console.error("Error submitting review:", error);
+      this.snackBar.open(
+        "Failed to submit review. Please try again.",
+        "Close",
+        { duration: 3000 },
+      );
     } finally {
       this.isSubmitting.set(false);
     }
@@ -251,9 +289,9 @@ export class ReviewCreateComponent implements OnInit {
       criteria: {
         cleanliness: ratings.cleanliness || undefined,
         location: ratings.location || undefined,
-        value: ratings.value || undefined
+        value: ratings.value || undefined,
       },
-      comment: formValue.comment
+      comment: formValue.comment,
     };
 
     // Add parking ID if provided
@@ -281,7 +319,7 @@ export class ReviewCreateComponent implements OnInit {
     return new Promise((resolve, reject) => {
       this.reviewService.createReview(data).subscribe({
         next: resolve,
-        error: reject
+        error: reject,
       });
     });
   }
@@ -295,7 +333,7 @@ export class ReviewCreateComponent implements OnInit {
     this.criteriaRatings.set({
       cleanliness: 0,
       location: 0,
-      value: 0
+      value: 0,
     });
     this.photosPreviews.set([]);
   }
@@ -305,7 +343,9 @@ export class ReviewCreateComponent implements OnInit {
    */
   onCancel(): void {
     if (this.hasUnsavedChanges()) {
-      if (confirm('Are you sure you want to cancel? All changes will be lost.')) {
+      if (
+        confirm("Are you sure you want to cancel? All changes will be lost.")
+      ) {
         this.resetForm();
       }
     } else {
@@ -322,7 +362,7 @@ export class ReviewCreateComponent implements OnInit {
       this.criteriaRatings().cleanliness > 0 ||
       this.criteriaRatings().location > 0 ||
       this.criteriaRatings().value > 0 ||
-      (this.reviewForm.get('comment')?.value || '').length > 0 ||
+      (this.reviewForm.get("comment")?.value || "").length > 0 ||
       this.photosPreviews().length > 0
     );
   }
@@ -335,11 +375,11 @@ export class ReviewCreateComponent implements OnInit {
     const percentage = (length / this.MAX_COMMENT_LENGTH) * 100;
 
     if (percentage >= 90) {
-      return 'warn';
+      return "warn";
     } else if (percentage >= 75) {
-      return 'accent';
+      return "accent";
     } else {
-      return 'primary';
+      return "primary";
     }
   }
 

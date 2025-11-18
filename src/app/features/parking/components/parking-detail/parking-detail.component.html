@@ -39,7 +39,10 @@
   <div class="gallery-section">
     <div class="main-image">
       <img
-        [src]="selectedPhoto()?.url || 'https://via.placeholder.com/800x600?text=No+Image'"
+        [src]="
+          selectedPhoto()?.url ||
+          'https://via.placeholder.com/800x600?text=No+Image'
+        "
         [alt]="selectedPhoto()?.caption || parking()!.title"
       />
       <button
@@ -70,7 +73,7 @@
         [class.active]="i === selectedPhotoIndex()"
         (click)="selectPhoto(i)"
       >
-        <img [src]="photo.url" [alt]="photo.caption || 'Photo ' + (i + 1)">
+        <img [src]="photo.url" [alt]="photo.caption || 'Photo ' + (i + 1)" />
       </div>
     </div>
   </div>
@@ -127,7 +130,10 @@
         </mat-card-header>
         <mat-card-content>
           <div class="features-grid">
-            <div class="feature-item" *ngFor="let feature of parking()!.features">
+            <div
+              class="feature-item"
+              *ngFor="let feature of parking()!.features"
+            >
               <mat-icon>check_circle</mat-icon>
               <span>{{ feature }}</span>
             </div>
@@ -174,10 +180,14 @@
         </mat-card-header>
         <mat-card-content>
           <div class="access-method">
-            <mat-icon>{{ getAccessMethodIcon(parking()!.accessMethod) }}</mat-icon>
+            <mat-icon>{{
+              getAccessMethodIcon(parking()!.accessMethod)
+            }}</mat-icon>
             <div class="access-info">
               <span class="access-label">Access Method</span>
-              <span class="access-value">{{ getAccessMethodLabel(parking()!.accessMethod) }}</span>
+              <span class="access-value">{{
+                getAccessMethodLabel(parking()!.accessMethod)
+              }}</span>
             </div>
           </div>
           <p *ngIf="parking()!.accessInstructions" class="access-instructions">
@@ -210,7 +220,10 @@
         </mat-card-header>
         <mat-card-content>
           <div class="schedule-list">
-            <div class="schedule-item" *ngFor="let day of daysOfWeek; let i = index">
+            <div
+              class="schedule-item"
+              *ngFor="let day of daysOfWeek; let i = index"
+            >
               <span class="day-name">{{ day }}</span>
               <span class="day-hours">{{ getAvailabilityForDay(i) }}</span>
             </div>
@@ -218,15 +231,28 @@
 
           <mat-divider class="my-3"></mat-divider>
 
-          <div *ngIf="parking()!.availabilityExceptions.length > 0" class="exceptions">
+          <div
+            *ngIf="parking()!.availabilityExceptions.length > 0"
+            class="exceptions"
+          >
             <h4>Special Dates</h4>
-            <div class="exception-item" *ngFor="let exception of parking()!.availabilityExceptions">
-              <mat-icon [class.available]="exception.isAvailable" [class.unavailable]="!exception.isAvailable">
-                {{ exception.isAvailable ? 'check_circle' : 'cancel' }}
+            <div
+              class="exception-item"
+              *ngFor="let exception of parking()!.availabilityExceptions"
+            >
+              <mat-icon
+                [class.available]="exception.isAvailable"
+                [class.unavailable]="!exception.isAvailable"
+              >
+                {{ exception.isAvailable ? "check_circle" : "cancel" }}
               </mat-icon>
               <div class="exception-info">
-                <span class="exception-date">{{ formatDate(exception.date) }}</span>
-                <span class="exception-reason" *ngIf="exception.reason">{{ exception.reason }}</span>
+                <span class="exception-date">{{
+                  formatDate(exception.date)
+                }}</span>
+                <span class="exception-reason" *ngIf="exception.reason">{{
+                  exception.reason
+                }}</span>
               </div>
             </div>
           </div>
@@ -245,14 +271,23 @@
                 *ngIf="parking()!.owner!.profilePicture"
                 [src]="parking()!.owner!.profilePicture"
                 [alt]="parking()!.owner!.firstName"
+              />
+              <div
+                *ngIf="!parking()!.owner!.profilePicture"
+                class="avatar-placeholder"
               >
-              <div *ngIf="!parking()!.owner!.profilePicture" class="avatar-placeholder">
-                {{ parking()!.owner!.firstName.charAt(0) }}{{ parking()!.owner!.lastName.charAt(0) }}
+                {{ parking()!.owner!.firstName.charAt(0)
+                }}{{ parking()!.owner!.lastName.charAt(0) }}
               </div>
             </div>
             <div class="owner-details">
-              <h3>{{ parking()!.owner!.firstName }} {{ parking()!.owner!.lastName }}</h3>
-              <p class="verification-level">{{ parking()!.owner!.verificationLevel }} verified</p>
+              <h3>
+                {{ parking()!.owner!.firstName }}
+                {{ parking()!.owner!.lastName }}
+              </h3>
+              <p class="verification-level">
+                {{ parking()!.owner!.verificationLevel }} verified
+              </p>
               <button mat-stroked-button (click)="navigateToOwnerProfile()">
                 View Profile
               </button>
@@ -284,41 +319,59 @@
                       *ngIf="review.author?.profilePicture"
                       [src]="review.author.profilePicture"
                       [alt]="getReviewerName(review)"
+                    />
+                    <div
+                      *ngIf="!review.author?.profilePicture"
+                      class="avatar-placeholder"
                     >
-                    <div *ngIf="!review.author?.profilePicture" class="avatar-placeholder">
                       {{ getReviewerInitials(review) }}
                     </div>
                   </div>
                   <div class="reviewer-details">
                     <h4>{{ getReviewerName(review) }}</h4>
-                    <span class="review-date">{{ formatDate(review.createdAt) }}</span>
+                    <span class="review-date">{{
+                      formatDate(review.createdAt)
+                    }}</span>
                   </div>
                 </div>
                 <div class="review-rating">
-                  <mat-icon *ngFor="let filled of getStarArray(review.rating)" [class.filled]="filled">
-                    {{ filled ? 'star' : 'star_border' }}
+                  <mat-icon
+                    *ngFor="let filled of getStarArray(review.rating)"
+                    [class.filled]="filled"
+                  >
+                    {{ filled ? "star" : "star_border" }}
                   </mat-icon>
                 </div>
               </div>
 
-              <p class="review-comment" *ngIf="review.comment">{{ review.comment }}</p>
+              <p class="review-comment" *ngIf="review.comment">
+                {{ review.comment }}
+              </p>
 
               <div class="review-criteria" *ngIf="review.criteria">
                 <div class="criteria-item" *ngIf="review.criteria.location">
                   <span>Location</span>
-                  <span class="criteria-value">{{ review.criteria.location }}/5</span>
+                  <span class="criteria-value"
+                    >{{ review.criteria.location }}/5</span
+                  >
                 </div>
                 <div class="criteria-item" *ngIf="review.criteria.cleanliness">
                   <span>Cleanliness</span>
-                  <span class="criteria-value">{{ review.criteria.cleanliness }}/5</span>
+                  <span class="criteria-value"
+                    >{{ review.criteria.cleanliness }}/5</span
+                  >
                 </div>
                 <div class="criteria-item" *ngIf="review.criteria.security">
                   <span>Security</span>
-                  <span class="criteria-value">{{ review.criteria.security }}/5</span>
+                  <span class="criteria-value"
+                    >{{ review.criteria.security }}/5</span
+                  >
                 </div>
                 <div class="criteria-item" *ngIf="review.criteria.value">
                   <span>Value</span>
-                  <span class="criteria-value">{{ review.criteria.value }}/5</span>
+                  <span class="criteria-value"
+                    >{{ review.criteria.value }}/5</span
+                  >
                 </div>
               </div>
 
@@ -327,7 +380,9 @@
                 <div class="response-content">
                   <h5>Response from owner</h5>
                   <p>{{ review.response }}</p>
-                  <span class="response-date">{{ formatDate(review.responseDate!) }}</span>
+                  <span class="response-date">{{
+                    formatDate(review.responseDate!)
+                  }}</span>
                 </div>
               </div>
 
@@ -360,14 +415,18 @@
                 <mat-icon>event</mat-icon>
                 <div class="date-info">
                   <span class="date-label">Check-in</span>
-                  <span class="date-value">{{ dateRange().startDate | date:'short' }}</span>
+                  <span class="date-value">{{
+                    dateRange().startDate | date: "short"
+                  }}</span>
                 </div>
               </div>
               <div class="date-field">
                 <mat-icon>event</mat-icon>
                 <div class="date-info">
                   <span class="date-label">Check-out</span>
-                  <span class="date-value">{{ dateRange().endDate | date:'short' }}</span>
+                  <span class="date-value">{{
+                    dateRange().endDate | date: "short"
+                  }}</span>
                 </div>
               </div>
             </div>

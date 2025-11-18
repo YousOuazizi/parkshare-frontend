@@ -40,7 +40,10 @@
             }
           </mat-select>
           <mat-icon matPrefix>description</mat-icon>
-          @if (uploadForm.get('documentType')?.invalid && uploadForm.get('documentType')?.touched) {
+          @if (
+            uploadForm.get("documentType")?.invalid &&
+            uploadForm.get("documentType")?.touched
+          ) {
             <mat-error>Please select a document type</mat-error>
           }
         </mat-form-field>
@@ -53,7 +56,10 @@
               <h3>{{ selectedDocumentType()?.label }} Requirements</h3>
             </div>
             <ul class="instructions-list">
-              @for (instruction of selectedDocumentType()?.instructions; track instruction) {
+              @for (
+                instruction of selectedDocumentType()?.instructions;
+                track instruction
+              ) {
                 <li>{{ instruction }}</li>
               }
             </ul>
@@ -61,7 +67,7 @@
         }
 
         <!-- File Upload Area -->
-        @if (uploadForm.get('documentType')?.value) {
+        @if (uploadForm.get("documentType")?.value) {
           <div class="upload-section">
             @if (!selectedFile()) {
               <!-- Drag and Drop Zone -->
@@ -94,7 +100,9 @@
                   (change)="onFileSelected($event)"
                   hidden
                 />
-                <p class="file-info">Supported formats: JPG, PNG, PDF (max 5MB)</p>
+                <p class="file-info">
+                  Supported formats: JPG, PNG, PDF (max 5MB)
+                </p>
               </div>
             } @else {
               <!-- File Preview -->
@@ -118,7 +126,9 @@
                     <div class="file-details">
                       <p class="file-name">{{ selectedFile()?.name }}</p>
                       @if (selectedFile()) {
-                        <p class="file-size">{{ getFormattedFileSize(selectedFile()!.size) }}</p>
+                        <p class="file-size">
+                          {{ getFormattedFileSize(selectedFile()!.size) }}
+                        </p>
                       }
                     </div>
                     <button

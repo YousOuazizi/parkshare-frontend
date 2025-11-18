@@ -1,12 +1,12 @@
-import { Injectable, inject, signal } from '@angular/core';
-import { io, Socket } from 'socket.io-client';
-import { Observable, fromEvent } from 'rxjs';
-import { AuthService } from './auth.service';
-import { environment } from '../../../environments/environment';
-import { Notification } from '../models';
+import { Injectable, inject, signal } from "@angular/core";
+import { io, Socket } from "socket.io-client";
+import { Observable, fromEvent } from "rxjs";
+import { AuthService } from "./auth.service";
+import { environment } from "../../../environments/environment";
+import { Notification } from "../models";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class WebSocketService {
   private authService = inject(AuthService);
@@ -25,32 +25,32 @@ export class WebSocketService {
 
     const token = this.authService.getAccessToken();
     if (!token) {
-      console.warn('No auth token available for WebSocket connection');
+      console.warn("No auth token available for WebSocket connection");
       return;
     }
 
     this.socket = io(environment.wsUrl, {
       auth: {
-        token
+        token,
       },
-      transports: ['websocket'],
+      transports: ["websocket"],
       reconnection: true,
       reconnectionDelay: 1000,
-      reconnectionAttempts: 5
+      reconnectionAttempts: 5,
     });
 
-    this.socket.on('connect', () => {
-      console.log('WebSocket connected');
+    this.socket.on("connect", () => {
+      console.log("WebSocket connected");
       this.connectedSignal.set(true);
     });
 
-    this.socket.on('disconnect', (reason) => {
-      console.log('WebSocket disconnected:', reason);
+    this.socket.on("disconnect", (reason) => {
+      console.log("WebSocket disconnected:", reason);
       this.connectedSignal.set(false);
     });
 
-    this.socket.on('connect_error', (error) => {
-      console.error('WebSocket connection error:', error);
+    this.socket.on("connect_error", (error) => {
+      console.error("WebSocket connection error:", error);
       this.connectedSignal.set(false);
     });
   }
@@ -71,9 +71,9 @@ export class WebSocketService {
    */
   onNotification(): Observable<Notification> {
     if (!this.socket) {
-      throw new Error('Socket not connected');
+      throw new Error("Socket not connected");
     }
-    return fromEvent<Notification>(this.socket, 'notification');
+    return fromEvent<Notification>(this.socket, "notification");
   }
 
   /**
@@ -81,9 +81,9 @@ export class WebSocketService {
    */
   onBookingUpdate(): Observable<any> {
     if (!this.socket) {
-      throw new Error('Socket not connected');
+      throw new Error("Socket not connected");
     }
-    return fromEvent(this.socket, 'booking_update');
+    return fromEvent(this.socket, "booking_update");
   }
 
   /**
@@ -91,9 +91,9 @@ export class WebSocketService {
    */
   onParkingUpdate(): Observable<any> {
     if (!this.socket) {
-      throw new Error('Socket not connected');
+      throw new Error("Socket not connected");
     }
-    return fromEvent(this.socket, 'parking_update');
+    return fromEvent(this.socket, "parking_update");
   }
 
   /**
@@ -101,9 +101,9 @@ export class WebSocketService {
    */
   onMessage(): Observable<any> {
     if (!this.socket) {
-      throw new Error('Socket not connected');
+      throw new Error("Socket not connected");
     }
-    return fromEvent(this.socket, 'receive_message');
+    return fromEvent(this.socket, "receive_message");
   }
 
   /**
@@ -111,12 +111,12 @@ export class WebSocketService {
    */
   sendMessage(recipientId: string, content: string, bookingId?: string): void {
     if (!this.socket) {
-      throw new Error('Socket not connected');
+      throw new Error("Socket not connected");
     }
-    this.socket.emit('send_message', {
+    this.socket.emit("send_message", {
       recipientId,
       content,
-      bookingId
+      bookingId,
     });
   }
 
@@ -125,7 +125,7 @@ export class WebSocketService {
    */
   emit(event: string, data: any): void {
     if (!this.socket) {
-      throw new Error('Socket not connected');
+      throw new Error("Socket not connected");
     }
     this.socket.emit(event, data);
   }
@@ -135,7 +135,7 @@ export class WebSocketService {
    */
   on<T = any>(event: string): Observable<T> {
     if (!this.socket) {
-      throw new Error('Socket not connected');
+      throw new Error("Socket not connected");
     }
     return fromEvent<T>(this.socket, event);
   }

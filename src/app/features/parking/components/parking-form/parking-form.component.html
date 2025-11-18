@@ -1,8 +1,12 @@
 <div class="parking-form-container">
   <div class="form-header">
-    <h1>{{ isEditMode() ? 'Edit' : 'Add New' }} Parking Space</h1>
+    <h1>{{ isEditMode() ? "Edit" : "Add New" }} Parking Space</h1>
     <p class="subtitle">
-      {{ isEditMode() ? 'Update your parking space details' : 'List your parking space and start earning' }}
+      {{
+        isEditMode()
+          ? "Update your parking space details"
+          : "List your parking space and start earning"
+      }}
     </p>
   </div>
 
@@ -17,7 +21,9 @@
       <mat-step [stepControl]="basicInfoForm" label="Basic Info">
         <form [formGroup]="basicInfoForm" class="step-form">
           <h2>Basic Information</h2>
-          <p class="step-description">Provide essential details about your parking space</p>
+          <p class="step-description">
+            Provide essential details about your parking space
+          </p>
 
           <mat-form-field appearance="outline">
             <mat-label>Title</mat-label>
@@ -27,11 +33,18 @@
               placeholder="e.g., Secure Covered Parking Downtown"
               maxlength="100"
             />
-            <mat-hint align="end">{{ basicInfoForm.get('title')?.value?.length || 0 }}/100</mat-hint>
-            @if (basicInfoForm.get('title')?.hasError('required') && basicInfoForm.get('title')?.touched) {
+            <mat-hint align="end"
+              >{{
+                basicInfoForm.get("title")?.value?.length || 0
+              }}/100</mat-hint
+            >
+            @if (
+              basicInfoForm.get("title")?.hasError("required") &&
+              basicInfoForm.get("title")?.touched
+            ) {
               <mat-error>Title is required</mat-error>
             }
-            @if (basicInfoForm.get('title')?.hasError('minlength')) {
+            @if (basicInfoForm.get("title")?.hasError("minlength")) {
               <mat-error>Title must be at least 5 characters</mat-error>
             }
           </mat-form-field>
@@ -45,11 +58,18 @@
               rows="5"
               maxlength="1000"
             ></textarea>
-            <mat-hint align="end">{{ basicInfoForm.get('description')?.value?.length || 0 }}/1000</mat-hint>
-            @if (basicInfoForm.get('description')?.hasError('required') && basicInfoForm.get('description')?.touched) {
+            <mat-hint align="end"
+              >{{
+                basicInfoForm.get("description")?.value?.length || 0
+              }}/1000</mat-hint
+            >
+            @if (
+              basicInfoForm.get("description")?.hasError("required") &&
+              basicInfoForm.get("description")?.touched
+            ) {
               <mat-error>Description is required</mat-error>
             }
-            @if (basicInfoForm.get('description')?.hasError('minlength')) {
+            @if (basicInfoForm.get("description")?.hasError("minlength")) {
               <mat-error>Description must be at least 20 characters</mat-error>
             }
           </mat-form-field>
@@ -75,12 +95,25 @@
               rows="3"
               maxlength="500"
             ></textarea>
-            <mat-hint align="end">{{ basicInfoForm.get('accessInstructions')?.value?.length || 0 }}/500</mat-hint>
+            <mat-hint align="end"
+              >{{
+                basicInfoForm.get("accessInstructions")?.value?.length || 0
+              }}/500</mat-hint
+            >
           </mat-form-field>
 
           <div class="step-actions">
-            <button mat-button (click)="onCancel()" type="button">Cancel</button>
-            <button mat-raised-button color="primary" matStepperNext type="button">Next</button>
+            <button mat-button (click)="onCancel()" type="button">
+              Cancel
+            </button>
+            <button
+              mat-raised-button
+              color="primary"
+              matStepperNext
+              type="button"
+            >
+              Next
+            </button>
           </div>
         </form>
       </mat-step>
@@ -101,7 +134,10 @@
             />
             <mat-icon matSuffix>location_on</mat-icon>
             <mat-hint>Start typing to search for your address</mat-hint>
-            @if (locationForm.get('address')?.hasError('required') && locationForm.get('address')?.touched) {
+            @if (
+              locationForm.get("address")?.hasError("required") &&
+              locationForm.get("address")?.touched
+            ) {
               <mat-error>Address is required</mat-error>
             }
           </mat-form-field>
@@ -114,7 +150,10 @@
                 formControlName="city"
                 placeholder="San Francisco"
               />
-              @if (locationForm.get('city')?.hasError('required') && locationForm.get('city')?.touched) {
+              @if (
+                locationForm.get("city")?.hasError("required") &&
+                locationForm.get("city")?.touched
+              ) {
                 <mat-error>City is required</mat-error>
               }
             </mat-form-field>
@@ -126,7 +165,10 @@
                 formControlName="country"
                 placeholder="United States"
               />
-              @if (locationForm.get('country')?.hasError('required') && locationForm.get('country')?.touched) {
+              @if (
+                locationForm.get("country")?.hasError("required") &&
+                locationForm.get("country")?.touched
+              ) {
                 <mat-error>Country is required</mat-error>
               }
             </mat-form-field>
@@ -155,10 +197,16 @@
                   placeholder="37.7749"
                   step="0.000001"
                 />
-                @if (locationForm.get('latitude')?.hasError('required') && locationForm.get('latitude')?.touched) {
+                @if (
+                  locationForm.get("latitude")?.hasError("required") &&
+                  locationForm.get("latitude")?.touched
+                ) {
                   <mat-error>Latitude is required</mat-error>
                 }
-                @if (locationForm.get('latitude')?.hasError('min') || locationForm.get('latitude')?.hasError('max')) {
+                @if (
+                  locationForm.get("latitude")?.hasError("min") ||
+                  locationForm.get("latitude")?.hasError("max")
+                ) {
                   <mat-error>Invalid latitude (-90 to 90)</mat-error>
                 }
               </mat-form-field>
@@ -172,10 +220,16 @@
                   placeholder="-122.4194"
                   step="0.000001"
                 />
-                @if (locationForm.get('longitude')?.hasError('required') && locationForm.get('longitude')?.touched) {
+                @if (
+                  locationForm.get("longitude")?.hasError("required") &&
+                  locationForm.get("longitude")?.touched
+                ) {
                   <mat-error>Longitude is required</mat-error>
                 }
-                @if (locationForm.get('longitude')?.hasError('min') || locationForm.get('longitude')?.hasError('max')) {
+                @if (
+                  locationForm.get("longitude")?.hasError("min") ||
+                  locationForm.get("longitude")?.hasError("max")
+                ) {
                   <mat-error>Invalid longitude (-180 to 180)</mat-error>
                 }
               </mat-form-field>
@@ -184,7 +238,14 @@
 
           <div class="step-actions">
             <button mat-button matStepperPrevious type="button">Back</button>
-            <button mat-raised-button color="primary" matStepperNext type="button">Next</button>
+            <button
+              mat-raised-button
+              color="primary"
+              matStepperNext
+              type="button"
+            >
+              Next
+            </button>
           </div>
         </form>
       </mat-step>
@@ -193,7 +254,9 @@
       <mat-step [stepControl]="pricingForm" label="Pricing & Size">
         <form [formGroup]="pricingForm" class="step-form">
           <h2>Pricing & Size</h2>
-          <p class="step-description">Set your pricing and specify parking space dimensions</p>
+          <p class="step-description">
+            Set your pricing and specify parking space dimensions
+          </p>
 
           <div class="pricing-section">
             <h3>Pricing</h3>
@@ -210,10 +273,13 @@
                 />
                 <span matTextPrefix>$&nbsp;</span>
                 <mat-hint>Your hourly rate</mat-hint>
-                @if (pricingForm.get('basePrice')?.hasError('required') && pricingForm.get('basePrice')?.touched) {
+                @if (
+                  pricingForm.get("basePrice")?.hasError("required") &&
+                  pricingForm.get("basePrice")?.touched
+                ) {
                   <mat-error>Price is required</mat-error>
                 }
-                @if (pricingForm.get('basePrice')?.hasError('min')) {
+                @if (pricingForm.get("basePrice")?.hasError("min")) {
                   <mat-error>Price must be greater than 0</mat-error>
                 }
               </mat-form-field>
@@ -253,7 +319,10 @@
                   min="1"
                 />
                 <mat-icon matSuffix>straighten</mat-icon>
-                @if (pricingForm.get('size.length')?.hasError('required') && pricingForm.get('size.length')?.touched) {
+                @if (
+                  pricingForm.get("size.length")?.hasError("required") &&
+                  pricingForm.get("size.length")?.touched
+                ) {
                   <mat-error>Length is required</mat-error>
                 }
               </mat-form-field>
@@ -268,7 +337,10 @@
                   min="1"
                 />
                 <mat-icon matSuffix>straighten</mat-icon>
-                @if (pricingForm.get('size.width')?.hasError('required') && pricingForm.get('size.width')?.touched) {
+                @if (
+                  pricingForm.get("size.width")?.hasError("required") &&
+                  pricingForm.get("size.width")?.touched
+                ) {
                   <mat-error>Width is required</mat-error>
                 }
               </mat-form-field>
@@ -284,7 +356,10 @@
                 />
                 <mat-icon matSuffix>height</mat-icon>
                 <mat-hint>Clearance height</mat-hint>
-                @if (pricingForm.get('size.height')?.hasError('required') && pricingForm.get('size.height')?.touched) {
+                @if (
+                  pricingForm.get("size.height")?.hasError("required") &&
+                  pricingForm.get("size.height")?.touched
+                ) {
                   <mat-error>Height is required</mat-error>
                 }
               </mat-form-field>
@@ -308,7 +383,14 @@
 
           <div class="step-actions">
             <button mat-button matStepperPrevious type="button">Back</button>
-            <button mat-raised-button color="primary" matStepperNext type="button">Next</button>
+            <button
+              mat-raised-button
+              color="primary"
+              matStepperNext
+              type="button"
+            >
+              Next
+            </button>
           </div>
         </form>
       </mat-step>
@@ -317,7 +399,9 @@
       <mat-step label="Photos">
         <div class="step-form">
           <h2>Photos</h2>
-          <p class="step-description">Add photos to showcase your parking space</p>
+          <p class="step-description">
+            Add photos to showcase your parking space
+          </p>
 
           <div class="photos-upload-section">
             <div class="upload-area">
@@ -385,14 +469,23 @@
               <div class="no-photos">
                 <mat-icon>photo_library</mat-icon>
                 <p>No photos uploaded yet</p>
-                <p class="hint">Add photos to make your listing more attractive</p>
+                <p class="hint">
+                  Add photos to make your listing more attractive
+                </p>
               </div>
             }
           </div>
 
           <div class="step-actions">
             <button mat-button matStepperPrevious type="button">Back</button>
-            <button mat-raised-button color="primary" matStepperNext type="button">Next</button>
+            <button
+              mat-raised-button
+              color="primary"
+              matStepperNext
+              type="button"
+            >
+              Next
+            </button>
           </div>
         </div>
       </mat-step>
@@ -401,7 +494,9 @@
       <mat-step label="Availability">
         <div class="step-form">
           <h2>Availability Schedule</h2>
-          <p class="step-description">Set when your parking space is available for booking</p>
+          <p class="step-description">
+            Set when your parking space is available for booking
+          </p>
 
           <div class="availability-section">
             @for (day of weekDays; track day.dayOfWeek) {
@@ -409,7 +504,7 @@
                 <div class="day-header">
                   <mat-slide-toggle
                     [(ngModel)]="day.enabled"
-                    [ngModelOptions]="{standalone: true}"
+                    [ngModelOptions]="{ standalone: true }"
                     color="primary"
                   >
                     <strong>{{ day.day }}</strong>
@@ -424,7 +519,7 @@
                         matInput
                         type="time"
                         [(ngModel)]="day.startTime"
-                        [ngModelOptions]="{standalone: true}"
+                        [ngModelOptions]="{ standalone: true }"
                       />
                       <mat-icon matSuffix>schedule</mat-icon>
                     </mat-form-field>
@@ -437,7 +532,7 @@
                         matInput
                         type="time"
                         [(ngModel)]="day.endTime"
-                        [ngModelOptions]="{standalone: true}"
+                        [ngModelOptions]="{ standalone: true }"
                       />
                       <mat-icon matSuffix>schedule</mat-icon>
                     </mat-form-field>
@@ -461,7 +556,7 @@
                 <span>Saving...</span>
               } @else {
                 <mat-icon>save</mat-icon>
-                <span>{{ isEditMode() ? 'Update' : 'Create' }} Parking</span>
+                <span>{{ isEditMode() ? "Update" : "Create" }} Parking</span>
               }
             </button>
           </div>

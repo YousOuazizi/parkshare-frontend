@@ -1,14 +1,14 @@
-import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { Injectable, inject } from "@angular/core";
+import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
+import { Observable } from "rxjs";
+import { environment } from "../../../environments/environment";
 
 export interface QueryParams {
   [key: string]: string | number | boolean | string[] | number[] | undefined;
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class ApiService {
   private http = inject(HttpClient);
@@ -19,31 +19,51 @@ export class ApiService {
    */
   get<T>(endpoint: string, params?: QueryParams): Observable<T> {
     const httpParams = this.buildHttpParams(params);
-    return this.http.get<T>(`${this.baseUrl}${endpoint}`, { params: httpParams });
+    return this.http.get<T>(`${this.baseUrl}${endpoint}`, {
+      params: httpParams,
+    });
   }
 
   /**
    * POST request
    */
-  post<T>(endpoint: string, body: any, options?: { params?: QueryParams }): Observable<T> {
+  post<T>(
+    endpoint: string,
+    body: any,
+    options?: { params?: QueryParams },
+  ): Observable<T> {
     const httpParams = this.buildHttpParams(options?.params);
-    return this.http.post<T>(`${this.baseUrl}${endpoint}`, body, { params: httpParams });
+    return this.http.post<T>(`${this.baseUrl}${endpoint}`, body, {
+      params: httpParams,
+    });
   }
 
   /**
    * PUT request
    */
-  put<T>(endpoint: string, body: any, options?: { params?: QueryParams }): Observable<T> {
+  put<T>(
+    endpoint: string,
+    body: any,
+    options?: { params?: QueryParams },
+  ): Observable<T> {
     const httpParams = this.buildHttpParams(options?.params);
-    return this.http.put<T>(`${this.baseUrl}${endpoint}`, body, { params: httpParams });
+    return this.http.put<T>(`${this.baseUrl}${endpoint}`, body, {
+      params: httpParams,
+    });
   }
 
   /**
    * PATCH request
    */
-  patch<T>(endpoint: string, body: any, options?: { params?: QueryParams }): Observable<T> {
+  patch<T>(
+    endpoint: string,
+    body: any,
+    options?: { params?: QueryParams },
+  ): Observable<T> {
     const httpParams = this.buildHttpParams(options?.params);
-    return this.http.patch<T>(`${this.baseUrl}${endpoint}`, body, { params: httpParams });
+    return this.http.patch<T>(`${this.baseUrl}${endpoint}`, body, {
+      params: httpParams,
+    });
   }
 
   /**
@@ -51,7 +71,9 @@ export class ApiService {
    */
   delete<T>(endpoint: string, params?: QueryParams): Observable<T> {
     const httpParams = this.buildHttpParams(params);
-    return this.http.delete<T>(`${this.baseUrl}${endpoint}`, { params: httpParams });
+    return this.http.delete<T>(`${this.baseUrl}${endpoint}`, {
+      params: httpParams,
+    });
   }
 
   /**
@@ -66,7 +88,7 @@ export class ApiService {
    */
   download(endpoint: string, filename: string): Observable<Blob> {
     return this.http.get(`${this.baseUrl}${endpoint}`, {
-      responseType: 'blob'
+      responseType: "blob",
     });
   }
 
@@ -77,11 +99,11 @@ export class ApiService {
     let httpParams = new HttpParams();
 
     if (params) {
-      Object.keys(params).forEach(key => {
+      Object.keys(params).forEach((key) => {
         const value = params[key];
         if (value !== undefined && value !== null) {
           if (Array.isArray(value)) {
-            value.forEach(v => {
+            value.forEach((v) => {
               httpParams = httpParams.append(key, v.toString());
             });
           } else {

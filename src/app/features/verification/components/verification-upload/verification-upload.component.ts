@@ -1,15 +1,20 @@
-import { Component, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatCardModule } from '@angular/material/card';
-import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { VerificationService } from '../../services/verification.service';
-import { DocumentType } from '../../../../core/models/verification.model';
+import { Component, signal, computed } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from "@angular/forms";
+import { MatCardModule } from "@angular/material/card";
+import { MatSelectModule } from "@angular/material/select";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { VerificationService } from "../../services/verification.service";
+import { DocumentType } from "../../../../core/models/verification.model";
 
 interface DocumentTypeOption {
   value: DocumentType;
@@ -19,7 +24,7 @@ interface DocumentTypeOption {
 }
 
 @Component({
-  selector: 'app-verification-upload',
+  selector: "app-verification-upload",
   standalone: true,
   imports: [
     CommonModule,
@@ -30,10 +35,10 @@ interface DocumentTypeOption {
     MatIconModule,
     MatProgressSpinnerModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
   ],
-  templateUrl: './verification-upload.component.html',
-  styleUrls: ['./verification-upload.component.scss']
+  templateUrl: "./verification-upload.component.html",
+  styleUrls: ["./verification-upload.component.scss"],
 })
 export class VerificationUploadComponent {
   uploadForm: FormGroup;
@@ -47,72 +52,72 @@ export class VerificationUploadComponent {
   documentTypes: DocumentTypeOption[] = [
     {
       value: DocumentType.PASSPORT,
-      label: 'Passport',
-      icon: 'badge',
+      label: "Passport",
+      icon: "badge",
       instructions: [
-        'Upload a clear photo of your passport photo page',
-        'Ensure all text is readable',
-        'Photo must be in color',
-        'File size should not exceed 5MB'
-      ]
+        "Upload a clear photo of your passport photo page",
+        "Ensure all text is readable",
+        "Photo must be in color",
+        "File size should not exceed 5MB",
+      ],
     },
     {
       value: DocumentType.NATIONAL_ID,
-      label: 'National ID Card',
-      icon: 'credit_card',
+      label: "National ID Card",
+      icon: "credit_card",
       instructions: [
-        'Upload both front and back of your ID card',
-        'All corners must be visible',
-        'Text and photo must be clear',
-        'No glare or shadows on the card'
-      ]
+        "Upload both front and back of your ID card",
+        "All corners must be visible",
+        "Text and photo must be clear",
+        "No glare or shadows on the card",
+      ],
     },
     {
       value: DocumentType.DRIVER_LICENSE,
-      label: 'Driver License',
-      icon: 'drive_eta',
+      label: "Driver License",
+      icon: "drive_eta",
       instructions: [
-        'Upload both sides of your driver license',
-        'Ensure license is valid (not expired)',
-        'All text must be legible',
-        'Photo must show your full face clearly'
-      ]
+        "Upload both sides of your driver license",
+        "Ensure license is valid (not expired)",
+        "All text must be legible",
+        "Photo must show your full face clearly",
+      ],
     },
     {
       value: DocumentType.ADDRESS_PROOF,
-      label: 'Address Proof',
-      icon: 'home',
+      label: "Address Proof",
+      icon: "home",
       instructions: [
-        'Upload utility bill, bank statement, or lease agreement',
-        'Document must be dated within last 3 months',
-        'Your name and address must be clearly visible',
-        'Accepted formats: PDF, JPG, PNG'
-      ]
+        "Upload utility bill, bank statement, or lease agreement",
+        "Document must be dated within last 3 months",
+        "Your name and address must be clearly visible",
+        "Accepted formats: PDF, JPG, PNG",
+      ],
     },
     {
       value: DocumentType.SELFIE,
-      label: 'Selfie with ID',
-      icon: 'photo_camera',
+      label: "Selfie with ID",
+      icon: "photo_camera",
       instructions: [
-        'Take a selfie holding your ID next to your face',
-        'Your face must be clearly visible',
-        'ID details should be readable',
-        'Use good lighting, no filters or edits'
-      ]
-    }
+        "Take a selfie holding your ID next to your face",
+        "Your face must be clearly visible",
+        "ID details should be readable",
+        "Use good lighting, no filters or edits",
+      ],
+    },
   ];
 
   selectedDocumentType = computed(() => {
-    const typeValue = this.uploadForm.get('documentType')?.value;
-    return this.documentTypes.find(type => type.value === typeValue);
+    const typeValue = this.uploadForm.get("documentType")?.value;
+    return this.documentTypes.find((type) => type.value === typeValue);
   });
 
   constructor(
     private fb: FormBuilder,
-    private verificationService: VerificationService
+    private verificationService: VerificationService,
   ) {
     this.uploadForm = this.fb.group({
-      documentType: ['', Validators.required]
+      documentType: ["", Validators.required],
     });
   }
 
@@ -147,16 +152,21 @@ export class VerificationUploadComponent {
 
   private processFile(file: File): void {
     // Validate file type
-    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
+    const validTypes = [
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "application/pdf",
+    ];
     if (!validTypes.includes(file.type)) {
-      this.errorMessage.set('Please upload a valid file (JPG, PNG, or PDF)');
+      this.errorMessage.set("Please upload a valid file (JPG, PNG, or PDF)");
       return;
     }
 
     // Validate file size (5MB max)
     const maxSize = 5 * 1024 * 1024; // 5MB in bytes
     if (file.size > maxSize) {
-      this.errorMessage.set('File size must not exceed 5MB');
+      this.errorMessage.set("File size must not exceed 5MB");
       return;
     }
 
@@ -164,7 +174,7 @@ export class VerificationUploadComponent {
     this.errorMessage.set(null);
 
     // Create preview for images
-    if (file.type.startsWith('image/')) {
+    if (file.type.startsWith("image/")) {
       const reader = new FileReader();
       reader.onload = (e) => {
         this.previewUrl.set(e.target?.result as string);
@@ -190,22 +200,26 @@ export class VerificationUploadComponent {
     this.errorMessage.set(null);
     this.successMessage.set(null);
 
-    const documentType = this.uploadForm.get('documentType')?.value;
+    const documentType = this.uploadForm.get("documentType")?.value;
     const file = this.selectedFile();
 
     if (file) {
       this.verificationService.uploadDocument(documentType, file).subscribe({
         next: (response) => {
           this.loading.set(false);
-          this.successMessage.set(response.message || 'Document uploaded successfully! It will be reviewed shortly.');
+          this.successMessage.set(
+            response.message ||
+              "Document uploaded successfully! It will be reviewed shortly.",
+          );
           this.resetForm();
         },
         error: (error) => {
           this.loading.set(false);
           this.errorMessage.set(
-            error.error?.message || 'Failed to upload document. Please try again.'
+            error.error?.message ||
+              "Failed to upload document. Please try again.",
           );
-        }
+        },
       });
     }
   }
@@ -217,10 +231,10 @@ export class VerificationUploadComponent {
   }
 
   getFormattedFileSize(bytes: number): string {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) return "0 Bytes";
     const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB'];
+    const sizes = ["Bytes", "KB", "MB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i];
   }
 }

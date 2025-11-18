@@ -1,9 +1,9 @@
 export enum AccessMethod {
-  CODE = 'CODE',
-  KEY = 'KEY',
-  REMOTE = 'REMOTE',
-  APP = 'APP',
-  NONE = 'NONE'
+  CODE = "CODE",
+  KEY = "KEY",
+  REMOTE = "REMOTE",
+  APP = "APP",
+  NONE = "NONE",
 }
 
 export interface ParkingSize {
@@ -70,6 +70,7 @@ export interface Parking {
 }
 
 export interface ParkingSearchParams {
+  [key: string]: string | number | boolean | string[] | number[] | undefined;
   latitude?: number;
   longitude?: number;
   radius?: number;
@@ -83,7 +84,7 @@ export interface ParkingSearchParams {
   page?: number;
   limit?: number;
   sortBy?: string;
-  sortOrder?: 'ASC' | 'DESC';
+  sortOrder?: "ASC" | "DESC";
 }
 
 export interface CreateParkingRequest {

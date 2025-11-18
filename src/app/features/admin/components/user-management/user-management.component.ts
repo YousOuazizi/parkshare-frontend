@@ -1,26 +1,46 @@
-import { Component, OnInit, signal, computed, inject, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatTableModule, MatTableDataSource } from '@angular/material/table';
-import { MatPaginatorModule, MatPaginator, PageEvent } from '@angular/material/paginator';
-import { MatSortModule, MatSort } from '@angular/material/sort';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatDialogModule, MatDialog } from '@angular/material/dialog';
-import { MatCardModule } from '@angular/material/card';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { SelectionModel } from '@angular/cdk/collections';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import {
+  Component,
+  OnInit,
+  signal,
+  computed,
+  inject,
+  ViewChild,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from "@angular/forms";
+import { MatTableModule, MatTableDataSource } from "@angular/material/table";
+import {
+  MatPaginatorModule,
+  MatPaginator,
+  PageEvent,
+} from "@angular/material/paginator";
+import { MatSortModule, MatSort } from "@angular/material/sort";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatSelectModule } from "@angular/material/select";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+import { MatChipsModule } from "@angular/material/chips";
+import { MatCheckboxModule } from "@angular/material/checkbox";
+import { MatMenuModule } from "@angular/material/menu";
+import { MatDialogModule, MatDialog } from "@angular/material/dialog";
+import { MatCardModule } from "@angular/material/card";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { SelectionModel } from "@angular/cdk/collections";
+import { debounceTime, distinctUntilChanged } from "rxjs/operators";
 
-import { AdminService, UserStatistics } from '../../services/admin.service';
-import { User, UserRole, VerificationLevel } from '../../../../core/models/user.model';
+import { AdminService, UserStatistics } from "../../services/admin.service";
+import {
+  User,
+  UserRole,
+  VerificationLevel,
+} from "../../../../core/models/user.model";
 
 interface FilterForm {
   search: FormControl<string | null>;
@@ -30,7 +50,7 @@ interface FilterForm {
 }
 
 @Component({
-  selector: 'app-user-management',
+  selector: "app-user-management",
   standalone: true,
   imports: [
     CommonModule,
@@ -49,10 +69,10 @@ interface FilterForm {
     MatDialogModule,
     MatCardModule,
     MatProgressSpinnerModule,
-    MatTooltipModule
+    MatTooltipModule,
   ],
-  templateUrl: './user-management.component.html',
-  styleUrls: ['./user-management.component.scss']
+  templateUrl: "./user-management.component.html",
+  styleUrls: ["./user-management.component.scss"],
 })
 export class UserManagementComponent implements OnInit {
   private adminService = inject(AdminService);
@@ -72,15 +92,15 @@ export class UserManagementComponent implements OnInit {
 
   // Table configuration
   displayedColumns: string[] = [
-    'select',
-    'email',
-    'name',
-    'role',
-    'verificationLevel',
-    'status',
-    'createdAt',
-    'lastLogin',
-    'actions'
+    "select",
+    "email",
+    "name",
+    "role",
+    "verificationLevel",
+    "status",
+    "createdAt",
+    "lastLogin",
+    "actions",
   ];
 
   dataSource = new MatTableDataSource<User>();
@@ -88,10 +108,10 @@ export class UserManagementComponent implements OnInit {
 
   // Filter form
   filterForm = new FormGroup<FilterForm>({
-    search: new FormControl<string>(''),
+    search: new FormControl<string>(""),
     role: new FormControl<UserRole | null>(null),
     verificationLevel: new FormControl<VerificationLevel | null>(null),
-    isActive: new FormControl<boolean | null>(null)
+    isActive: new FormControl<boolean | null>(null),
   });
 
   // Enum references for template
@@ -100,24 +120,24 @@ export class UserManagementComponent implements OnInit {
 
   // Role options
   roleOptions = [
-    { value: UserRole.USER, label: 'User' },
-    { value: UserRole.OWNER, label: 'Owner' },
-    { value: UserRole.ADMIN, label: 'Admin' }
+    { value: UserRole.USER, label: "User" },
+    { value: UserRole.OWNER, label: "Owner" },
+    { value: UserRole.ADMIN, label: "Admin" },
   ];
 
   // Verification level options
   verificationLevelOptions = [
-    { value: VerificationLevel.LEVEL_0, label: 'Level 0' },
-    { value: VerificationLevel.LEVEL_1, label: 'Level 1' },
-    { value: VerificationLevel.LEVEL_2, label: 'Level 2' },
-    { value: VerificationLevel.LEVEL_3, label: 'Level 3' },
-    { value: VerificationLevel.LEVEL_4, label: 'Level 4' }
+    { value: VerificationLevel.LEVEL_0, label: "Level 0" },
+    { value: VerificationLevel.LEVEL_1, label: "Level 1" },
+    { value: VerificationLevel.LEVEL_2, label: "Level 2" },
+    { value: VerificationLevel.LEVEL_3, label: "Level 3" },
+    { value: VerificationLevel.LEVEL_4, label: "Level 4" },
   ];
 
   // Status options
   statusOptions = [
-    { value: true, label: 'Active' },
-    { value: false, label: 'Suspended' }
+    { value: true, label: "Active" },
+    { value: false, label: "Suspended" },
   ];
 
   // Computed values
@@ -143,7 +163,7 @@ export class UserManagementComponent implements OnInit {
       search: this.filterForm.value.search || undefined,
       role: this.filterForm.value.role || undefined,
       verificationLevel: this.filterForm.value.verificationLevel || undefined,
-      isActive: this.filterForm.value.isActive ?? undefined
+      isActive: this.filterForm.value.isActive ?? undefined,
     };
 
     this.adminService.getUsers(params).subscribe({
@@ -155,10 +175,10 @@ export class UserManagementComponent implements OnInit {
         this.selection.clear();
       },
       error: (err) => {
-        this.error.set('Failed to load users. Please try again.');
+        this.error.set("Failed to load users. Please try again.");
         this.loading.set(false);
-        console.error('Error loading users:', err);
-      }
+        console.error("Error loading users:", err);
+      },
     });
   }
 
@@ -171,8 +191,8 @@ export class UserManagementComponent implements OnInit {
         this.statistics.set(stats);
       },
       error: (err) => {
-        console.error('Error loading statistics:', err);
-      }
+        console.error("Error loading statistics:", err);
+      },
     });
   }
 
@@ -181,10 +201,7 @@ export class UserManagementComponent implements OnInit {
    */
   private setupFilterListeners(): void {
     this.filterForm.valueChanges
-      .pipe(
-        debounceTime(300),
-        distinctUntilChanged()
-      )
+      .pipe(debounceTime(300), distinctUntilChanged())
       .subscribe(() => {
         this.currentPage.set(0);
         this.loadUsers();
@@ -205,10 +222,10 @@ export class UserManagementComponent implements OnInit {
    */
   resetFilters(): void {
     this.filterForm.reset({
-      search: '',
+      search: "",
       role: null,
       verificationLevel: null,
-      isActive: null
+      isActive: null,
     });
   }
 
@@ -245,12 +262,12 @@ export class UserManagementComponent implements OnInit {
   getRoleColor(role: UserRole): string {
     switch (role) {
       case UserRole.ADMIN:
-        return 'warn';
+        return "warn";
       case UserRole.OWNER:
-        return 'accent';
+        return "accent";
       case UserRole.USER:
       default:
-        return 'primary';
+        return "primary";
     }
   }
 
@@ -260,16 +277,16 @@ export class UserManagementComponent implements OnInit {
   getVerificationLevelColor(level: VerificationLevel): string {
     switch (level) {
       case VerificationLevel.LEVEL_4:
-        return 'success';
+        return "success";
       case VerificationLevel.LEVEL_3:
-        return 'primary';
+        return "primary";
       case VerificationLevel.LEVEL_2:
-        return 'accent';
+        return "accent";
       case VerificationLevel.LEVEL_1:
-        return 'warn';
+        return "warn";
       case VerificationLevel.LEVEL_0:
       default:
-        return 'default';
+        return "default";
     }
   }
 
@@ -277,7 +294,7 @@ export class UserManagementComponent implements OnInit {
    * Get status color
    */
   getStatusColor(isActive: boolean): string {
-    return isActive ? 'success' : 'warn';
+    return isActive ? "success" : "warn";
   }
 
   /**
@@ -285,18 +302,18 @@ export class UserManagementComponent implements OnInit {
    */
   getStatusText(user: User): string {
     // Assuming we have an isActive field, otherwise use a different indicator
-    return 'Active'; // Modify based on your User model
+    return "Active"; // Modify based on your User model
   }
 
   /**
    * Format date
    */
   formatDate(date: string | undefined): string {
-    if (!date) return 'Never';
-    return new Date(date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
+    if (!date) return "Never";
+    return new Date(date).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   }
 
@@ -305,7 +322,7 @@ export class UserManagementComponent implements OnInit {
    */
   viewUser(user: User): void {
     // Implement view user dialog
-    console.log('View user:', user);
+    console.log("View user:", user);
   }
 
   /**
@@ -313,14 +330,18 @@ export class UserManagementComponent implements OnInit {
    */
   editUser(user: User): void {
     // Implement edit user dialog
-    console.log('Edit user:', user);
+    console.log("Edit user:", user);
   }
 
   /**
    * Suspend user
    */
   suspendUser(user: User): void {
-    if (!confirm(`Are you sure you want to suspend ${this.getUserFullName(user)}?`)) {
+    if (
+      !confirm(
+        `Are you sure you want to suspend ${this.getUserFullName(user)}?`,
+      )
+    ) {
       return;
     }
 
@@ -329,9 +350,9 @@ export class UserManagementComponent implements OnInit {
         this.loadUsers();
       },
       error: (err) => {
-        console.error('Error suspending user:', err);
-        alert('Failed to suspend user. Please try again.');
-      }
+        console.error("Error suspending user:", err);
+        alert("Failed to suspend user. Please try again.");
+      },
     });
   }
 
@@ -339,7 +360,11 @@ export class UserManagementComponent implements OnInit {
    * Delete user
    */
   deleteUser(user: User): void {
-    if (!confirm(`Are you sure you want to delete ${this.getUserFullName(user)}? This action cannot be undone.`)) {
+    if (
+      !confirm(
+        `Are you sure you want to delete ${this.getUserFullName(user)}? This action cannot be undone.`,
+      )
+    ) {
       return;
     }
 
@@ -349,9 +374,9 @@ export class UserManagementComponent implements OnInit {
         this.loadStatistics();
       },
       error: (err) => {
-        console.error('Error deleting user:', err);
-        alert('Failed to delete user. Please try again.');
-      }
+        console.error("Error deleting user:", err);
+        alert("Failed to delete user. Please try again.");
+      },
     });
   }
 
@@ -359,8 +384,10 @@ export class UserManagementComponent implements OnInit {
    * Bulk suspend selected users
    */
   bulkSuspend(): void {
-    const selectedIds = this.selection.selected.map(u => u.id);
-    if (!confirm(`Are you sure you want to suspend ${selectedIds.length} users?`)) {
+    const selectedIds = this.selection.selected.map((u) => u.id);
+    if (
+      !confirm(`Are you sure you want to suspend ${selectedIds.length} users?`)
+    ) {
       return;
     }
 
@@ -370,9 +397,9 @@ export class UserManagementComponent implements OnInit {
         this.loadUsers();
       },
       error: (err) => {
-        console.error('Error bulk suspending users:', err);
-        alert('Failed to suspend users. Please try again.');
-      }
+        console.error("Error bulk suspending users:", err);
+        alert("Failed to suspend users. Please try again.");
+      },
     });
   }
 
@@ -380,8 +407,12 @@ export class UserManagementComponent implements OnInit {
    * Bulk delete selected users
    */
   bulkDelete(): void {
-    const selectedIds = this.selection.selected.map(u => u.id);
-    if (!confirm(`Are you sure you want to delete ${selectedIds.length} users? This action cannot be undone.`)) {
+    const selectedIds = this.selection.selected.map((u) => u.id);
+    if (
+      !confirm(
+        `Are you sure you want to delete ${selectedIds.length} users? This action cannot be undone.`,
+      )
+    ) {
       return;
     }
 
@@ -392,9 +423,9 @@ export class UserManagementComponent implements OnInit {
         this.loadStatistics();
       },
       error: (err) => {
-        console.error('Error bulk deleting users:', err);
-        alert('Failed to delete users. Please try again.');
-      }
+        console.error("Error bulk deleting users:", err);
+        alert("Failed to delete users. Please try again.");
+      },
     });
   }
 
@@ -403,7 +434,7 @@ export class UserManagementComponent implements OnInit {
    */
   exportUsers(): void {
     // Implement CSV export functionality
-    console.log('Export users to CSV');
+    console.log("Export users to CSV");
   }
 
   /**

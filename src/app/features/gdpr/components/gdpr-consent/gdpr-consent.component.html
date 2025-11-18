@@ -6,17 +6,17 @@
         <mat-icon class="header-icon">privacy_tip</mat-icon>
         <div>
           <h1>Consent Management</h1>
-          <p class="subtitle">Manage your privacy preferences and consent settings</p>
+          <p class="subtitle">
+            Manage your privacy preferences and consent settings
+          </p>
         </div>
       </div>
       <div class="header-actions">
-        <button
-          mat-stroked-button
-          color="primary"
-          (click)="toggleHistory()"
-        >
-          <mat-icon>{{ showHistory() ? 'visibility_off' : 'history' }}</mat-icon>
-          {{ showHistory() ? 'Hide History' : 'View History' }}
+        <button mat-stroked-button color="primary" (click)="toggleHistory()">
+          <mat-icon>{{
+            showHistory() ? "visibility_off" : "history"
+          }}</mat-icon>
+          {{ showHistory() ? "Hide History" : "View History" }}
         </button>
         <button
           mat-raised-button
@@ -25,7 +25,10 @@
           [disabled]="loading()"
         >
           @if (loading()) {
-            <mat-spinner diameter="20" style="display: inline-block; margin-right: 8px;"></mat-spinner>
+            <mat-spinner
+              diameter="20"
+              style="display: inline-block; margin-right: 8px"
+            ></mat-spinner>
           } @else {
             <mat-icon>refresh</mat-icon>
           }
@@ -78,7 +81,10 @@
             @for (category of consentCategories(); track category.type) {
               <div class="consent-item">
                 <div class="consent-info">
-                  <div class="consent-icon-wrapper" [class.required]="category.required">
+                  <div
+                    class="consent-icon-wrapper"
+                    [class.required]="category.required"
+                  >
                     <mat-icon [ngClass]="'consent-icon'">
                       {{ category.icon }}
                     </mat-icon>
@@ -90,7 +96,9 @@
                         <span class="required-badge">Required</span>
                       }
                     </div>
-                    <p class="consent-description">{{ category.description }}</p>
+                    <p class="consent-description">
+                      {{ category.description }}
+                    </p>
                   </div>
                 </div>
                 <mat-slide-toggle
@@ -137,14 +145,23 @@
                       <mat-list>
                         @for (consent of history; track consent.id) {
                           <mat-list-item>
-                            <mat-icon matListItemIcon [class]="getConsentStatusColor(consent)">
+                            <mat-icon
+                              matListItemIcon
+                              [class]="getConsentStatusColor(consent)"
+                            >
                               {{ getConsentStatusIcon(consent) }}
                             </mat-icon>
                             <div matListItemTitle>
-                              {{ consent.granted ? 'Granted' : 'Withdrawn' }}
+                              {{ consent.granted ? "Granted" : "Withdrawn" }}
                             </div>
                             <div matListItemLine>
-                              {{ formatDate(consent.granted ? consent.grantedAt || consent.createdAt : consent.withdrawnAt || consent.createdAt) }}
+                              {{
+                                formatDate(
+                                  consent.granted
+                                    ? consent.grantedAt || consent.createdAt
+                                    : consent.withdrawnAt || consent.createdAt
+                                )
+                              }}
                             </div>
                             <div matListItemLine class="consent-meta">
                               IP: {{ consent.ipAddress }}
@@ -169,16 +186,27 @@
             <div>
               <h3>About Consent Management</h3>
               <p>
-                Your privacy matters to us. You have full control over how your data is used.
-                You can grant or withdraw consent at any time for non-required permissions.
+                Your privacy matters to us. You have full control over how your
+                data is used. You can grant or withdraw consent at any time for
+                non-required permissions.
               </p>
               <ul>
-                <li><strong>Required Consents:</strong> These are essential for ParkShare to function and cannot be disabled</li>
-                <li><strong>Optional Consents:</strong> You can enable or disable these based on your preferences</li>
-                <li><strong>Consent History:</strong> We keep a record of all consent changes for transparency and compliance</li>
+                <li>
+                  <strong>Required Consents:</strong> These are essential for
+                  ParkShare to function and cannot be disabled
+                </li>
+                <li>
+                  <strong>Optional Consents:</strong> You can enable or disable
+                  these based on your preferences
+                </li>
+                <li>
+                  <strong>Consent History:</strong> We keep a record of all
+                  consent changes for transparency and compliance
+                </li>
               </ul>
               <p class="note">
-                All consent changes are logged with timestamps and IP addresses for GDPR compliance.
+                All consent changes are logged with timestamps and IP addresses
+                for GDPR compliance.
               </p>
             </div>
           </div>

@@ -1,13 +1,18 @@
-import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
-import { ApiService } from '../../../core/services/api.service';
-import { API_ENDPOINTS } from '../../../core/constants/api-endpoints';
-import { Payment, CreatePaymentRequest, PaymentIntent, RefundRequest } from '../../../core/models';
-import { loadStripe, Stripe } from '@stripe/stripe-js';
-import { environment } from '../../../../environments/environment';
+import { Injectable, inject } from "@angular/core";
+import { Observable } from "rxjs";
+import { ApiService } from "../../../core/services/api.service";
+import { API_ENDPOINTS } from "../../../core/constants/api-endpoints";
+import {
+  Payment,
+  CreatePaymentRequest,
+  PaymentIntent,
+  RefundRequest,
+} from "../../../core/models";
+import { loadStripe, Stripe } from "@stripe/stripe-js";
+import { environment } from "../../../../environments/environment";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class PaymentService {
   private api = inject(ApiService);
@@ -56,7 +61,9 @@ export class PaymentService {
    * Get payments by booking
    */
   getPaymentsByBooking(bookingId: string): Observable<Payment[]> {
-    return this.api.get<Payment[]>(API_ENDPOINTS.PAYMENTS.BY_BOOKING(bookingId));
+    return this.api.get<Payment[]>(
+      API_ENDPOINTS.PAYMENTS.BY_BOOKING(bookingId),
+    );
   }
 
   /**

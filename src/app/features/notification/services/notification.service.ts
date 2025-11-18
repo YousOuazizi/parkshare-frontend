@@ -1,12 +1,12 @@
-import { Injectable, inject, signal } from '@angular/core';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
-import { ApiService } from '../../../core/services/api.service';
-import { API_ENDPOINTS } from '../../../core/constants/api-endpoints';
-import { Notification } from '../../../core/models';
+import { Injectable, inject, signal } from "@angular/core";
+import { Observable } from "rxjs";
+import { tap } from "rxjs/operators";
+import { ApiService } from "../../../core/services/api.service";
+import { API_ENDPOINTS } from "../../../core/constants/api-endpoints";
+import { Notification } from "../../../core/models";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class NotificationService {
   private api = inject(ApiService);
@@ -26,9 +26,9 @@ export class NotificationService {
    * Get unread count
    */
   getUnreadCount(): Observable<{ count: number }> {
-    return this.api.get<{ count: number }>(API_ENDPOINTS.NOTIFICATIONS.COUNT).pipe(
-      tap(response => this.unreadCountSignal.set(response.count))
-    );
+    return this.api
+      .get<{ count: number }>(API_ENDPOINTS.NOTIFICATIONS.COUNT)
+      .pipe(tap((response) => this.unreadCountSignal.set(response.count)));
   }
 
   /**
@@ -42,23 +42,25 @@ export class NotificationService {
    * Mark notification as read
    */
   markAsRead(id: string): Observable<Notification> {
-    return this.api.patch<Notification>(API_ENDPOINTS.NOTIFICATIONS.MARK_READ(id), {}).pipe(
-      tap(() => {
-        const current = this.unreadCountSignal();
-        if (current > 0) {
-          this.unreadCountSignal.set(current - 1);
-        }
-      })
-    );
+    return this.api
+      .patch<Notification>(API_ENDPOINTS.NOTIFICATIONS.MARK_READ(id), {})
+      .pipe(
+        tap(() => {
+          const current = this.unreadCountSignal();
+          if (current > 0) {
+            this.unreadCountSignal.set(current - 1);
+          }
+        }),
+      );
   }
 
   /**
    * Mark all as read
    */
   markAllAsRead(): Observable<{ message: string }> {
-    return this.api.post<{ message: string }>(API_ENDPOINTS.NOTIFICATIONS.READ_ALL, {}).pipe(
-      tap(() => this.unreadCountSignal.set(0))
-    );
+    return this.api
+      .post<{ message: string }>(API_ENDPOINTS.NOTIFICATIONS.READ_ALL, {})
+      .pipe(tap(() => this.unreadCountSignal.set(0)));
   }
 
   /**

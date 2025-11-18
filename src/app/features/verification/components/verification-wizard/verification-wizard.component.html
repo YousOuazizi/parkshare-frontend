@@ -13,7 +13,9 @@
             <mat-icon class="header-icon">verified_user</mat-icon>
             <div>
               <h2>Account Verification</h2>
-              <p class="subtitle">Complete verification to unlock all features</p>
+              <p class="subtitle">
+                Complete verification to unlock all features
+              </p>
             </div>
           </div>
           <div class="progress-info">
@@ -64,10 +66,17 @@
           <h3>Verification Levels</h3>
           <div class="levels-grid">
             @for (level of verificationLevels(); track level.level) {
-              <div class="level-card" [class.completed]="level.isCompleted" [class.current]="level.level === currentLevel()">
+              <div
+                class="level-card"
+                [class.completed]="level.isCompleted"
+                [class.current]="level.level === currentLevel()"
+              >
                 <div class="level-header">
                   <mat-icon>{{ level.icon }}</mat-icon>
-                  <mat-chip [color]="getLevelChipColor(level)" [highlighted]="level.level === currentLevel()">
+                  <mat-chip
+                    [color]="getLevelChipColor(level)"
+                    [highlighted]="level.level === currentLevel()"
+                  >
                     @if (level.isCompleted) {
                       <mat-icon>check</mat-icon>
                       <span>Completed</span>
@@ -86,9 +95,16 @@
         </div>
 
         <!-- Verification Stepper -->
-        <mat-stepper [linear]="false" [selectedIndex]="currentLevel()" class="verification-stepper">
+        <mat-stepper
+          [linear]="false"
+          [selectedIndex]="currentLevel()"
+          class="verification-stepper"
+        >
           <!-- Step 0: Email Verification -->
-          <mat-step [completed]="verificationLevels()[0].isCompleted" [editable]="!verificationLevels()[0].isCompleted">
+          <mat-step
+            [completed]="verificationLevels()[0].isCompleted"
+            [editable]="!verificationLevels()[0].isCompleted"
+          >
             <ng-template matStepLabel>Email Verification</ng-template>
             <div class="step-content">
               <div class="step-header">
@@ -102,14 +118,20 @@
               <div class="requirements-list">
                 <h4>Requirements:</h4>
                 <ul>
-                  @for (req of verificationLevels()[0].requirements; track req) {
+                  @for (
+                    req of verificationLevels()[0].requirements;
+                    track req
+                  ) {
                     <li>{{ req }}</li>
                   }
                 </ul>
               </div>
 
               @if (!emailSent()) {
-                <form [formGroup]="emailForm" (ngSubmit)="requestEmailVerification()">
+                <form
+                  [formGroup]="emailForm"
+                  (ngSubmit)="requestEmailVerification()"
+                >
                   <mat-form-field appearance="outline" class="full-width">
                     <mat-label>Email Address</mat-label>
                     <input
@@ -119,7 +141,10 @@
                       placeholder="you@example.com"
                     />
                     <mat-icon matPrefix>email</mat-icon>
-                    @if (emailForm.get('email')?.invalid && emailForm.get('email')?.touched) {
+                    @if (
+                      emailForm.get("email")?.invalid &&
+                      emailForm.get("email")?.touched
+                    ) {
                       <mat-error>Please enter a valid email address</mat-error>
                     }
                   </mat-form-field>
@@ -150,7 +175,10 @@
                       placeholder="Enter code from email"
                     />
                     <mat-icon matPrefix>vpn_key</mat-icon>
-                    @if (emailCodeForm.get('token')?.invalid && emailCodeForm.get('token')?.touched) {
+                    @if (
+                      emailCodeForm.get("token")?.invalid &&
+                      emailCodeForm.get("token")?.touched
+                    ) {
                       <mat-error>Please enter the verification code</mat-error>
                     }
                   </mat-form-field>
@@ -184,7 +212,13 @@
           </mat-step>
 
           <!-- Step 1: Phone Verification -->
-          <mat-step [completed]="verificationLevels()[1].isCompleted" [editable]="verificationLevels()[0].isCompleted && !verificationLevels()[1].isCompleted">
+          <mat-step
+            [completed]="verificationLevels()[1].isCompleted"
+            [editable]="
+              verificationLevels()[0].isCompleted &&
+              !verificationLevels()[1].isCompleted
+            "
+          >
             <ng-template matStepLabel>Phone Verification</ng-template>
             <div class="step-content">
               <div class="step-header">
@@ -198,14 +232,20 @@
               <div class="requirements-list">
                 <h4>Requirements:</h4>
                 <ul>
-                  @for (req of verificationLevels()[1].requirements; track req) {
+                  @for (
+                    req of verificationLevels()[1].requirements;
+                    track req
+                  ) {
                     <li>{{ req }}</li>
                   }
                 </ul>
               </div>
 
               @if (!phoneSent()) {
-                <form [formGroup]="phoneForm" (ngSubmit)="requestPhoneVerification()">
+                <form
+                  [formGroup]="phoneForm"
+                  (ngSubmit)="requestPhoneVerification()"
+                >
                   <mat-form-field appearance="outline" class="full-width">
                     <mat-label>Phone Number</mat-label>
                     <input
@@ -215,7 +255,10 @@
                       placeholder="+1234567890"
                     />
                     <mat-icon matPrefix>phone</mat-icon>
-                    @if (phoneForm.get('phoneNumber')?.invalid && phoneForm.get('phoneNumber')?.touched) {
+                    @if (
+                      phoneForm.get("phoneNumber")?.invalid &&
+                      phoneForm.get("phoneNumber")?.touched
+                    ) {
                       <mat-error>Please enter a valid phone number</mat-error>
                     }
                   </mat-form-field>
@@ -246,7 +289,10 @@
                       placeholder="Enter SMS code"
                     />
                     <mat-icon matPrefix>vpn_key</mat-icon>
-                    @if (phoneCodeForm.get('code')?.invalid && phoneCodeForm.get('code')?.touched) {
+                    @if (
+                      phoneCodeForm.get("code")?.invalid &&
+                      phoneCodeForm.get("code")?.touched
+                    ) {
                       <mat-error>Please enter the verification code</mat-error>
                     }
                   </mat-form-field>
@@ -280,7 +326,13 @@
           </mat-step>
 
           <!-- Step 2: Identity Verification -->
-          <mat-step [completed]="verificationLevels()[2].isCompleted" [editable]="verificationLevels()[1].isCompleted && !verificationLevels()[2].isCompleted">
+          <mat-step
+            [completed]="verificationLevels()[2].isCompleted"
+            [editable]="
+              verificationLevels()[1].isCompleted &&
+              !verificationLevels()[2].isCompleted
+            "
+          >
             <ng-template matStepLabel>Identity Verification</ng-template>
             <div class="step-content">
               <div class="step-header">
@@ -294,18 +346,26 @@
               <div class="requirements-list">
                 <h4>Requirements:</h4>
                 <ul>
-                  @for (req of verificationLevels()[2].requirements; track req) {
+                  @for (
+                    req of verificationLevels()[2].requirements;
+                    track req
+                  ) {
                     <li>{{ req }}</li>
                   }
                 </ul>
               </div>
 
-              <form [formGroup]="identityForm" (ngSubmit)="uploadIdentityDocument()">
+              <form
+                [formGroup]="identityForm"
+                (ngSubmit)="uploadIdentityDocument()"
+              >
                 <mat-form-field appearance="outline" class="full-width">
                   <mat-label>Document Type</mat-label>
                   <mat-select formControlName="documentType">
                     @for (docType of getDocumentTypes(); track docType.value) {
-                      <mat-option [value]="docType.value">{{ docType.label }}</mat-option>
+                      <mat-option [value]="docType.value">{{
+                        docType.label
+                      }}</mat-option>
                     }
                   </mat-select>
                   <mat-icon matPrefix>description</mat-icon>
@@ -351,7 +411,11 @@
                   mat-raised-button
                   color="primary"
                   type="submit"
-                  [disabled]="identityForm.invalid || !selectedIdentityFile() || loadingStep()"
+                  [disabled]="
+                    identityForm.invalid ||
+                    !selectedIdentityFile() ||
+                    loadingStep()
+                  "
                 >
                   @if (loadingStep()) {
                     <mat-spinner diameter="20"></mat-spinner>
@@ -366,7 +430,13 @@
           </mat-step>
 
           <!-- Step 3: Advanced Verification -->
-          <mat-step [completed]="verificationLevels()[3].isCompleted" [editable]="verificationLevels()[2].isCompleted && !verificationLevels()[3].isCompleted">
+          <mat-step
+            [completed]="verificationLevels()[3].isCompleted"
+            [editable]="
+              verificationLevels()[2].isCompleted &&
+              !verificationLevels()[3].isCompleted
+            "
+          >
             <ng-template matStepLabel>Advanced Verification</ng-template>
             <div class="step-content">
               <div class="step-header">
@@ -380,18 +450,29 @@
               <div class="requirements-list">
                 <h4>Requirements:</h4>
                 <ul>
-                  @for (req of verificationLevels()[3].requirements; track req) {
+                  @for (
+                    req of verificationLevels()[3].requirements;
+                    track req
+                  ) {
                     <li>{{ req }}</li>
                   }
                 </ul>
               </div>
 
-              <form [formGroup]="advancedForm" (ngSubmit)="uploadAdvancedDocument()">
+              <form
+                [formGroup]="advancedForm"
+                (ngSubmit)="uploadAdvancedDocument()"
+              >
                 <mat-form-field appearance="outline" class="full-width">
                   <mat-label>Document Type</mat-label>
                   <mat-select formControlName="documentType">
-                    @for (docType of getAdvancedDocumentTypes(); track docType.value) {
-                      <mat-option [value]="docType.value">{{ docType.label }}</mat-option>
+                    @for (
+                      docType of getAdvancedDocumentTypes();
+                      track docType.value
+                    ) {
+                      <mat-option [value]="docType.value">{{
+                        docType.label
+                      }}</mat-option>
                     }
                   </mat-select>
                   <mat-icon matPrefix>description</mat-icon>
@@ -437,7 +518,11 @@
                   mat-raised-button
                   color="primary"
                   type="submit"
-                  [disabled]="advancedForm.invalid || !selectedAdvancedFile() || loadingStep()"
+                  [disabled]="
+                    advancedForm.invalid ||
+                    !selectedAdvancedFile() ||
+                    loadingStep()
+                  "
                 >
                   @if (loadingStep()) {
                     <mat-spinner diameter="20"></mat-spinner>

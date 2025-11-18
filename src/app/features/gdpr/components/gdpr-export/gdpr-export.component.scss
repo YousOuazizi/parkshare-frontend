@@ -32,7 +32,11 @@
         font-size: 32px;
         font-weight: 700;
         margin: 0;
-        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+        background: linear-gradient(
+          135deg,
+          var(--primary-color) 0%,
+          var(--primary-light) 100%
+        );
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -483,7 +487,11 @@
   .info-card {
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-sm);
-    background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.05) 0%, rgba(var(--accent-rgb), 0.05) 100%);
+    background: linear-gradient(
+      135deg,
+      rgba(var(--primary-rgb), 0.05) 0%,
+      rgba(var(--accent-rgb), 0.05) 100%
+    );
     border-left: 4px solid var(--primary-color);
 
     mat-card-content {
@@ -675,7 +683,11 @@
     }
 
     .info-card {
-      background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.1) 0%, rgba(var(--accent-rgb), 0.1) 100%);
+      background: linear-gradient(
+        135deg,
+        rgba(var(--primary-rgb), 0.1) 0%,
+        rgba(var(--accent-rgb), 0.1) 100%
+      );
 
       .info-content {
         h3 {

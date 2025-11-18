@@ -34,7 +34,6 @@
 
   <!-- Dashboard Content -->
   <div *ngIf="!loading() && !error()" class="dashboard-content">
-
     <!-- Statistics Cards -->
     <div class="stats-grid">
       <mat-card class="stat-card">
@@ -72,7 +71,9 @@
           <mat-icon>trending_up</mat-icon>
         </div>
         <div class="stat-content">
-          <div class="stat-value">{{ formatCurrency(averageBookingValue()) }}</div>
+          <div class="stat-value">
+            {{ formatCurrency(averageBookingValue()) }}
+          </div>
           <div class="stat-label">Avg. Booking Value</div>
         </div>
       </mat-card>
@@ -80,7 +81,6 @@
 
     <!-- Recent Bookings and Saved Parkings -->
     <div class="content-grid">
-
       <!-- Recent Bookings -->
       <mat-card class="section-card">
         <div class="card-header">
@@ -99,7 +99,11 @@
           <div *ngIf="recentBookings().length === 0" class="empty-state">
             <mat-icon>event_busy</mat-icon>
             <p>No recent bookings</p>
-            <button mat-raised-button color="primary" (click)="navigateToSearch()">
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="navigateToSearch()"
+            >
               <mat-icon>search</mat-icon>
               Find Parking
             </button>
@@ -108,7 +112,8 @@
           <div
             *ngFor="let booking of recentBookings()"
             class="booking-item"
-            (click)="viewBookingDetails(booking.id)">
+            (click)="viewBookingDetails(booking.id)"
+          >
             <div class="booking-info">
               <div class="booking-header">
                 <mat-icon class="parking-icon">local_parking</mat-icon>
@@ -119,11 +124,18 @@
                   <mat-icon>event</mat-icon>
                   {{ formatDate(booking.date) }}
                 </span>
-                <span class="booking-amount">{{ formatCurrency(booking.amount) }}</span>
+                <span class="booking-amount">{{
+                  formatCurrency(booking.amount)
+                }}</span>
               </div>
             </div>
-            <mat-chip [class]="getStatusClass(booking.status)" class="status-chip">
-              <mat-icon class="chip-icon">{{ getStatusIcon(booking.status) }}</mat-icon>
+            <mat-chip
+              [class]="getStatusClass(booking.status)"
+              class="status-chip"
+            >
+              <mat-icon class="chip-icon">{{
+                getStatusIcon(booking.status)
+              }}</mat-icon>
               {{ booking.status }}
             </mat-chip>
           </div>
@@ -148,7 +160,11 @@
           <div *ngIf="savedParkings().length === 0" class="empty-state">
             <mat-icon>bookmark_border</mat-icon>
             <p>No saved parkings</p>
-            <button mat-raised-button color="primary" (click)="navigateToSearch()">
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="navigateToSearch()"
+            >
               <mat-icon>search</mat-icon>
               Explore Parkings
             </button>
@@ -157,7 +173,8 @@
           <div
             *ngFor="let parking of savedParkings()"
             class="saved-item"
-            (click)="viewParkingDetails(parking.id)">
+            (click)="viewParkingDetails(parking.id)"
+          >
             <div class="parking-info">
               <div class="parking-header">
                 <mat-icon class="location-icon">location_on</mat-icon>
@@ -168,12 +185,17 @@
               </div>
               <div class="parking-footer">
                 <div class="parking-rating">
-                  <mat-icon *ngFor="let star of getRatingStars(parking.rating)" class="star-icon">
+                  <mat-icon
+                    *ngFor="let star of getRatingStars(parking.rating)"
+                    class="star-icon"
+                  >
                     {{ star }}
                   </mat-icon>
                   <span class="rating-value">{{ parking.rating }}</span>
                 </div>
-                <span class="parking-price">{{ formatCurrency(parking.basePrice) }}/hr</span>
+                <span class="parking-price"
+                  >{{ formatCurrency(parking.basePrice) }}/hr</span
+                >
               </div>
             </div>
             <button mat-icon-button matTooltip="View Details">
@@ -202,7 +224,10 @@
     </mat-card>
 
     <!-- Favorite Locations -->
-    <mat-card class="favorite-locations-card" *ngIf="favoriteLocations().length > 0">
+    <mat-card
+      class="favorite-locations-card"
+      *ngIf="favoriteLocations().length > 0"
+    >
       <div class="card-header">
         <div class="card-title">
           <mat-icon>favorite</mat-icon>
@@ -215,12 +240,15 @@
         <div
           *ngFor="let location of favoriteLocations()"
           class="favorite-item"
-          (click)="viewParkingDetails(location.parkingId)">
+          (click)="viewParkingDetails(location.parkingId)"
+        >
           <div class="favorite-content">
             <mat-icon class="favorite-icon">local_parking</mat-icon>
             <div class="favorite-info">
               <span class="favorite-title">{{ location.parkingTitle }}</span>
-              <span class="favorite-count">{{ location.bookingCount }} bookings</span>
+              <span class="favorite-count"
+                >{{ location.bookingCount }} bookings</span
+              >
             </div>
           </div>
           <mat-icon class="chevron-icon">chevron_right</mat-icon>

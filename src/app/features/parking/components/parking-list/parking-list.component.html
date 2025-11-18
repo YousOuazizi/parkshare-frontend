@@ -11,7 +11,8 @@
       <mat-button-toggle-group
         [value]="viewMode()"
         (change)="toggleViewMode($event.value)"
-        aria-label="View mode">
+        aria-label="View mode"
+      >
         <mat-button-toggle value="grid">
           <mat-icon>grid_view</mat-icon>
           <span class="toggle-label">Grid</span>
@@ -33,7 +34,8 @@
         <input
           matInput
           formControlName="searchQuery"
-          placeholder="Enter city, address, or zip code">
+          placeholder="Enter city, address, or zip code"
+        />
         <mat-icon matPrefix>search</mat-icon>
       </mat-form-field>
 
@@ -47,7 +49,8 @@
               matInput
               type="number"
               formControlName="minPrice"
-              placeholder="0">
+              placeholder="0"
+            />
             <span matPrefix>$</span>
           </mat-form-field>
 
@@ -59,7 +62,8 @@
               matInput
               type="number"
               formControlName="maxPrice"
-              placeholder="200">
+              placeholder="200"
+            />
             <span matPrefix>$</span>
           </mat-form-field>
         </div>
@@ -70,7 +74,8 @@
         <mat-slide-toggle
           formControlName="hasEVCharging"
           color="primary"
-          class="filter-toggle">
+          class="filter-toggle"
+        >
           <mat-icon class="toggle-icon">ev_station</mat-icon>
           EV Charging
         </mat-slide-toggle>
@@ -78,7 +83,8 @@
         <mat-slide-toggle
           formControlName="isVerified"
           color="primary"
-          class="filter-toggle">
+          class="filter-toggle"
+        >
           <mat-icon class="toggle-icon">verified</mat-icon>
           Verified Only
         </mat-slide-toggle>
@@ -90,7 +96,8 @@
         <mat-select
           formControlName="features"
           multiple
-          placeholder="Select features">
+          placeholder="Select features"
+        >
           @for (feature of availableFeatures; track feature) {
             <mat-option [value]="feature">{{ feature }}</mat-option>
           }
@@ -103,7 +110,8 @@
         <mat-label>Sort By</mat-label>
         <mat-select
           [value]="selectedSort()"
-          (selectionChange)="selectedSort.set($event.value)">
+          (selectionChange)="selectedSort.set($event.value)"
+        >
           @for (option of sortOptions; track option.value) {
             <mat-option [value]="option.value">{{ option.label }}</mat-option>
           }
@@ -116,7 +124,8 @@
         mat-stroked-button
         type="button"
         class="reset-button"
-        (click)="resetFilters()">
+        (click)="resetFilters()"
+      >
         <mat-icon>refresh</mat-icon>
         Reset Filters
       </button>
@@ -132,7 +141,8 @@
           <mat-chip
             (removed)="filterForm.patchValue({
               features: filterForm.value.features?.filter(f => f !== feature)
-            })">
+            })"
+          >
             {{ feature }}
             <button matChipRemove>
               <mat-icon>cancel</mat-icon>
@@ -165,13 +175,15 @@
   }
 
   <!-- Grid View -->
-  @if (viewMode() === 'grid' && !loading() && !error()) {
+  @if (viewMode() === "grid" && !loading() && !error()) {
     <!-- Empty State -->
     @if (displayedParkings().length === 0) {
       <div class="empty-state">
         <mat-icon class="empty-icon">search_off</mat-icon>
         <h3 class="empty-title">No parking spots found</h3>
-        <p class="empty-message">Try adjusting your filters or search criteria</p>
+        <p class="empty-message">
+          Try adjusting your filters or search criteria
+        </p>
         <button mat-raised-button color="primary" (click)="resetFilters()">
           Clear Filters
         </button>
@@ -181,22 +193,32 @@
     <!-- Parking Grid -->
     @if (displayedParkings().length > 0) {
       <div class="parking-grid">
-        @for (parking of displayedParkings(); track trackByParkingId($index, parking)) {
-          <mat-card class="parking-card" [routerLink]="['/parking', parking.id]">
+        @for (
+          parking of displayedParkings();
+          track trackByParkingId($index, parking)
+        ) {
+          <mat-card
+            class="parking-card"
+            [routerLink]="['/parking', parking.id]"
+          >
             <!-- Parking Image -->
             <div class="card-image-container">
               <img
                 [src]="getPrimaryPhotoUrl(parking)"
                 [alt]="parking.title"
-                class="card-image">
+                class="card-image"
+              />
 
               <!-- Availability Badge -->
               <div
                 class="availability-badge"
                 [class.available]="isCurrentlyAvailable(parking)"
-                [class.unavailable]="!isCurrentlyAvailable(parking)">
+                [class.unavailable]="!isCurrentlyAvailable(parking)"
+              >
                 <mat-icon class="badge-icon">
-                  {{ isCurrentlyAvailable(parking) ? 'check_circle' : 'schedule' }}
+                  {{
+                    isCurrentlyAvailable(parking) ? "check_circle" : "schedule"
+                  }}
                 </mat-icon>
                 {{ getAvailabilityStatus(parking) }}
               </div>
@@ -216,7 +238,9 @@
                 <h3 class="card-title">{{ parking.title }}</h3>
                 <div class="card-location">
                   <mat-icon class="location-icon">place</mat-icon>
-                  <span class="location-text">{{ getFormattedAddress(parking) }}</span>
+                  <span class="location-text">{{
+                    getFormattedAddress(parking)
+                  }}</span>
                 </div>
               </div>
 
@@ -224,14 +248,19 @@
               @if (parking.averageRating && parking.totalReviews) {
                 <div class="rating-container">
                   <div class="stars">
-                    @for (filled of getRatingStars(parking.averageRating); track $index) {
+                    @for (
+                      filled of getRatingStars(parking.averageRating);
+                      track $index
+                    ) {
                       <mat-icon class="star" [class.filled]="filled">
-                        {{ filled ? 'star' : 'star_border' }}
+                        {{ filled ? "star" : "star_border" }}
                       </mat-icon>
                     }
                   </div>
                   <span class="rating-text">
-                    {{ parking.averageRating?.toFixed(1) }} ({{ parking.totalReviews }})
+                    {{ parking.averageRating?.toFixed(1) }} ({{
+                      parking.totalReviews
+                    }})
                   </span>
                 </div>
               }
@@ -239,11 +268,16 @@
               <!-- Features -->
               @if (parking.features && parking.features.length > 0) {
                 <div class="features-container">
-                  @for (feature of parking.features.slice(0, 3); track feature) {
+                  @for (
+                    feature of parking.features.slice(0, 3);
+                    track feature
+                  ) {
                     <mat-chip class="feature-chip">{{ feature }}</mat-chip>
                   }
                   @if (parking.features.length > 3) {
-                    <span class="more-features">+{{ parking.features.length - 3 }} more</span>
+                    <span class="more-features"
+                      >+{{ parking.features.length - 3 }} more</span
+                    >
                   }
                 </div>
               }
@@ -260,7 +294,8 @@
                   mat-raised-button
                   color="primary"
                   class="book-button"
-                  (click)="$event.stopPropagation()">
+                  (click)="$event.stopPropagation()"
+                >
                   Book Now
                 </button>
               </div>
@@ -268,21 +303,24 @@
               <!-- Extra Features Icons -->
               <div class="extra-features">
                 @if (parking.hasEVCharging) {
-                  <mat-icon class="feature-icon" matTooltip="EV Charging Available">
+                  <mat-icon
+                    class="feature-icon"
+                    matTooltip="EV Charging Available"
+                  >
                     ev_station
                   </mat-icon>
                 }
-                @if (parking.features.includes('24/7 Access')) {
+                @if (parking.features.includes("24/7 Access")) {
                   <mat-icon class="feature-icon" matTooltip="24/7 Access">
                     schedule
                   </mat-icon>
                 }
-                @if (parking.features.includes('Security Camera')) {
+                @if (parking.features.includes("Security Camera")) {
                   <mat-icon class="feature-icon" matTooltip="Security Camera">
                     videocam
                   </mat-icon>
                 }
-                @if (parking.features.includes('Covered')) {
+                @if (parking.features.includes("Covered")) {
                   <mat-icon class="feature-icon" matTooltip="Covered Parking">
                     roofing
                   </mat-icon>
@@ -301,20 +339,22 @@
         [pageIndex]="pageIndex()"
         [pageSizeOptions]="[6, 12, 24, 48]"
         (page)="onPageChange($event)"
-        aria-label="Select page">
+        aria-label="Select page"
+      >
       </mat-paginator>
     }
   }
 
   <!-- Map View (Placeholder) -->
-  @if (viewMode() === 'map' && !loading() && !error()) {
+  @if (viewMode() === "map" && !loading() && !error()) {
     <div class="map-view-container">
       <div class="map-placeholder">
         <mat-icon class="map-icon">map</mat-icon>
         <h3>Map View</h3>
         <p>Map integration coming soon</p>
         <p class="map-note">
-          This will display all {{ totalItems() }} parking spots on an interactive map
+          This will display all {{ totalItems() }} parking spots on an
+          interactive map
         </p>
       </div>
     </div>

@@ -1,11 +1,15 @@
-import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
-import { ApiService } from '../../../core/services/api.service';
-import { API_ENDPOINTS } from '../../../core/constants/api-endpoints';
-import { Parking, ParkingSearchParams, CreateParkingRequest } from '../../../core/models';
+import { Injectable, inject } from "@angular/core";
+import { Observable } from "rxjs";
+import { ApiService } from "../../../core/services/api.service";
+import { API_ENDPOINTS } from "../../../core/constants/api-endpoints";
+import {
+  Parking,
+  ParkingSearchParams,
+  CreateParkingRequest,
+} from "../../../core/models";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class ParkingService {
   private api = inject(ApiService);
@@ -41,7 +45,10 @@ export class ParkingService {
   /**
    * Update parking
    */
-  updateParking(id: string, data: Partial<CreateParkingRequest>): Observable<Parking> {
+  updateParking(
+    id: string,
+    data: Partial<CreateParkingRequest>,
+  ): Observable<Parking> {
     return this.api.patch<Parking>(API_ENDPOINTS.PARKINGS.BY_ID(id), data);
   }
 
@@ -55,10 +62,14 @@ export class ParkingService {
   /**
    * Check parking availability
    */
-  checkAvailability(id: string, startTime: string, endTime: string): Observable<{ available: boolean }> {
+  checkAvailability(
+    id: string,
+    startTime: string,
+    endTime: string,
+  ): Observable<{ available: boolean }> {
     return this.api.get<{ available: boolean }>(
       API_ENDPOINTS.PARKINGS.CHECK_AVAILABILITY(id),
-      { startTime, endTime }
+      { startTime, endTime },
     );
   }
 
@@ -67,8 +78,8 @@ export class ParkingService {
    */
   uploadPhoto(parkingId: string, file: File): Observable<{ url: string }> {
     const formData = new FormData();
-    formData.append('photo', file);
-    formData.append('parkingId', parkingId);
-    return this.api.upload<{ url: string }>('/parkings/upload-photo', formData);
+    formData.append("photo", file);
+    formData.append("parkingId", parkingId);
+    return this.api.upload<{ url: string }>("/parkings/upload-photo", formData);
   }
 }

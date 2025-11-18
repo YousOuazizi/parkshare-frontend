@@ -38,7 +38,6 @@
 
   <!-- Dashboard Content -->
   <div *ngIf="!loading() && !error()" class="dashboard-content">
-
     <!-- Statistics Cards -->
     <div class="stats-grid">
       <mat-card class="stat-card">
@@ -125,17 +124,18 @@
           <div class="revenue-bar-container">
             <div
               class="revenue-bar"
-              [style.width.%]="(trend.revenue / 12500 * 100)">
-            </div>
+              [style.width.%]="(trend.revenue / 12500) * 100"
+            ></div>
           </div>
-          <span class="revenue-amount">{{ formatCurrency(trend.revenue) }}</span>
+          <span class="revenue-amount">{{
+            formatCurrency(trend.revenue)
+          }}</span>
         </div>
       </div>
     </mat-card>
 
     <!-- Popular Parkings and Recent Bookings -->
     <div class="content-grid">
-
       <!-- Popular Parkings -->
       <mat-card class="section-card">
         <div class="card-header">
@@ -163,7 +163,8 @@
           <div
             *ngFor="let parking of popularParkings()"
             class="parking-item"
-            (click)="viewParkingDetails(parking.id)">
+            (click)="viewParkingDetails(parking.id)"
+          >
             <div class="parking-main">
               <div class="parking-header">
                 <mat-icon class="parking-icon">local_parking</mat-icon>
@@ -183,12 +184,23 @@
                 </div>
               </div>
               <div class="parking-metrics">
-                <div class="occupancy-badge" [class]="getOccupancyClass(parking.occupancyRate)">
+                <div
+                  class="occupancy-badge"
+                  [class]="getOccupancyClass(parking.occupancyRate)"
+                >
                   <mat-icon>query_stats</mat-icon>
-                  <span>{{ formatPercentage(parking.occupancyRate) }} occupancy</span>
+                  <span
+                    >{{
+                      formatPercentage(parking.occupancyRate)
+                    }}
+                    occupancy</span
+                  >
                 </div>
                 <div class="rating">
-                  <mat-icon *ngFor="let star of getRatingStars(parking.rating)" class="star-icon">
+                  <mat-icon
+                    *ngFor="let star of getRatingStars(parking.rating)"
+                    class="star-icon"
+                  >
                     {{ star }}
                   </mat-icon>
                   <span class="rating-value">{{ parking.rating }}</span>
@@ -223,7 +235,8 @@
           <div
             *ngFor="let booking of recentBookings()"
             class="booking-item"
-            (click)="viewBookingDetails(booking.id)">
+            (click)="viewBookingDetails(booking.id)"
+          >
             <div class="booking-info">
               <div class="booking-header">
                 <mat-icon class="user-icon">person</mat-icon>
@@ -237,11 +250,18 @@
                   <mat-icon>event</mat-icon>
                   {{ formatDate(booking.date) }}
                 </span>
-                <span class="booking-amount">{{ formatCurrency(booking.amount) }}</span>
+                <span class="booking-amount">{{
+                  formatCurrency(booking.amount)
+                }}</span>
               </div>
             </div>
-            <mat-chip [class]="getStatusClass(booking.status)" class="status-chip">
-              <mat-icon class="chip-icon">{{ getStatusIcon(booking.status) }}</mat-icon>
+            <mat-chip
+              [class]="getStatusClass(booking.status)"
+              class="status-chip"
+            >
+              <mat-icon class="chip-icon">{{
+                getStatusIcon(booking.status)
+              }}</mat-icon>
               {{ booking.status }}
             </mat-chip>
           </div>
@@ -265,9 +285,14 @@
             <mat-icon class="metric-icon">visibility</mat-icon>
             <span class="metric-label">Views to Bookings</span>
           </div>
-          <div class="metric-value">{{ formatPercentage(conversionRate()) }}</div>
+          <div class="metric-value">
+            {{ formatPercentage(conversionRate()) }}
+          </div>
           <div class="metric-bar">
-            <div class="metric-bar-fill" [style.width.%]="conversionRate()"></div>
+            <div
+              class="metric-bar-fill"
+              [style.width.%]="conversionRate()"
+            ></div>
           </div>
         </div>
 

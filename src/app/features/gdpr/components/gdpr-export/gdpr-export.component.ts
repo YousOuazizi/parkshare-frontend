@@ -1,18 +1,21 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { MatCardModule } from '@angular/material/card';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatTableModule } from '@angular/material/table';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatRadioModule } from '@angular/material/radio';
-import { FormsModule } from '@angular/forms';
+import { Component, OnInit, signal, inject } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { MatCardModule } from "@angular/material/card";
+import { MatCheckboxModule } from "@angular/material/checkbox";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+import { MatChipsModule } from "@angular/material/chips";
+import { MatTableModule } from "@angular/material/table";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
+import { MatRadioModule } from "@angular/material/radio";
+import { FormsModule } from "@angular/forms";
 
-import { GdprService } from '../../services/gdpr.service';
-import { DataExportRequest, DataExportStatus } from '../../../../core/models/gdpr.model';
+import { GdprService } from "../../services/gdpr.service";
+import {
+  DataExportRequest,
+  DataExportStatus,
+} from "../../../../core/models/gdpr.model";
 
 interface DataCategory {
   id: string;
@@ -30,7 +33,7 @@ interface ExportFormat {
 }
 
 @Component({
-  selector: 'app-gdpr-export',
+  selector: "app-gdpr-export",
   standalone: true,
   imports: [
     CommonModule,
@@ -43,10 +46,10 @@ interface ExportFormat {
     MatTableModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
-    MatRadioModule
+    MatRadioModule,
   ],
-  templateUrl: './gdpr-export.component.html',
-  styleUrls: ['./gdpr-export.component.scss']
+  templateUrl: "./gdpr-export.component.html",
+  styleUrls: ["./gdpr-export.component.scss"],
 })
 export class GdprExportComponent implements OnInit {
   private gdprService = inject(GdprService);
@@ -56,85 +59,91 @@ export class GdprExportComponent implements OnInit {
   exportRequests = signal<DataExportRequest[]>([]);
   dataCategories = signal<DataCategory[]>([
     {
-      id: 'profile',
-      label: 'Profile Information',
-      description: 'Personal details, contact information, preferences',
-      icon: 'person',
-      selected: true
+      id: "profile",
+      label: "Profile Information",
+      description: "Personal details, contact information, preferences",
+      icon: "person",
+      selected: true,
     },
     {
-      id: 'bookings',
-      label: 'Booking History',
-      description: 'All parking reservations and bookings',
-      icon: 'event',
-      selected: true
+      id: "bookings",
+      label: "Booking History",
+      description: "All parking reservations and bookings",
+      icon: "event",
+      selected: true,
     },
     {
-      id: 'payments',
-      label: 'Payment Records',
-      description: 'Transaction history and payment methods',
-      icon: 'payment',
-      selected: true
+      id: "payments",
+      label: "Payment Records",
+      description: "Transaction history and payment methods",
+      icon: "payment",
+      selected: true,
     },
     {
-      id: 'parkings',
-      label: 'Parking Spots',
-      description: 'Listed parking spots and availability',
-      icon: 'local_parking',
-      selected: true
+      id: "parkings",
+      label: "Parking Spots",
+      description: "Listed parking spots and availability",
+      icon: "local_parking",
+      selected: true,
     },
     {
-      id: 'reviews',
-      label: 'Reviews',
-      description: 'Reviews given and received',
-      icon: 'rate_review',
-      selected: false
+      id: "reviews",
+      label: "Reviews",
+      description: "Reviews given and received",
+      icon: "rate_review",
+      selected: false,
     },
     {
-      id: 'swaps',
-      label: 'Swap History',
-      description: 'Parking swap offers and exchanges',
-      icon: 'swap_horiz',
-      selected: false
+      id: "swaps",
+      label: "Swap History",
+      description: "Parking swap offers and exchanges",
+      icon: "swap_horiz",
+      selected: false,
     },
     {
-      id: 'subscriptions',
-      label: 'Subscriptions',
-      description: 'Active and past subscription plans',
-      icon: 'card_membership',
-      selected: false
+      id: "subscriptions",
+      label: "Subscriptions",
+      description: "Active and past subscription plans",
+      icon: "card_membership",
+      selected: false,
     },
     {
-      id: 'consents',
-      label: 'Consent Records',
-      description: 'GDPR consent history',
-      icon: 'privacy_tip',
-      selected: false
-    }
+      id: "consents",
+      label: "Consent Records",
+      description: "GDPR consent history",
+      icon: "privacy_tip",
+      selected: false,
+    },
   ]);
 
   exportFormats: ExportFormat[] = [
     {
-      id: 'json',
-      label: 'JSON',
-      description: 'Machine-readable format',
-      icon: 'code'
+      id: "json",
+      label: "JSON",
+      description: "Machine-readable format",
+      icon: "code",
     },
     {
-      id: 'csv',
-      label: 'CSV',
-      description: 'Spreadsheet format',
-      icon: 'table_chart'
-    }
+      id: "csv",
+      label: "CSV",
+      description: "Spreadsheet format",
+      icon: "table_chart",
+    },
   ];
 
-  selectedFormat = signal<string>('json');
+  selectedFormat = signal<string>("json");
   loading = signal<boolean>(false);
   requesting = signal<boolean>(false);
   error = signal<string | null>(null);
 
   // Table columns
-  displayedColumns: string[] = ['status', 'requestDate', 'downloadUrl', 'expiresAt', 'actions'];
+  displayedColumns: string[] = [
+    "status",
+    "requestDate",
+    "downloadUrl",
+    "expiresAt",
+    "actions",
+  ];
 
   // Expose enum for template
   DataExportStatus = DataExportStatus;
@@ -153,45 +162,49 @@ export class GdprExportComponent implements OnInit {
         this.loading.set(false);
       },
       error: (error) => {
-        this.error.set('Failed to load export requests');
+        this.error.set("Failed to load export requests");
         this.loading.set(false);
-        this.showSnackBar('Failed to load export requests', 'error');
-      }
+        this.showSnackBar("Failed to load export requests", "error");
+      },
     });
   }
 
   toggleCategory(category: DataCategory): void {
     const categories = this.dataCategories();
-    const updatedCategories = categories.map(cat =>
-      cat.id === category.id ? { ...cat, selected: !cat.selected } : cat
+    const updatedCategories = categories.map((cat) =>
+      cat.id === category.id ? { ...cat, selected: !cat.selected } : cat,
     );
     this.dataCategories.set(updatedCategories);
   }
 
   toggleAllCategories(selected: boolean): void {
     const categories = this.dataCategories();
-    const updatedCategories = categories.map(cat => ({ ...cat, selected }));
+    const updatedCategories = categories.map((cat) => ({ ...cat, selected }));
     this.dataCategories.set(updatedCategories);
   }
 
   areAllCategoriesSelected(): boolean {
-    return this.dataCategories().every(cat => cat.selected);
+    return this.dataCategories().every((cat) => cat.selected);
   }
 
   areSomeCategoriesSelected(): boolean {
     const categories = this.dataCategories();
-    return categories.some(cat => cat.selected) && !this.areAllCategoriesSelected();
+    return (
+      categories.some((cat) => cat.selected) && !this.areAllCategoriesSelected()
+    );
   }
 
   getSelectedCategoriesCount(): number {
-    return this.dataCategories().filter(cat => cat.selected).length;
+    return this.dataCategories().filter((cat) => cat.selected).length;
   }
 
   requestExport(): void {
-    const selectedCategories = this.dataCategories().filter(cat => cat.selected);
+    const selectedCategories = this.dataCategories().filter(
+      (cat) => cat.selected,
+    );
 
     if (selectedCategories.length === 0) {
-      this.showSnackBar('Please select at least one data category', 'info');
+      this.showSnackBar("Please select at least one data category", "info");
       return;
     }
 
@@ -202,91 +215,94 @@ export class GdprExportComponent implements OnInit {
     this.gdprService.requestDataExport().subscribe({
       next: (request) => {
         this.requesting.set(false);
-        this.showSnackBar('Data export request submitted successfully', 'success');
+        this.showSnackBar(
+          "Data export request submitted successfully",
+          "success",
+        );
         this.loadExportRequests();
       },
       error: (error) => {
         this.requesting.set(false);
-        this.showSnackBar('Failed to request data export', 'error');
-      }
+        this.showSnackBar("Failed to request data export", "error");
+      },
     });
   }
 
   downloadExport(request: DataExportRequest): void {
     if (request.status !== DataExportStatus.COMPLETED || !request.downloadUrl) {
-      this.showSnackBar('Export is not ready for download', 'info');
+      this.showSnackBar("Export is not ready for download", "info");
       return;
     }
 
     this.gdprService.downloadDataExport(request.id).subscribe({
       next: () => {
-        this.showSnackBar('Download started successfully', 'success');
+        this.showSnackBar("Download started successfully", "success");
       },
       error: (error) => {
-        this.showSnackBar('Failed to download export', 'error');
-      }
+        this.showSnackBar("Failed to download export", "error");
+      },
     });
   }
 
   getStatusIcon(status: DataExportStatus): string {
     switch (status) {
       case DataExportStatus.PENDING:
-        return 'schedule';
+        return "schedule";
       case DataExportStatus.PROCESSING:
-        return 'sync';
+        return "sync";
       case DataExportStatus.COMPLETED:
-        return 'check_circle';
+        return "check_circle";
       case DataExportStatus.FAILED:
-        return 'error';
+        return "error";
       case DataExportStatus.EXPIRED:
-        return 'event_busy';
+        return "event_busy";
       default:
-        return 'help';
+        return "help";
     }
   }
 
   getStatusColor(status: DataExportStatus): string {
     switch (status) {
       case DataExportStatus.PENDING:
-        return 'pending';
+        return "pending";
       case DataExportStatus.PROCESSING:
-        return 'processing';
+        return "processing";
       case DataExportStatus.COMPLETED:
-        return 'completed';
+        return "completed";
       case DataExportStatus.FAILED:
-        return 'failed';
+        return "failed";
       case DataExportStatus.EXPIRED:
-        return 'expired';
+        return "expired";
       default:
-        return 'default';
+        return "default";
     }
   }
 
   getStatusLabel(status: DataExportStatus): string {
     switch (status) {
       case DataExportStatus.PENDING:
-        return 'Pending';
+        return "Pending";
       case DataExportStatus.PROCESSING:
-        return 'Processing';
+        return "Processing";
       case DataExportStatus.COMPLETED:
-        return 'Completed';
+        return "Completed";
       case DataExportStatus.FAILED:
-        return 'Failed';
+        return "Failed";
       case DataExportStatus.EXPIRED:
-        return 'Expired';
+        return "Expired";
       default:
-        return 'Unknown';
+        return "Unknown";
     }
   }
 
   formatDate(dateString: string): string {
     const date = new Date(dateString);
-    return date.toLocaleString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return date.toLocaleString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   }
 
@@ -295,21 +311,22 @@ export class GdprExportComponent implements OnInit {
 
     const expiresAt = new Date(request.expiresAt);
     const now = new Date();
-    const hoursUntilExpiry = (expiresAt.getTime() - now.getTime()) / (1000 * 60 * 60);
+    const hoursUntilExpiry =
+      (expiresAt.getTime() - now.getTime()) / (1000 * 60 * 60);
 
     return hoursUntilExpiry <= 24 && hoursUntilExpiry > 0;
   }
 
   private showSnackBar(
     message: string,
-    type: 'success' | 'error' | 'info' = 'info',
-    duration: number = 3000
+    type: "success" | "error" | "info" = "info",
+    duration: number = 3000,
   ): void {
-    this.snackBar.open(message, 'Close', {
+    this.snackBar.open(message, "Close", {
       duration,
-      horizontalPosition: 'end',
-      verticalPosition: 'top',
-      panelClass: [`snackbar-${type}`]
+      horizontalPosition: "end",
+      verticalPosition: "top",
+      panelClass: [`snackbar-${type}`],
     });
   }
 }

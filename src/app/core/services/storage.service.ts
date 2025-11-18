@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class StorageService {
   /**
@@ -12,7 +12,7 @@ export class StorageService {
       const serialized = JSON.stringify(value);
       localStorage.setItem(key, serialized);
     } catch (error) {
-      console.error('Error saving to localStorage', error);
+      console.error("Error saving to localStorage", error);
     }
   }
 
@@ -27,7 +27,7 @@ export class StorageService {
       }
       return null;
     } catch (error) {
-      console.error('Error reading from localStorage', error);
+      console.error("Error reading from localStorage", error);
       return null;
     }
   }
@@ -61,7 +61,7 @@ export class StorageService {
       const serialized = JSON.stringify(value);
       sessionStorage.setItem(key, serialized);
     } catch (error) {
-      console.error('Error saving to sessionStorage', error);
+      console.error("Error saving to sessionStorage", error);
     }
   }
 
@@ -76,7 +76,7 @@ export class StorageService {
       }
       return null;
     } catch (error) {
-      console.error('Error reading from sessionStorage', error);
+      console.error("Error reading from sessionStorage", error);
       return null;
     }
   }

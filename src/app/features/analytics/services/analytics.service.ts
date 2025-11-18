@@ -1,16 +1,16 @@
-import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
-import { ApiService } from '../../../core/services/api.service';
-import { API_ENDPOINTS } from '../../../core/constants/api-endpoints';
+import { Injectable, inject } from "@angular/core";
+import { Observable } from "rxjs";
+import { ApiService } from "../../../core/services/api.service";
+import { API_ENDPOINTS } from "../../../core/constants/api-endpoints";
 import {
   AnalyticsEvent,
   UserStatistics,
   ParkingStatistics,
-  AdminDashboard
-} from '../../../core/models';
+  AdminDashboard,
+} from "../../../core/models";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class AnalyticsService {
   private api = inject(ApiService);
@@ -40,7 +40,9 @@ export class AnalyticsService {
    * Get parking statistics
    */
   getParkingStatistics(parkingId: string): Observable<ParkingStatistics> {
-    return this.api.get<ParkingStatistics>(API_ENDPOINTS.ANALYTICS.PARKING(parkingId));
+    return this.api.get<ParkingStatistics>(
+      API_ENDPOINTS.ANALYTICS.PARKING(parkingId),
+    );
   }
 
   /**
@@ -48,11 +50,11 @@ export class AnalyticsService {
    */
   trackPageView(page: string): void {
     this.trackEvent({
-      eventType: 'page_view',
+      eventType: "page_view",
       page,
       eventData: {
-        timestamp: new Date().toISOString()
-      }
+        timestamp: new Date().toISOString(),
+      },
     }).subscribe();
   }
 
@@ -61,12 +63,12 @@ export class AnalyticsService {
    */
   trackClick(element: string, data?: any): void {
     this.trackEvent({
-      eventType: 'click',
+      eventType: "click",
       eventData: {
         element,
         ...data,
-        timestamp: new Date().toISOString()
-      }
+        timestamp: new Date().toISOString(),
+      },
     }).subscribe();
   }
 }

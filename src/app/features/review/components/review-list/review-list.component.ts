@@ -1,20 +1,32 @@
-import { Component, OnInit, signal, computed, inject, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatSelectModule } from '@angular/material/select';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatChipsModule } from '@angular/material/chip';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import {
+  Component,
+  OnInit,
+  signal,
+  computed,
+  inject,
+  input,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { MatCardModule } from "@angular/material/card";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+import { MatSelectModule } from "@angular/material/select";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatPaginatorModule, PageEvent } from "@angular/material/paginator";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatChipsModule } from "@angular/material/chips";
+import { MatButtonToggleModule } from "@angular/material/button-toggle";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { debounceTime, distinctUntilChanged } from "rxjs/operators";
 
-import { ReviewService } from '../../services/review.service';
-import { Review, ReviewSearchParams, ReviewStatistics, ReviewType } from '../../../../core/models';
+import { ReviewService } from "../../services/review.service";
+import {
+  Review,
+  ReviewSearchParams,
+  ReviewStatistics,
+  ReviewType,
+} from "../../../../core/models";
 
 interface FilterForm {
   minRating: FormControl<number | null>;
@@ -22,7 +34,7 @@ interface FilterForm {
 }
 
 @Component({
-  selector: 'app-review-list',
+  selector: "app-review-list",
   standalone: true,
   imports: [
     CommonModule,
@@ -36,10 +48,10 @@ interface FilterForm {
     MatProgressSpinnerModule,
     MatChipsModule,
     MatButtonToggleModule,
-    MatTooltipModule
+    MatTooltipModule,
   ],
-  templateUrl: './review-list.component.html',
-  styleUrls: ['./review-list.component.scss']
+  templateUrl: "./review-list.component.html",
+  styleUrls: ["./review-list.component.scss"],
 })
 export class ReviewListComponent implements OnInit {
   private reviewService = inject(ReviewService);
@@ -77,37 +89,38 @@ export class ReviewListComponent implements OnInit {
     const stats = this.statistics();
     if (!stats) return [];
 
-    return [5, 4, 3, 2, 1].map(rating => ({
+    return [5, 4, 3, 2, 1].map((rating) => ({
       rating,
       count: stats.ratingDistribution[rating] || 0,
-      percentage: stats.totalReviews > 0
-        ? ((stats.ratingDistribution[rating] || 0) / stats.totalReviews) * 100
-        : 0
+      percentage:
+        stats.totalReviews > 0
+          ? ((stats.ratingDistribution[rating] || 0) / stats.totalReviews) * 100
+          : 0,
     }));
   });
 
   // Filter form
   filterForm = new FormGroup<FilterForm>({
     minRating: new FormControl<number | null>(null),
-    sortBy: new FormControl<string>('date:DESC')
+    sortBy: new FormControl<string>("date:DESC"),
   });
 
   // Rating filter options
   ratingOptions = [
-    { value: null, label: 'All Ratings' },
-    { value: 5, label: '5 Stars' },
-    { value: 4, label: '4+ Stars' },
-    { value: 3, label: '3+ Stars' },
-    { value: 2, label: '2+ Stars' },
-    { value: 1, label: '1+ Stars' }
+    { value: null, label: "All Ratings" },
+    { value: 5, label: "5 Stars" },
+    { value: 4, label: "4+ Stars" },
+    { value: 3, label: "3+ Stars" },
+    { value: 2, label: "2+ Stars" },
+    { value: 1, label: "1+ Stars" },
   ];
 
   // Sort options
   sortOptions = [
-    { value: 'date:DESC', label: 'Most Recent' },
-    { value: 'date:ASC', label: 'Oldest First' },
-    { value: 'rating:DESC', label: 'Highest Rating' },
-    { value: 'rating:ASC', label: 'Lowest Rating' }
+    { value: "date:DESC", label: "Most Recent" },
+    { value: "date:ASC", label: "Oldest First" },
+    { value: "rating:DESC", label: "Highest Rating" },
+    { value: "rating:ASC", label: "Lowest Rating" },
   ];
 
   ngOnInit(): void {
@@ -132,10 +145,10 @@ export class ReviewListComponent implements OnInit {
         this.loading.set(false);
       },
       error: (err) => {
-        this.error.set('Failed to load reviews. Please try again.');
+        this.error.set("Failed to load reviews. Please try again.");
         this.loading.set(false);
-        console.error('Error loading reviews:', err);
-      }
+        console.error("Error loading reviews:", err);
+      },
     });
   }
 
@@ -152,8 +165,8 @@ export class ReviewListComponent implements OnInit {
           this.statistics.set(stats);
         },
         error: (err) => {
-          console.error('Error loading statistics:', err);
-        }
+          console.error("Error loading statistics:", err);
+        },
       });
     } else if (userId) {
       this.reviewService.getUserStats(userId).subscribe({
@@ -161,8 +174,8 @@ export class ReviewListComponent implements OnInit {
           this.statistics.set(stats);
         },
         error: (err) => {
-          console.error('Error loading statistics:', err);
-        }
+          console.error("Error loading statistics:", err);
+        },
       });
     }
   }
@@ -172,11 +185,11 @@ export class ReviewListComponent implements OnInit {
    */
   private buildSearchParams(): ReviewSearchParams {
     const formValue = this.filterForm.value;
-    const [sortBy, sortOrder] = (formValue.sortBy || 'date:DESC').split(':');
+    const [sortBy, sortOrder] = (formValue.sortBy || "date:DESC").split(":");
 
     const params: ReviewSearchParams = {
       page: 1,
-      limit: 100 // Load all for client-side pagination
+      limit: 100, // Load all for client-side pagination
     };
 
     if (this.parkingId()) {
@@ -188,7 +201,11 @@ export class ReviewListComponent implements OnInit {
       params.targetUserId = this.userId();
     }
 
-    if (formValue.minRating !== null && formValue.minRating > 0) {
+    if (
+      formValue.minRating !== null &&
+      formValue.minRating !== undefined &&
+      formValue.minRating > 0
+    ) {
       params.minRating = formValue.minRating;
     }
 
@@ -200,10 +217,7 @@ export class ReviewListComponent implements OnInit {
    */
   private setupFilterListeners(): void {
     this.filterForm.valueChanges
-      .pipe(
-        debounceTime(300),
-        distinctUntilChanged()
-      )
+      .pipe(debounceTime(300), distinctUntilChanged())
       .subscribe(() => {
         this.resetPagination();
         this.loadReviews();
@@ -216,7 +230,7 @@ export class ReviewListComponent implements OnInit {
   onPageChange(event: PageEvent): void {
     this.pageIndex.set(event.pageIndex);
     this.pageSize.set(event.pageSize);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   /**
@@ -239,7 +253,7 @@ export class ReviewListComponent implements OnInit {
   resetFilters(): void {
     this.filterForm.reset({
       minRating: null,
-      sortBy: 'date:DESC'
+      sortBy: "date:DESC",
     });
     this.resetPagination();
   }
@@ -261,16 +275,16 @@ export class ReviewListComponent implements OnInit {
   /**
    * Get half stars for partial ratings
    */
-  getStarType(index: number, rating: number): 'full' | 'half' | 'empty' {
+  getStarType(index: number, rating: number): "full" | "half" | "empty" {
     const roundedRating = Math.floor(rating);
     const hasHalf = rating - roundedRating >= 0.5;
 
     if (index < roundedRating) {
-      return 'full';
+      return "full";
     } else if (index === roundedRating && hasHalf) {
-      return 'half';
+      return "half";
     } else {
-      return 'empty';
+      return "empty";
     }
   }
 
@@ -284,9 +298,9 @@ export class ReviewListComponent implements OnInit {
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
     if (diffDays === 0) {
-      return 'Today';
+      return "Today";
     } else if (diffDays === 1) {
-      return 'Yesterday';
+      return "Yesterday";
     } else if (diffDays < 7) {
       return `${diffDays} days ago`;
     } else if (diffDays < 30) {
@@ -294,10 +308,10 @@ export class ReviewListComponent implements OnInit {
     } else if (diffDays < 365) {
       return `${Math.floor(diffDays / 30)} months ago`;
     } else {
-      return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
+      return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
       });
     }
   }
@@ -309,7 +323,7 @@ export class ReviewListComponent implements OnInit {
     if (review.author) {
       return `${review.author.firstName} ${review.author.lastName}`;
     }
-    return 'Anonymous';
+    return "Anonymous";
   }
 
   /**
@@ -317,11 +331,11 @@ export class ReviewListComponent implements OnInit {
    */
   getReviewerInitials(review: Review): string {
     if (review.author) {
-      const firstInitial = review.author.firstName?.charAt(0) || '';
-      const lastInitial = review.author.lastName?.charAt(0) || '';
+      const firstInitial = review.author.firstName?.charAt(0) || "";
+      const lastInitial = review.author.lastName?.charAt(0) || "";
       return `${firstInitial}${lastInitial}`.toUpperCase();
     }
-    return 'AN';
+    return "AN";
   }
 
   /**
@@ -336,12 +350,12 @@ export class ReviewListComponent implements OnInit {
    */
   getCriteriaLabel(key: string): string {
     const labels: { [key: string]: string } = {
-      location: 'Location',
-      cleanliness: 'Cleanliness',
-      security: 'Security',
-      accuracy: 'Accuracy',
-      value: 'Value',
-      communication: 'Communication'
+      location: "Location",
+      cleanliness: "Cleanliness",
+      security: "Security",
+      accuracy: "Accuracy",
+      value: "Value",
+      communication: "Communication",
     };
     return labels[key] || key;
   }

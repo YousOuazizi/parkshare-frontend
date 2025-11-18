@@ -1,10 +1,14 @@
-import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
-import { ApiService } from '../../../core/services/api.service';
-import { User, UserRole } from '../../../core/models/user.model';
-import { VerificationDocument, DocumentStatus } from '../../../core/models/verification.model';
+import { Injectable, inject } from "@angular/core";
+import { Observable } from "rxjs";
+import { ApiService } from "../../../core/services/api.service";
+import { User, UserRole } from "../../../core/models/user.model";
+import {
+  VerificationDocument,
+  DocumentStatus,
+} from "../../../core/models/verification.model";
 
 export interface UserListParams {
+  [key: string]: string | number | boolean | string[] | number[] | undefined;
   page?: number;
   limit?: number;
   search?: string;
@@ -12,7 +16,7 @@ export interface UserListParams {
   verificationLevel?: string;
   isActive?: boolean;
   sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: "asc" | "desc";
 }
 
 export interface UserListResponse {
@@ -48,12 +52,13 @@ export interface UserStatistics {
 }
 
 export interface VerificationQueueParams {
+  [key: string]: string | number | boolean | string[] | number[] | undefined;
   page?: number;
   limit?: number;
   status?: DocumentStatus;
   level?: string;
   sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: "asc" | "desc";
 }
 
 export interface VerificationQueueResponse {
@@ -70,7 +75,7 @@ export interface DocumentReviewRequest {
 }
 
 export interface SystemHealth {
-  status: 'healthy' | 'degraded' | 'unhealthy';
+  status: "healthy" | "degraded" | "unhealthy";
   uptime: number;
   timestamp: string;
   services: {
@@ -153,12 +158,13 @@ export interface DatabaseStats {
 export interface SystemLog {
   id: string;
   timestamp: string;
-  level: 'info' | 'warn' | 'error';
+  level: "info" | "warn" | "error";
   message: string;
   metadata?: any;
 }
 
 export interface LogQueryParams {
+  [key: string]: string | number | boolean | string[] | number[] | undefined;
   page?: number;
   limit?: number;
   level?: string;
@@ -168,7 +174,7 @@ export interface LogQueryParams {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class AdminService {
   private api = inject(ApiService);
@@ -179,7 +185,7 @@ export class AdminService {
    * Get paginated list of users
    */
   getUsers(params?: UserListParams): Observable<UserListResponse> {
-    return this.api.get<UserListResponse>('/admin/users', params);
+    return this.api.get<UserListResponse>("/admin/users", params);
   }
 
   /**
@@ -200,14 +206,20 @@ export class AdminService {
    * Suspend user account
    */
   suspendUser(userId: string): Observable<{ message: string }> {
-    return this.api.patch<{ message: string }>(`/admin/users/${userId}/suspend`, {});
+    return this.api.patch<{ message: string }>(
+      `/admin/users/${userId}/suspend`,
+      {},
+    );
   }
 
   /**
    * Activate user account
    */
   activateUser(userId: string): Observable<{ message: string }> {
-    return this.api.patch<{ message: string }>(`/admin/users/${userId}/activate`, {});
+    return this.api.patch<{ message: string }>(
+      `/admin/users/${userId}/activate`,
+      {},
+    );
   }
 
   /**
@@ -220,22 +232,32 @@ export class AdminService {
   /**
    * Bulk suspend users
    */
-  bulkSuspendUsers(userIds: string[]): Observable<{ message: string; count: number }> {
-    return this.api.post<{ message: string; count: number }>('/admin/users/bulk/suspend', { userIds });
+  bulkSuspendUsers(
+    userIds: string[],
+  ): Observable<{ message: string; count: number }> {
+    return this.api.post<{ message: string; count: number }>(
+      "/admin/users/bulk/suspend",
+      { userIds },
+    );
   }
 
   /**
    * Bulk delete users
    */
-  bulkDeleteUsers(userIds: string[]): Observable<{ message: string; count: number }> {
-    return this.api.post<{ message: string; count: number }>('/admin/users/bulk/delete', { userIds });
+  bulkDeleteUsers(
+    userIds: string[],
+  ): Observable<{ message: string; count: number }> {
+    return this.api.post<{ message: string; count: number }>(
+      "/admin/users/bulk/delete",
+      { userIds },
+    );
   }
 
   /**
    * Get user statistics
    */
   getUserStatistics(): Observable<UserStatistics> {
-    return this.api.get<UserStatistics>('/admin/users/statistics');
+    return this.api.get<UserStatistics>("/admin/users/statistics");
   }
 
   // Verification Management
@@ -243,46 +265,74 @@ export class AdminService {
   /**
    * Get verification queue
    */
-  getVerificationQueue(params?: VerificationQueueParams): Observable<VerificationQueueResponse> {
-    return this.api.get<VerificationQueueResponse>('/admin/verifications/queue', params);
+  getVerificationQueue(
+    params?: VerificationQueueParams,
+  ): Observable<VerificationQueueResponse> {
+    return this.api.get<VerificationQueueResponse>(
+      "/admin/verifications/queue",
+      params,
+    );
   }
 
   /**
    * Get verification document by ID
    */
-  getVerificationDocument(documentId: string): Observable<VerificationDocument> {
-    return this.api.get<VerificationDocument>(`/admin/verifications/documents/${documentId}`);
+  getVerificationDocument(
+    documentId: string,
+  ): Observable<VerificationDocument> {
+    return this.api.get<VerificationDocument>(
+      `/admin/verifications/documents/${documentId}`,
+    );
   }
 
   /**
    * Review verification document
    */
-  reviewDocument(documentId: string, data: DocumentReviewRequest): Observable<{ message: string }> {
-    return this.api.patch<{ message: string }>(`/admin/verifications/documents/${documentId}/review`, data);
+  reviewDocument(
+    documentId: string,
+    data: DocumentReviewRequest,
+  ): Observable<{ message: string }> {
+    return this.api.patch<{ message: string }>(
+      `/admin/verifications/documents/${documentId}/review`,
+      data,
+    );
   }
 
   /**
    * Bulk approve documents
    */
-  bulkApproveDocuments(documentIds: string[]): Observable<{ message: string; count: number }> {
-    return this.api.post<{ message: string; count: number }>('/admin/verifications/bulk/approve', { documentIds });
+  bulkApproveDocuments(
+    documentIds: string[],
+  ): Observable<{ message: string; count: number }> {
+    return this.api.post<{ message: string; count: number }>(
+      "/admin/verifications/bulk/approve",
+      { documentIds },
+    );
   }
 
   /**
    * Bulk reject documents
    */
-  bulkRejectDocuments(documentIds: string[], rejectionReason: string): Observable<{ message: string; count: number }> {
-    return this.api.post<{ message: string; count: number }>('/admin/verifications/bulk/reject', {
-      documentIds,
-      rejectionReason
-    });
+  bulkRejectDocuments(
+    documentIds: string[],
+    rejectionReason: string,
+  ): Observable<{ message: string; count: number }> {
+    return this.api.post<{ message: string; count: number }>(
+      "/admin/verifications/bulk/reject",
+      {
+        documentIds,
+        rejectionReason,
+      },
+    );
   }
 
   /**
    * Get verification history for user
    */
   getVerificationHistory(userId: string): Observable<VerificationDocument[]> {
-    return this.api.get<VerificationDocument[]>(`/admin/verifications/history/${userId}`);
+    return this.api.get<VerificationDocument[]>(
+      `/admin/verifications/history/${userId}`,
+    );
   }
 
   // System Management
@@ -291,62 +341,78 @@ export class AdminService {
    * Get system health
    */
   getSystemHealth(): Observable<SystemHealth> {
-    return this.api.get<SystemHealth>('/admin/system/health');
+    return this.api.get<SystemHealth>("/admin/system/health");
   }
 
   /**
    * Get application settings
    */
   getApplicationSettings(): Observable<ApplicationSettings> {
-    return this.api.get<ApplicationSettings>('/admin/system/settings');
+    return this.api.get<ApplicationSettings>("/admin/system/settings");
   }
 
   /**
    * Update application settings
    */
-  updateApplicationSettings(settings: Partial<ApplicationSettings>): Observable<ApplicationSettings> {
-    return this.api.put<ApplicationSettings>('/admin/system/settings', settings);
+  updateApplicationSettings(
+    settings: Partial<ApplicationSettings>,
+  ): Observable<ApplicationSettings> {
+    return this.api.put<ApplicationSettings>(
+      "/admin/system/settings",
+      settings,
+    );
   }
 
   /**
    * Get feature flags
    */
   getFeatureFlags(): Observable<FeatureFlag[]> {
-    return this.api.get<FeatureFlag[]>('/admin/system/feature-flags');
+    return this.api.get<FeatureFlag[]>("/admin/system/feature-flags");
   }
 
   /**
    * Toggle feature flag
    */
-  toggleFeatureFlag(flagName: string, enabled: boolean): Observable<FeatureFlag> {
-    return this.api.patch<FeatureFlag>(`/admin/system/feature-flags/${flagName}`, { enabled });
+  toggleFeatureFlag(
+    flagName: string,
+    enabled: boolean,
+  ): Observable<FeatureFlag> {
+    return this.api.patch<FeatureFlag>(
+      `/admin/system/feature-flags/${flagName}`,
+      { enabled },
+    );
   }
 
   /**
    * Get cache statistics
    */
   getCacheStats(): Observable<CacheStats> {
-    return this.api.get<CacheStats>('/admin/system/cache/stats');
+    return this.api.get<CacheStats>("/admin/system/cache/stats");
   }
 
   /**
    * Clear cache
    */
   clearCache(): Observable<{ message: string }> {
-    return this.api.post<{ message: string }>('/admin/system/cache/clear', {});
+    return this.api.post<{ message: string }>("/admin/system/cache/clear", {});
   }
 
   /**
    * Get database statistics
    */
   getDatabaseStats(): Observable<DatabaseStats> {
-    return this.api.get<DatabaseStats>('/admin/system/database/stats');
+    return this.api.get<DatabaseStats>("/admin/system/database/stats");
   }
 
   /**
    * Get system logs
    */
-  getSystemLogs(params?: LogQueryParams): Observable<{ logs: SystemLog[]; total: number }> {
-    return this.api.get<{ logs: SystemLog[]; total: number }>('/admin/system/logs', params);
+  getSystemLogs(
+    params?: LogQueryParams,
+  ): Observable<{ logs: SystemLog[]; total: number }> {
+    return this.api.get<{ logs: SystemLog[]; total: number }>(
+      "/admin/system/logs",
+      params,
+    );
   }
 }

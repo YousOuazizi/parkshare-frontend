@@ -37,7 +37,11 @@
         <mat-icon class="error-icon">error_outline</mat-icon>
         <div>
           <h3>{{ error() }}</h3>
-          <button mat-raised-button color="primary" (click)="loadPricingSuggestions()">
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="loadPricingSuggestions()"
+          >
             <mat-icon>refresh</mat-icon>
             Retry
           </button>
@@ -106,14 +110,25 @@
             </div>
             <div class="metric-details">
               <p class="metric-label">ML Suggestion</p>
-              <h2 class="metric-value">{{ formatCurrency(bestSuggestion()!.suggestedPrice) }}</h2>
-              <p class="metric-change"
-                 [class.positive]="calculatePriceChange(bestSuggestion()!) > 0"
-                 [class.negative]="calculatePriceChange(bestSuggestion()!) < 0">
+              <h2 class="metric-value">
+                {{ formatCurrency(bestSuggestion()!.suggestedPrice) }}
+              </h2>
+              <p
+                class="metric-change"
+                [class.positive]="calculatePriceChange(bestSuggestion()!) > 0"
+                [class.negative]="calculatePriceChange(bestSuggestion()!) < 0"
+              >
                 <mat-icon>
-                  {{ calculatePriceChange(bestSuggestion()!) >= 0 ? 'trending_up' : 'trending_down' }}
+                  {{
+                    calculatePriceChange(bestSuggestion()!) >= 0
+                      ? "trending_up"
+                      : "trending_down"
+                  }}
                 </mat-icon>
-                {{ formatPercentage(calculatePriceChange(bestSuggestion()!)) }} vs current
+                {{
+                  formatPercentage(calculatePriceChange(bestSuggestion()!))
+                }}
+                vs current
               </p>
             </div>
           </div>
@@ -136,16 +151,21 @@
             <div class="chart-bars">
               @for (value of revenueChart().data; track $index) {
                 <div class="chart-bar-container">
-                  <div class="chart-bar"
-                       [style.height.%]="(value / 3500) * 100"
-                       [matTooltip]="formatCurrency(value)">
-                  </div>
-                  <span class="chart-label">{{ revenueChart().labels[$index] }}</span>
+                  <div
+                    class="chart-bar"
+                    [style.height.%]="(value / 3500) * 100"
+                    [matTooltip]="formatCurrency(value)"
+                  ></div>
+                  <span class="chart-label">{{
+                    revenueChart().labels[$index]
+                  }}</span>
                 </div>
               }
             </div>
           </div>
-          <p class="chart-note">Chart library integration placeholder (e.g., Chart.js, ng2-charts)</p>
+          <p class="chart-note">
+            Chart library integration placeholder (e.g., Chart.js, ng2-charts)
+          </p>
         </mat-card-content>
       </mat-card>
 
@@ -162,11 +182,14 @@
             <div class="chart-bars">
               @for (value of demandChart().data; track $index) {
                 <div class="chart-bar-container">
-                  <div class="chart-bar demand"
-                       [style.height.%]="value"
-                       [matTooltip]="value + '%'">
-                  </div>
-                  <span class="chart-label">{{ demandChart().labels[$index] }}</span>
+                  <div
+                    class="chart-bar demand"
+                    [style.height.%]="value"
+                    [matTooltip]="value + '%'"
+                  ></div>
+                  <span class="chart-label">{{
+                    demandChart().labels[$index]
+                  }}</span>
                 </div>
               }
             </div>
@@ -188,11 +211,14 @@
             <div class="chart-bars">
               @for (value of occupancyChart().data; track $index) {
                 <div class="chart-bar-container">
-                  <div class="chart-bar occupancy"
-                       [style.height.%]="value"
-                       [matTooltip]="value + '%'">
-                  </div>
-                  <span class="chart-label">{{ occupancyChart().labels[$index] }}</span>
+                  <div
+                    class="chart-bar occupancy"
+                    [style.height.%]="value"
+                    [matTooltip]="value + '%'"
+                  ></div>
+                  <span class="chart-label">{{
+                    occupancyChart().labels[$index]
+                  }}</span>
                 </div>
               }
             </div>
@@ -209,7 +235,11 @@
           <mat-icon>psychology</mat-icon>
           ML-Based Pricing Suggestions
         </mat-card-title>
-        <button mat-icon-button (click)="loadPricingSuggestions()" matTooltip="Refresh">
+        <button
+          mat-icon-button
+          (click)="loadPricingSuggestions()"
+          matTooltip="Refresh"
+        >
           <mat-icon>refresh</mat-icon>
         </button>
       </mat-card-header>
@@ -218,18 +248,30 @@
           <div class="empty-state">
             <mat-icon class="empty-icon">insights</mat-icon>
             <h3>No suggestions available</h3>
-            <p>Click "Optimize Pricing" to generate ML-based pricing recommendations</p>
+            <p>
+              Click "Optimize Pricing" to generate ML-based pricing
+              recommendations
+            </p>
           </div>
         } @else {
           <!-- Desktop Table View -->
           <div class="table-container hide-mobile">
-            <table mat-table [dataSource]="suggestions()" class="suggestions-table">
+            <table
+              mat-table
+              [dataSource]="suggestions()"
+              class="suggestions-table"
+            >
               <!-- Algorithm Column -->
               <ng-container matColumnDef="algorithm">
                 <th mat-header-cell *matHeaderCellDef>Algorithm</th>
                 <td mat-cell *matCellDef="let suggestion">
-                  <mat-chip [color]="getAlgorithmColor(suggestion.algorithmType)" highlighted>
-                    <mat-icon matChipAvatar>{{ getAlgorithmIcon(suggestion.algorithmType) }}</mat-icon>
+                  <mat-chip
+                    [color]="getAlgorithmColor(suggestion.algorithmType)"
+                    highlighted
+                  >
+                    <mat-icon matChipAvatar>{{
+                      getAlgorithmIcon(suggestion.algorithmType)
+                    }}</mat-icon>
                     {{ suggestion.algorithmType }}
                   </mat-chip>
                 </td>
@@ -239,7 +281,9 @@
               <ng-container matColumnDef="current">
                 <th mat-header-cell *matHeaderCellDef>Current Price</th>
                 <td mat-cell *matCellDef="let suggestion">
-                  <span class="price-value">{{ formatCurrency(suggestion.currentPrice) }}</span>
+                  <span class="price-value">{{
+                    formatCurrency(suggestion.currentPrice)
+                  }}</span>
                 </td>
               </ng-container>
 
@@ -247,10 +291,14 @@
               <ng-container matColumnDef="suggested">
                 <th mat-header-cell *matHeaderCellDef>Suggested Price</th>
                 <td mat-cell *matCellDef="let suggestion">
-                  <span class="price-value suggested">{{ formatCurrency(suggestion.suggestedPrice) }}</span>
-                  <span class="price-change"
-                        [class.positive]="calculatePriceChange(suggestion) > 0"
-                        [class.negative]="calculatePriceChange(suggestion) < 0">
+                  <span class="price-value suggested">{{
+                    formatCurrency(suggestion.suggestedPrice)
+                  }}</span>
+                  <span
+                    class="price-change"
+                    [class.positive]="calculatePriceChange(suggestion) > 0"
+                    [class.negative]="calculatePriceChange(suggestion) < 0"
+                  >
                     {{ formatPercentage(calculatePriceChange(suggestion)) }}
                   </span>
                 </td>
@@ -262,14 +310,20 @@
                 <td mat-cell *matCellDef="let suggestion">
                   <div class="confidence-container">
                     <div class="confidence-bar">
-                      <div class="confidence-fill"
-                           [style.width.%]="suggestion.confidence * 100"
-                           [class.high]="suggestion.confidence >= 0.8"
-                           [class.medium]="suggestion.confidence >= 0.6 && suggestion.confidence < 0.8"
-                           [class.low]="suggestion.confidence < 0.6">
-                      </div>
+                      <div
+                        class="confidence-fill"
+                        [style.width.%]="suggestion.confidence * 100"
+                        [class.high]="suggestion.confidence >= 0.8"
+                        [class.medium]="
+                          suggestion.confidence >= 0.6 &&
+                          suggestion.confidence < 0.8
+                        "
+                        [class.low]="suggestion.confidence < 0.6"
+                      ></div>
                     </div>
-                    <span class="confidence-value">{{ (suggestion.confidence * 100).toFixed(0) }}%</span>
+                    <span class="confidence-value"
+                      >{{ (suggestion.confidence * 100).toFixed(0) }}%</span
+                    >
                   </div>
                 </td>
               </ng-container>
@@ -278,8 +332,15 @@
               <ng-container matColumnDef="impact">
                 <th mat-header-cell *matHeaderCellDef>Reasoning</th>
                 <td mat-cell *matCellDef="let suggestion">
-                  <div class="reasoning-text" [matTooltip]="suggestion.reasoning">
-                    {{ suggestion.reasoning.length > 50 ? suggestion.reasoning.substring(0, 50) + '...' : suggestion.reasoning }}
+                  <div
+                    class="reasoning-text"
+                    [matTooltip]="suggestion.reasoning"
+                  >
+                    {{
+                      suggestion.reasoning.length > 50
+                        ? suggestion.reasoning.substring(0, 50) + "..."
+                        : suggestion.reasoning
+                    }}
                   </div>
                 </td>
               </ng-container>
@@ -308,19 +369,30 @@
               </ng-container>
 
               <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-              <tr mat-row *matRowDef="let row; columns: displayedColumns" class="suggestion-row"></tr>
+              <tr
+                mat-row
+                *matRowDef="let row; columns: displayedColumns"
+                class="suggestion-row"
+              ></tr>
             </table>
           </div>
 
           <!-- Mobile Card View -->
           <div class="cards-container hide-desktop">
             @for (suggestion of suggestions(); track suggestion.id) {
-              <mat-card class="suggestion-card"
-                        [class.applied]="suggestion.isApplied">
+              <mat-card
+                class="suggestion-card"
+                [class.applied]="suggestion.isApplied"
+              >
                 <mat-card-content>
                   <div class="suggestion-header">
-                    <mat-chip [color]="getAlgorithmColor(suggestion.algorithmType)" highlighted>
-                      <mat-icon matChipAvatar>{{ getAlgorithmIcon(suggestion.algorithmType) }}</mat-icon>
+                    <mat-chip
+                      [color]="getAlgorithmColor(suggestion.algorithmType)"
+                      highlighted
+                    >
+                      <mat-icon matChipAvatar>{{
+                        getAlgorithmIcon(suggestion.algorithmType)
+                      }}</mat-icon>
                       {{ suggestion.algorithmType }}
                     </mat-chip>
                     @if (suggestion.isApplied) {
@@ -334,15 +406,21 @@
                   <div class="price-comparison">
                     <div class="price-item">
                       <p class="price-label">Current</p>
-                      <p class="price-value">{{ formatCurrency(suggestion.currentPrice) }}</p>
+                      <p class="price-value">
+                        {{ formatCurrency(suggestion.currentPrice) }}
+                      </p>
                     </div>
                     <mat-icon class="arrow-icon">arrow_forward</mat-icon>
                     <div class="price-item">
                       <p class="price-label">Suggested</p>
-                      <p class="price-value suggested">{{ formatCurrency(suggestion.suggestedPrice) }}</p>
-                      <p class="price-change"
-                         [class.positive]="calculatePriceChange(suggestion) > 0"
-                         [class.negative]="calculatePriceChange(suggestion) < 0">
+                      <p class="price-value suggested">
+                        {{ formatCurrency(suggestion.suggestedPrice) }}
+                      </p>
+                      <p
+                        class="price-change"
+                        [class.positive]="calculatePriceChange(suggestion) > 0"
+                        [class.negative]="calculatePriceChange(suggestion) < 0"
+                      >
                         {{ formatPercentage(calculatePriceChange(suggestion)) }}
                       </p>
                     </div>
@@ -352,14 +430,20 @@
                     <p class="confidence-label">Confidence</p>
                     <div class="confidence-container">
                       <div class="confidence-bar">
-                        <div class="confidence-fill"
-                             [style.width.%]="suggestion.confidence * 100"
-                             [class.high]="suggestion.confidence >= 0.8"
-                             [class.medium]="suggestion.confidence >= 0.6 && suggestion.confidence < 0.8"
-                             [class.low]="suggestion.confidence < 0.6">
-                        </div>
+                        <div
+                          class="confidence-fill"
+                          [style.width.%]="suggestion.confidence * 100"
+                          [class.high]="suggestion.confidence >= 0.8"
+                          [class.medium]="
+                            suggestion.confidence >= 0.6 &&
+                            suggestion.confidence < 0.8
+                          "
+                          [class.low]="suggestion.confidence < 0.6"
+                        ></div>
                       </div>
-                      <span class="confidence-value">{{ (suggestion.confidence * 100).toFixed(0) }}%</span>
+                      <span class="confidence-value"
+                        >{{ (suggestion.confidence * 100).toFixed(0) }}%</span
+                      >
                     </div>
                   </div>
 
@@ -402,26 +486,39 @@
           <div class="analysis-grid">
             <div class="analysis-item">
               <p class="analysis-label">Average Price (30d)</p>
-              <p class="analysis-value">{{ formatCurrency(analysis()!.averagePrice) }}</p>
+              <p class="analysis-value">
+                {{ formatCurrency(analysis()!.averagePrice) }}
+              </p>
             </div>
             <div class="analysis-item highlight">
               <p class="analysis-label">Optimal Price</p>
-              <p class="analysis-value">{{ formatCurrency(analysis()!.optimalPrice) }}</p>
+              <p class="analysis-value">
+                {{ formatCurrency(analysis()!.optimalPrice) }}
+              </p>
             </div>
             <div class="analysis-item">
               <p class="analysis-label">Current Revenue</p>
-              <p class="analysis-value">{{ formatCurrency(analysis()!.revenueWithCurrentPricing) }}</p>
+              <p class="analysis-value">
+                {{ formatCurrency(analysis()!.revenueWithCurrentPricing) }}
+              </p>
             </div>
             <div class="analysis-item highlight">
               <p class="analysis-label">Projected Revenue</p>
-              <p class="analysis-value">{{ formatCurrency(analysis()!.projectedRevenueWithOptimalPricing) }}</p>
+              <p class="analysis-value">
+                {{
+                  formatCurrency(analysis()!.projectedRevenueWithOptimalPricing)
+                }}
+              </p>
             </div>
           </div>
 
           <div class="recommendations">
             <h3>Recommendations</h3>
             <ul class="recommendations-list">
-              @for (recommendation of analysis()!.recommendations; track $index) {
+              @for (
+                recommendation of analysis()!.recommendations;
+                track $index
+              ) {
                 <li>
                   <mat-icon>check_circle</mat-icon>
                   <span>{{ recommendation }}</span>

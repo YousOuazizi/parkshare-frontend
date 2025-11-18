@@ -1,14 +1,14 @@
-import { HttpInterceptorFn } from '@angular/common/http';
-import { inject } from '@angular/core';
-import { finalize } from 'rxjs';
-import { LoadingService } from '../services/loading.service';
+import { HttpInterceptorFn } from "@angular/common/http";
+import { inject } from "@angular/core";
+import { finalize } from "rxjs";
+import { LoadingService } from "../services/loading.service";
 
 export const loadingInterceptor: HttpInterceptorFn = (req, next) => {
   const loadingService = inject(LoadingService);
 
   // Don't show loading for certain endpoints
-  const skipLoading = req.url.includes('/notifications/count') ||
-                      req.url.includes('/health');
+  const skipLoading =
+    req.url.includes("/notifications/count") || req.url.includes("/health");
 
   if (!skipLoading) {
     loadingService.show();
@@ -19,6 +19,6 @@ export const loadingInterceptor: HttpInterceptorFn = (req, next) => {
       if (!skipLoading) {
         loadingService.hide();
       }
-    })
+    }),
   );
 };

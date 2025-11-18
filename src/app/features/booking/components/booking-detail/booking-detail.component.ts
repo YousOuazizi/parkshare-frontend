@@ -1,21 +1,29 @@
-import { Component, computed, inject, signal, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatStepperModule } from '@angular/material/stepper';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatMenuModule } from '@angular/material/menu';
-import { BookingService } from '../../services/booking.service';
-import { Booking, BookingStatus } from '../../../../core/models/booking.model';
-import * as QRCode from 'qrcode';
-import { formatDistance, format } from 'date-fns';
+import {
+  Component,
+  computed,
+  inject,
+  signal,
+  OnInit,
+  ViewChild,
+  ElementRef,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { ActivatedRoute, Router, RouterModule } from "@angular/router";
+import { MatCardModule } from "@angular/material/card";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+import { MatChipsModule } from "@angular/material/chips";
+import { MatDividerModule } from "@angular/material/divider";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatStepperModule } from "@angular/material/stepper";
+import { MatDialog, MatDialogModule } from "@angular/material/dialog";
+import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatMenuModule } from "@angular/material/menu";
+import { BookingService } from "../../services/booking.service";
+import { Booking, BookingStatus } from "../../../../core/models/booking.model";
+import * as QRCode from "qrcode";
+import { formatDistance, format } from "date-fns";
 
 interface BookingEvent {
   title: string;
@@ -26,7 +34,7 @@ interface BookingEvent {
 }
 
 @Component({
-  selector: 'app-booking-detail',
+  selector: "app-booking-detail",
   standalone: true,
   imports: [
     CommonModule,
@@ -41,10 +49,10 @@ interface BookingEvent {
     MatDialogModule,
     MatSnackBarModule,
     MatTooltipModule,
-    MatMenuModule
+    MatMenuModule,
   ],
-  templateUrl: './booking-detail.component.html',
-  styleUrls: ['./booking-detail.component.scss']
+  templateUrl: "./booking-detail.component.html",
+  styleUrls: ["./booking-detail.component.scss"],
 })
 export class BookingDetailComponent implements OnInit {
   private bookingService = inject(BookingService);
@@ -53,7 +61,8 @@ export class BookingDetailComponent implements OnInit {
   private dialog = inject(MatDialog);
   private snackBar = inject(MatSnackBar);
 
-  @ViewChild('qrcodeCanvas', { static: false }) qrcodeCanvas?: ElementRef<HTMLCanvasElement>;
+  @ViewChild("qrcodeCanvas", { static: false })
+  qrcodeCanvas?: ElementRef<HTMLCanvasElement>;
 
   // Signals for reactive state
   booking = signal<Booking | null>(null);
@@ -63,45 +72,61 @@ export class BookingDetailComponent implements OnInit {
   showAccessCode = signal(false);
 
   // Computed signals
-  bookingId = computed(() => this.booking()?.id || '');
+  bookingId = computed(() => this.booking()?.id || "");
 
-  bookingStatus = computed(() => this.booking()?.status || BookingStatus.PENDING);
+  bookingStatus = computed(
+    () => this.booking()?.status || BookingStatus.PENDING,
+  );
 
   statusColor = computed(() => {
     const status = this.bookingStatus();
     switch (status) {
-      case BookingStatus.CONFIRMED: return 'primary';
-      case BookingStatus.COMPLETED: return 'accent';
-      case BookingStatus.CANCELED: return 'warn';
-      case BookingStatus.REJECTED: return 'warn';
-      default: return 'accent';
+      case BookingStatus.CONFIRMED:
+        return "primary";
+      case BookingStatus.COMPLETED:
+        return "accent";
+      case BookingStatus.CANCELED:
+        return "warn";
+      case BookingStatus.REJECTED:
+        return "warn";
+      default:
+        return "accent";
     }
   });
 
   statusIcon = computed(() => {
     const status = this.bookingStatus();
     switch (status) {
-      case BookingStatus.CONFIRMED: return 'check_circle';
-      case BookingStatus.COMPLETED: return 'task_alt';
-      case BookingStatus.CANCELED: return 'cancel';
-      case BookingStatus.REJECTED: return 'block';
-      default: return 'pending';
+      case BookingStatus.CONFIRMED:
+        return "check_circle";
+      case BookingStatus.COMPLETED:
+        return "task_alt";
+      case BookingStatus.CANCELED:
+        return "cancel";
+      case BookingStatus.REJECTED:
+        return "block";
+      default:
+        return "pending";
     }
   });
 
   canCancel = computed(() => {
     const booking = this.booking();
     if (!booking) return false;
-    return booking.status === BookingStatus.PENDING ||
-           booking.status === BookingStatus.CONFIRMED;
+    return (
+      booking.status === BookingStatus.PENDING ||
+      booking.status === BookingStatus.CONFIRMED
+    );
   });
 
   canCheckIn = computed(() => {
     const booking = this.booking();
     if (!booking) return false;
-    return booking.status === BookingStatus.CONFIRMED &&
-           !booking.checkedIn &&
-           new Date(booking.startTime) <= new Date();
+    return (
+      booking.status === BookingStatus.CONFIRMED &&
+      !booking.checkedIn &&
+      new Date(booking.startTime) <= new Date()
+    );
   });
 
   canCheckOut = computed(() => {
@@ -112,7 +137,7 @@ export class BookingDetailComponent implements OnInit {
 
   bookingDuration = computed(() => {
     const booking = this.booking();
-    if (!booking) return '';
+    if (!booking) return "";
 
     const start = new Date(booking.startTime);
     const end = new Date(booking.endTime);
@@ -121,27 +146,29 @@ export class BookingDetailComponent implements OnInit {
     const diffDays = Math.floor(diffHours / 24);
 
     if (diffDays > 0) {
-      return `${diffDays} day${diffDays > 1 ? 's' : ''}, ${diffHours % 24} hour${diffHours % 24 !== 1 ? 's' : ''}`;
+      return `${diffDays} day${diffDays > 1 ? "s" : ""}, ${diffHours % 24} hour${diffHours % 24 !== 1 ? "s" : ""}`;
     }
-    return `${diffHours} hour${diffHours !== 1 ? 's' : ''}`;
+    return `${diffHours} hour${diffHours !== 1 ? "s" : ""}`;
   });
 
   formattedStartTime = computed(() => {
     const booking = this.booking();
-    if (!booking) return '';
-    return format(new Date(booking.startTime), 'PPpp');
+    if (!booking) return "";
+    return format(new Date(booking.startTime), "PPpp");
   });
 
   formattedEndTime = computed(() => {
     const booking = this.booking();
-    if (!booking) return '';
-    return format(new Date(booking.endTime), 'PPpp');
+    if (!booking) return "";
+    return format(new Date(booking.endTime), "PPpp");
   });
 
   timeUntilStart = computed(() => {
     const booking = this.booking();
-    if (!booking) return '';
-    return formatDistance(new Date(booking.startTime), new Date(), { addSuffix: true });
+    if (!booking) return "";
+    return formatDistance(new Date(booking.startTime), new Date(), {
+      addSuffix: true,
+    });
   });
 
   bookingEvents = computed<BookingEvent[]>(() => {
@@ -150,47 +177,51 @@ export class BookingDetailComponent implements OnInit {
 
     const events: BookingEvent[] = [
       {
-        title: 'Booking Created',
+        title: "Booking Created",
         date: booking.createdAt,
-        icon: 'add_circle',
+        icon: "add_circle",
         completed: true,
-        color: 'primary'
+        color: "primary",
       },
       {
-        title: 'Booking Confirmed',
-        date: booking.status === BookingStatus.CONFIRMED || booking.status === BookingStatus.COMPLETED
-          ? booking.updatedAt
-          : '',
-        icon: 'check_circle',
-        completed: booking.status === BookingStatus.CONFIRMED || booking.status === BookingStatus.COMPLETED,
-        color: 'primary'
+        title: "Booking Confirmed",
+        date:
+          booking.status === BookingStatus.CONFIRMED ||
+          booking.status === BookingStatus.COMPLETED
+            ? booking.updatedAt
+            : "",
+        icon: "check_circle",
+        completed:
+          booking.status === BookingStatus.CONFIRMED ||
+          booking.status === BookingStatus.COMPLETED,
+        color: "primary",
       },
       {
-        title: 'Checked In',
-        date: booking.checkedInTime || '',
-        icon: 'login',
+        title: "Checked In",
+        date: booking.checkedInTime || "",
+        icon: "login",
         completed: booking.checkedIn,
-        color: 'accent'
+        color: "accent",
       },
       {
-        title: 'Checked Out',
-        date: booking.checkedOutTime || '',
-        icon: 'logout',
+        title: "Checked Out",
+        date: booking.checkedOutTime || "",
+        icon: "logout",
         completed: booking.checkedOut,
-        color: 'accent'
-      }
+        color: "accent",
+      },
     ];
 
     if (booking.status === BookingStatus.CANCELED) {
       return [
         events[0],
         {
-          title: 'Booking Canceled',
+          title: "Booking Canceled",
           date: booking.updatedAt,
-          icon: 'cancel',
+          icon: "cancel",
           completed: true,
-          color: 'warn'
-        }
+          color: "warn",
+        },
       ];
     }
 
@@ -198,12 +229,12 @@ export class BookingDetailComponent implements OnInit {
       return [
         events[0],
         {
-          title: 'Booking Rejected',
+          title: "Booking Rejected",
           date: booking.updatedAt,
-          icon: 'block',
+          icon: "block",
           completed: true,
-          color: 'warn'
-        }
+          color: "warn",
+        },
       ];
     }
 
@@ -212,24 +243,24 @@ export class BookingDetailComponent implements OnInit {
 
   ownerName = computed(() => {
     const booking = this.booking();
-    if (!booking?.parking?.owner) return 'Unknown';
+    if (!booking?.parking?.owner) return "Unknown";
     return `${booking.parking.owner.firstName} ${booking.parking.owner.lastName}`;
   });
 
   parkingImage = computed(() => {
     const booking = this.booking();
     if (!booking?.parking?.photos || booking.parking.photos.length === 0) {
-      return 'assets/images/placeholder-parking.jpg';
+      return "assets/images/placeholder-parking.jpg";
     }
     return booking.parking.photos[0].url;
   });
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
+    const id = this.route.snapshot.paramMap.get("id");
     if (id) {
       this.loadBooking(id);
     } else {
-      this.router.navigate(['/bookings']);
+      this.router.navigate(["/bookings"]);
     }
   }
 
@@ -246,14 +277,14 @@ export class BookingDetailComponent implements OnInit {
         }
       },
       error: (error) => {
-        console.error('Error loading booking:', error);
+        console.error("Error loading booking:", error);
         this.isLoading.set(false);
-        this.snackBar.open('Failed to load booking details', 'Close', {
+        this.snackBar.open("Failed to load booking details", "Close", {
           duration: 3000,
-          panelClass: ['error-snackbar']
+          panelClass: ["error-snackbar"],
         });
-        this.router.navigate(['/bookings']);
-      }
+        this.router.navigate(["/bookings"]);
+      },
     });
   }
 
@@ -263,13 +294,13 @@ export class BookingDetailComponent implements OnInit {
         width: 300,
         margin: 2,
         color: {
-          dark: '#00897b',
-          light: '#ffffff'
-        }
+          dark: "#00897b",
+          light: "#ffffff",
+        },
       });
       this.qrCodeDataUrl.set(qrDataUrl);
     } catch (error) {
-      console.error('Error generating QR code:', error);
+      console.error("Error generating QR code:", error);
     }
   }
 
@@ -277,24 +308,32 @@ export class BookingDetailComponent implements OnInit {
     const booking = this.booking();
     if (!booking || !this.canCancel()) return;
 
-    if (confirm('Are you sure you want to cancel this booking? This action cannot be undone.')) {
+    if (
+      confirm(
+        "Are you sure you want to cancel this booking? This action cannot be undone.",
+      )
+    ) {
       this.isProcessing.set(true);
       this.bookingService.cancelBooking(booking.id).subscribe({
         next: () => {
-          this.snackBar.open('Booking canceled successfully', 'Close', {
+          this.snackBar.open("Booking canceled successfully", "Close", {
             duration: 3000,
-            panelClass: ['success-snackbar']
+            panelClass: ["success-snackbar"],
           });
-          this.router.navigate(['/bookings']);
+          this.router.navigate(["/bookings"]);
         },
         error: (error) => {
-          console.error('Error canceling booking:', error);
+          console.error("Error canceling booking:", error);
           this.isProcessing.set(false);
-          this.snackBar.open('Failed to cancel booking. Please try again.', 'Close', {
-            duration: 3000,
-            panelClass: ['error-snackbar']
-          });
-        }
+          this.snackBar.open(
+            "Failed to cancel booking. Please try again.",
+            "Close",
+            {
+              duration: 3000,
+              panelClass: ["error-snackbar"],
+            },
+          );
+        },
       });
     }
   }
@@ -308,9 +347,9 @@ export class BookingDetailComponent implements OnInit {
       next: (updatedBooking) => {
         this.booking.set(updatedBooking);
         this.isProcessing.set(false);
-        this.snackBar.open('Checked in successfully!', 'Close', {
+        this.snackBar.open("Checked in successfully!", "Close", {
           duration: 3000,
-          panelClass: ['success-snackbar']
+          panelClass: ["success-snackbar"],
         });
 
         // Generate access code if not already available
@@ -319,13 +358,13 @@ export class BookingDetailComponent implements OnInit {
         }
       },
       error: (error) => {
-        console.error('Error checking in:', error);
+        console.error("Error checking in:", error);
         this.isProcessing.set(false);
-        this.snackBar.open('Failed to check in. Please try again.', 'Close', {
+        this.snackBar.open("Failed to check in. Please try again.", "Close", {
           duration: 3000,
-          panelClass: ['error-snackbar']
+          panelClass: ["error-snackbar"],
         });
-      }
+      },
     });
   }
 
@@ -338,19 +377,19 @@ export class BookingDetailComponent implements OnInit {
       next: (updatedBooking) => {
         this.booking.set(updatedBooking);
         this.isProcessing.set(false);
-        this.snackBar.open('Checked out successfully!', 'Close', {
+        this.snackBar.open("Checked out successfully!", "Close", {
           duration: 3000,
-          panelClass: ['success-snackbar']
+          panelClass: ["success-snackbar"],
         });
       },
       error: (error) => {
-        console.error('Error checking out:', error);
+        console.error("Error checking out:", error);
         this.isProcessing.set(false);
-        this.snackBar.open('Failed to check out. Please try again.', 'Close', {
+        this.snackBar.open("Failed to check out. Please try again.", "Close", {
           duration: 3000,
-          panelClass: ['error-snackbar']
+          panelClass: ["error-snackbar"],
         });
-      }
+      },
     });
   }
 
@@ -366,24 +405,28 @@ export class BookingDetailComponent implements OnInit {
         this.generateQRCode(response.accessCode);
         this.showAccessCode.set(true);
         this.isProcessing.set(false);
-        this.snackBar.open('Access code retrieved!', 'Close', {
+        this.snackBar.open("Access code retrieved!", "Close", {
           duration: 3000,
-          panelClass: ['success-snackbar']
+          panelClass: ["success-snackbar"],
         });
       },
       error: (error) => {
-        console.error('Error getting access code:', error);
+        console.error("Error getting access code:", error);
         this.isProcessing.set(false);
-        this.snackBar.open('Failed to retrieve access code. Please try again.', 'Close', {
-          duration: 3000,
-          panelClass: ['error-snackbar']
-        });
-      }
+        this.snackBar.open(
+          "Failed to retrieve access code. Please try again.",
+          "Close",
+          {
+            duration: 3000,
+            panelClass: ["error-snackbar"],
+          },
+        );
+      },
     });
   }
 
   toggleAccessCode(): void {
-    this.showAccessCode.update(show => !show);
+    this.showAccessCode.update((show) => !show);
   }
 
   getDirections(): void {
@@ -392,16 +435,16 @@ export class BookingDetailComponent implements OnInit {
 
     const address = encodeURIComponent(booking.parking.address);
     const url = `https://www.google.com/maps/search/?api=1&query=${address}`;
-    window.open(url, '_blank');
+    window.open(url, "_blank");
   }
 
   contactOwner(): void {
     const booking = this.booking();
     if (!booking?.parking?.owner) return;
 
-    this.snackBar.open('Contact feature coming soon!', 'Close', {
+    this.snackBar.open("Contact feature coming soon!", "Close", {
       duration: 3000,
-      panelClass: ['info-snackbar']
+      panelClass: ["info-snackbar"],
     });
   }
 
@@ -409,7 +452,7 @@ export class BookingDetailComponent implements OnInit {
     const qrDataUrl = this.qrCodeDataUrl();
     if (!qrDataUrl) return;
 
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.download = `parking-access-${this.bookingId()}.png`;
     link.href = qrDataUrl;
     link.click();
@@ -420,38 +463,38 @@ export class BookingDetailComponent implements OnInit {
     if (!booking) return;
 
     const shareData = {
-      title: 'ParkShare Booking',
-      text: `Booking at ${booking.parking?.title || 'parking location'}`,
-      url: window.location.href
+      title: "ParkShare Booking",
+      text: `Booking at ${booking.parking?.title || "parking location"}`,
+      url: window.location.href,
     };
 
     if (navigator.share) {
       navigator.share(shareData).catch((error) => {
-        console.error('Error sharing:', error);
+        console.error("Error sharing:", error);
       });
     } else {
       // Fallback: copy to clipboard
       navigator.clipboard.writeText(window.location.href);
-      this.snackBar.open('Link copied to clipboard!', 'Close', {
+      this.snackBar.open("Link copied to clipboard!", "Close", {
         duration: 3000,
-        panelClass: ['success-snackbar']
+        panelClass: ["success-snackbar"],
       });
     }
   }
 
   formatDate(dateString: string): string {
-    if (!dateString) return '';
-    return format(new Date(dateString), 'PPp');
+    if (!dateString) return "";
+    return format(new Date(dateString), "PPp");
   }
 
-  formatCurrency(amount: number, currency: string = 'USD'): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: currency
+  formatCurrency(amount: number, currency: string = "USD"): string {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: currency,
     }).format(amount);
   }
 
   goBack(): void {
-    this.router.navigate(['/bookings']);
+    this.router.navigate(["/bookings"]);
   }
 }

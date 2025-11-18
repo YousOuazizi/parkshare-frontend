@@ -1,19 +1,19 @@
-import { Component, OnInit, signal, computed, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatDialogModule, MatDialog } from '@angular/material/dialog';
-import { RouterLink } from '@angular/router';
+import { Component, OnInit, signal, computed, inject } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { MatTabsModule } from "@angular/material/tabs";
+import { MatCardModule } from "@angular/material/card";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+import { MatChipsModule } from "@angular/material/chips";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatDialogModule, MatDialog } from "@angular/material/dialog";
+import { RouterLink } from "@angular/router";
 
-import { SwapService } from '../../services/swap.service';
-import { SwapOffer, SwapOfferStatus } from '../../../../core/models/swap.model';
+import { SwapService } from "../../services/swap.service";
+import { SwapOffer, SwapOfferStatus } from "../../../../core/models/swap.model";
 
 @Component({
-  selector: 'app-swap-offers',
+  selector: "app-swap-offers",
   standalone: true,
   imports: [
     CommonModule,
@@ -24,10 +24,10 @@ import { SwapOffer, SwapOfferStatus } from '../../../../core/models/swap.model';
     MatIconModule,
     MatChipsModule,
     MatProgressSpinnerModule,
-    MatDialogModule
+    MatDialogModule,
   ],
-  templateUrl: './swap-offers.component.html',
-  styleUrls: ['./swap-offers.component.scss']
+  templateUrl: "./swap-offers.component.html",
+  styleUrls: ["./swap-offers.component.scss"],
 })
 export class SwapOffersComponent implements OnInit {
   private swapService = inject(SwapService);
@@ -43,7 +43,7 @@ export class SwapOffersComponent implements OnInit {
   receivedOffers = computed(() => {
     // In a real implementation, you'd filter based on current user ID
     // For now, we'll assume offers where the listing belongs to the user are "received"
-    return this.allOffers().filter(offer => {
+    return this.allOffers().filter((offer) => {
       // This is a placeholder - you'd need to check if listing.userId === currentUserId
       return true; // Replace with actual logic
     });
@@ -52,7 +52,7 @@ export class SwapOffersComponent implements OnInit {
   sentOffers = computed(() => {
     // In a real implementation, you'd filter based on current user ID
     // For now, we'll assume offers where offererId === currentUserId are "sent"
-    return this.allOffers().filter(offer => {
+    return this.allOffers().filter((offer) => {
       // This is a placeholder - you'd need to check if offer.offererId === currentUserId
       return true; // Replace with actual logic
     });
@@ -78,10 +78,10 @@ export class SwapOffersComponent implements OnInit {
         this.loading.set(false);
       },
       error: (err) => {
-        this.error.set('Failed to load offers. Please try again.');
+        this.error.set("Failed to load offers. Please try again.");
         this.loading.set(false);
-        console.error('Error loading offers:', err);
-      }
+        console.error("Error loading offers:", err);
+      },
     });
   }
 
@@ -98,10 +98,10 @@ export class SwapOffersComponent implements OnInit {
         this.processingOfferId.set(null);
       },
       error: (err) => {
-        this.error.set('Failed to accept offer. Please try again.');
+        this.error.set("Failed to accept offer. Please try again.");
         this.processingOfferId.set(null);
-        console.error('Error accepting offer:', err);
-      }
+        console.error("Error accepting offer:", err);
+      },
     });
   }
 
@@ -111,18 +111,20 @@ export class SwapOffersComponent implements OnInit {
   rejectOffer(offer: SwapOffer): void {
     this.processingOfferId.set(offer.id);
 
-    this.swapService.respondToOffer(offer.id, false, 'Offer declined').subscribe({
-      next: (updatedOffer) => {
-        // Update the offer in the list
-        this.updateOfferInList(updatedOffer);
-        this.processingOfferId.set(null);
-      },
-      error: (err) => {
-        this.error.set('Failed to reject offer. Please try again.');
-        this.processingOfferId.set(null);
-        console.error('Error rejecting offer:', err);
-      }
-    });
+    this.swapService
+      .respondToOffer(offer.id, false, "Offer declined")
+      .subscribe({
+        next: (updatedOffer) => {
+          // Update the offer in the list
+          this.updateOfferInList(updatedOffer);
+          this.processingOfferId.set(null);
+        },
+        error: (err) => {
+          this.error.set("Failed to reject offer. Please try again.");
+          this.processingOfferId.set(null);
+          console.error("Error rejecting offer:", err);
+        },
+      });
   }
 
   /**
@@ -135,15 +137,15 @@ export class SwapOffersComponent implements OnInit {
       next: () => {
         // Remove the offer from the list or update its status
         const offers = this.allOffers();
-        const updatedOffers = offers.filter(o => o.id !== offer.id);
+        const updatedOffers = offers.filter((o) => o.id !== offer.id);
         this.allOffers.set(updatedOffers);
         this.processingOfferId.set(null);
       },
       error: (err) => {
-        this.error.set('Failed to cancel offer. Please try again.');
+        this.error.set("Failed to cancel offer. Please try again.");
         this.processingOfferId.set(null);
-        console.error('Error canceling offer:', err);
-      }
+        console.error("Error canceling offer:", err);
+      },
     });
   }
 
@@ -152,7 +154,7 @@ export class SwapOffersComponent implements OnInit {
    */
   private updateOfferInList(updatedOffer: SwapOffer): void {
     const offers = this.allOffers();
-    const index = offers.findIndex(o => o.id === updatedOffer.id);
+    const index = offers.findIndex((o) => o.id === updatedOffer.id);
     if (index !== -1) {
       const newOffers = [...offers];
       newOffers[index] = updatedOffer;
@@ -166,17 +168,17 @@ export class SwapOffersComponent implements OnInit {
   getStatusClass(status: SwapOfferStatus): string {
     switch (status) {
       case SwapOfferStatus.PENDING:
-        return 'status-pending';
+        return "status-pending";
       case SwapOfferStatus.ACCEPTED:
-        return 'status-accepted';
+        return "status-accepted";
       case SwapOfferStatus.REJECTED:
-        return 'status-rejected';
+        return "status-rejected";
       case SwapOfferStatus.CANCELLED:
-        return 'status-cancelled';
+        return "status-cancelled";
       case SwapOfferStatus.COMPLETED:
-        return 'status-completed';
+        return "status-completed";
       default:
-        return '';
+        return "";
     }
   }
 
@@ -187,7 +189,7 @@ export class SwapOffersComponent implements OnInit {
     if (photos && photos.length > 0) {
       return photos[0].url;
     }
-    return 'assets/images/default-parking.jpg';
+    return "assets/images/default-parking.jpg";
   }
 
   /**
@@ -197,8 +199,15 @@ export class SwapOffersComponent implements OnInit {
     const start = new Date(startDate);
     const end = new Date(endDate);
 
-    const startStr = start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    const endStr = end.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const startStr = start.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+    });
+    const endStr = end.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
 
     return `${startStr} - ${endStr}`;
   }
@@ -207,13 +216,13 @@ export class SwapOffersComponent implements OnInit {
    * Format price with currency
    */
   formatPrice(price: number | undefined): string {
-    if (!price) return 'N/A';
+    if (!price) return "N/A";
 
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
       minimumFractionDigits: 0,
-      maximumFractionDigits: 2
+      maximumFractionDigits: 2,
     }).format(price);
   }
 

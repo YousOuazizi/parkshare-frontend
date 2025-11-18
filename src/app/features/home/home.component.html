@@ -13,7 +13,8 @@
             mat-raised-button
             color="primary"
             class="hero-button primary-button"
-            (click)="navigateToFindParking()">
+            (click)="navigateToFindParking()"
+          >
             <mat-icon>search</mat-icon>
             Find Parking
           </button>
@@ -21,7 +22,8 @@
             mat-raised-button
             color="accent"
             class="hero-button accent-button"
-            (click)="navigateToListSpace()">
+            (click)="navigateToListSpace()"
+          >
             <mat-icon>add_location</mat-icon>
             List Your Space
           </button>
@@ -76,12 +78,13 @@
     <div class="container">
       <div class="section-header">
         <h2 class="section-title">How It Works</h2>
-        <p class="section-subtitle">
-          Get started in four simple steps
-        </p>
+        <p class="section-subtitle">Get started in four simple steps</p>
       </div>
       <div class="steps-container">
-        <div class="step-card" *ngFor="let step of howItWorksSteps; let i = index">
+        <div
+          class="step-card"
+          *ngFor="let step of howItWorksSteps; let i = index"
+        >
           <div class="step-number">{{ i + 1 }}</div>
           <div class="step-icon-wrapper">
             <mat-icon class="step-icon">{{ step.icon }}</mat-icon>
@@ -105,7 +108,8 @@
           mat-raised-button
           color="accent"
           class="cta-button"
-          (click)="navigateToSignUp()">
+          (click)="navigateToSignUp()"
+        >
           <mat-icon>person_add</mat-icon>
           Sign Up Now
         </button>

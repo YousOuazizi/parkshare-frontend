@@ -1,26 +1,26 @@
 export enum SubscriptionType {
-  HOURLY = 'HOURLY',
-  DAILY = 'DAILY',
-  WEEKLY = 'WEEKLY',
-  MONTHLY = 'MONTHLY',
-  CUSTOM = 'CUSTOM'
+  HOURLY = "HOURLY",
+  DAILY = "DAILY",
+  WEEKLY = "WEEKLY",
+  MONTHLY = "MONTHLY",
+  CUSTOM = "CUSTOM",
 }
 
 export enum RecurrencePattern {
-  NONE = 'NONE',
-  DAILY = 'DAILY',
-  WEEKDAY = 'WEEKDAY',
-  WEEKEND = 'WEEKEND',
-  WEEKLY = 'WEEKLY',
-  BIWEEKLY = 'BIWEEKLY',
-  MONTHLY = 'MONTHLY'
+  NONE = "NONE",
+  DAILY = "DAILY",
+  WEEKDAY = "WEEKDAY",
+  WEEKEND = "WEEKEND",
+  WEEKLY = "WEEKLY",
+  BIWEEKLY = "BIWEEKLY",
+  MONTHLY = "MONTHLY",
 }
 
 export enum SubscriptionStatus {
-  ACTIVE = 'ACTIVE',
-  PAUSED = 'PAUSED',
-  CANCELLED = 'CANCELLED',
-  EXPIRED = 'EXPIRED'
+  ACTIVE = "ACTIVE",
+  PAUSED = "PAUSED",
+  CANCELLED = "CANCELLED",
+  EXPIRED = "EXPIRED",
 }
 
 export interface SubscriptionPlan {
